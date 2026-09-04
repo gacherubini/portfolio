@@ -21,14 +21,68 @@ Três coisas na prática:
    custou, e aprova numa fila só as três coisas que precisam de gente: correção
    de ponto, reembolso de despesa e pedido de férias.
 
-Mais três que ampliam o escopo além de folha de ponto: cadastro de pessoas
-unificado (colaboradores, clientes e fornecedores juntos), agenda que junta
-férias, feriados, prazos e o Google Calendar de cada um, e um assistente
-conversacional que responde sobre os dados e propõe ações que a pessoa aprova.
+Mais duas que ampliam o escopo além de folha de ponto: cadastro de pessoas
+unificado (colaboradores, clientes e fornecedores juntos) e uma agenda que junta
+férias, feriados, prazos e o Google Calendar de cada um.
 
-Detalhe de produto que vale contar: **o assistente não é um canal
-privilegiado.** Cada pessoa alcança por ele exatamente o que alcançaria
-navegando o site. A régua de permissão é a mesma.
+E o assistente, que ganhou seção própria abaixo.
+
+## A feature de destaque: o assistente
+
+**Um chatbot construído com DeepSeek para resolver as tarefas do dia a dia do
+escritório.** Em vez de navegar sete telas para montar a resposta, a pessoa
+pergunta.
+
+Os 17 tools de leitura dizem para que ele serve melhor que qualquer descrição.
+São as perguntas chatas de segunda-feira, cada uma virada função:
+
+`quemNaoApontou` · `tasksTravadas` · `cargaEquipe` · `feriasEConflitos` ·
+`custoPorProjeto` · `aprovacoesPendentes` · `apontamentosAbertos` ·
+`andamentoDeProjeto` · `despesasDoPeriodo` · `agendaDoPeriodo` ·
+`simulacaoPerformance` · `gerarRelatorio` · `statusProjeto` · `listarEquipe` ·
+`bonusDoPeriodo` · `meusBonus` · `aniversariantes`
+
+### O detalhe que vale contar
+
+São 15 tools de escrita, e **todos os quinze começam com `propor`**:
+
+```
+proporCriarTask        proporAprovarDespesa    proporLancarBonus
+proporPedirFerias      proporEncerrarApontamento  proporMoverTask
+proporRejeitarFerias   proporEditarTask        proporComentarTask
+proporCriarApontamento proporLancarDespesa     proporEditarBonus
+proporAprovarFerias    proporRejeitarDespesa   proporApagarBonus
+```
+
+Nenhum se chama `criar` ou `aprovar`. O assistente não escreve no sistema — ele
+propõe, e a pessoa aprova. A regra não está num comentário nem numa checagem
+solta: está no nome de cada função que o modelo pode chamar. Escrever direto é
+uma coisa que não existe para ele.
+
+### As outras três amarras
+
+- **Não é um canal privilegiado.** Cada pessoa alcança pelo assistente
+  exatamente o que alcançaria navegando o site. A mesma régua de permissão dos
+  4 papéis vale nos dois caminhos.
+- **Cada resposta declara suas fontes.** No rodapé vai a lista de quais leituras
+  produziram aquela resposta. Dá para conferir em vez de acreditar.
+- **Teto de gasto por pessoa.** O custo de cada chamada é logado em USD, com
+  limite diário por usuário (US$ 1 no default) e uma tela de admin mostrando
+  gasto por dia, pedidos que ele não atendeu e avaliação por polegar. SQL ad-hoc
+  só roda por uma role Postgres somente-leitura dedicada.
+
+### Stack do assistente
+
+Modelo **DeepSeek V4 Flash**, falado por SDK OpenAI-compatible
+(`AGENT_PROVIDER_BASE_URL` + `AGENT_MODEL`, default `api.deepseek.com`), com
+resposta em streaming. Preço por 1M de tokens vem de env e alimenta o custo na
+tela do admin — sem esses valores o custo sai `null`, não zero, para não mentir
+que foi de graça.
+
+Tem suíte de evals própria (`src/lib/agent/evals/`) e um cuidado explícito com
+**prompt injection** vindo de anexo: PDF que a pessoa sobe entra no contexto do
+modelo, e o código trata isso como superfície de ataque, não como texto de
+confiança.
 
 ## Números
 
@@ -93,9 +147,13 @@ publica.
 `09-pessoas` · `10-apontamentos-da-equipe` · `11-aprovacoes` ·
 `12-painel-ao-vivo` · `13-relatorio-financeiro`
 
-Falta um print do `/assistente`: sem chamada real ao provedor a tela sai vazia,
-e fazer uma pergunta de verdade gasta a chave paga. Se quiser esse print, é
-logar, perguntar e capturar.
+**Falta o print do `/assistente`, e agora ele é obrigatório** — o destaque da
+página precisa de imagem. Sem uma pergunta real a tela sai vazia ("Conversas
+0"), o que não demonstra nada. O agente parou aí para não gastar a chave paga,
+mas o modelo é DeepSeek V4 Flash: uma pergunta custa fração de centavo, não a
+conta do mês. Basta logar, fazer duas ou três perguntas boas (uma de leitura,
+uma que gere proposta de escrita para o print mostrar o botão de aprovar) e
+capturar.
 
 Os cards de projeto aparecem com miniatura cinza porque o upload de imagem
 depende do Tigris/S3, vazio no ambiente local.
