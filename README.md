@@ -20,7 +20,6 @@ Next.js 15 (App Router) · TypeScript · Tailwind CSS 4 · Vercel. Bilíngue PT/
 | BDDente | Prontuário odontológico que substituiu um FoxPro de 1996 | no ar |
 | Office Timesheet | Controle de horas e projetos para escritório de arquitetura | sistema fechado |
 | Autotune | TCC sobre algoritmos de detecção de pitch | publicado |
-| Gastos do mês | App de finanças pessoais | em construção |
 
 ## A regra dos prints
 

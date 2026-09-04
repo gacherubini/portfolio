@@ -33,8 +33,8 @@ A faixa deixa de parecer um cartão sobre o produto e passa a parecer um pedaço
 dele.
 
 Consequência de manutenção: **projeto sem identidade visual própria precisa
-receber uma antes de entrar no site.** O app de finanças, que ainda não tem
-tela, ganhou uma paleta inventada e deve migrar para a real quando existir.
+receber uma antes de entrar no site.** Foi o que derrubou o app de finanças: sem
+tela, não tem cor, e cor inventada quebra a premissa da direção.
 
 ### Tipografia
 
@@ -48,6 +48,28 @@ sistema na faixa) · 24px (destaque) · 16.5px (lede) · 15px (corpo) ·
 13.5px (rótulo) · 12px (legenda).
 
 Texto corrido não passa de ~50 caracteres por linha (`max-width` em `ch`).
+
+### A marca
+
+O logotipo é a palavra inteira: **gacherubini.dev**, com o domínio em duas
+cores — `gacherubini` na tinta da casca e `.dev` em azul.
+
+| | |
+|---|---|
+| `gacherubini` | `#0F1317` |
+| `.dev` | `#2A4FD7` |
+
+Amostradas do arquivo que o dono mandou em 04/09/2026.
+
+**Ela é a única cor fixa do site**, e isso é coerente com a direção em vez de
+brigar com ela: tudo muda de cor faixa a faixa, e a assinatura é o que não muda.
+A marca fica sempre sobre o neutro da casca, nunca dentro de uma faixa colorida
+— sobre o roxo do BDDente ou o preto da Revy o azul some ou vibra.
+
+Um conflito a resolver na implementação: `#2A4FD7` é vizinho do azul do Office
+Timesheet (`#2563EB`). Como a marca nunca aparece dentro de uma faixa, os dois
+não se encostam — mas se algum dia a marca precisar entrar numa faixa, é a faixa
+do Timesheet que vai exigir uma variante.
 
 ### Neutros da casca
 
@@ -81,7 +103,6 @@ todas as paletas. Cor de projeto novo = seis hex num arquivo.
 | BDDente | `#5B21A8` | `#F4EEFC` | `#D9C4F5` | menu lateral do sistema |
 | Office Timesheet | `#EEF1F6` | `#151A22` | `#2563EB` | tema claro do front |
 | Autotune | `#10312F` | `#E4F2F0` | `#F3B843` | âmbar da curva de pitch |
-| Gastos do mês | `#FBF7F0` | `#1F1B14` | `#C2562B` | **inventada** — o app não tem tela ainda |
 
 **Requisito de acessibilidade:** todo par texto/fundo passa 4.5:1, e todo par
 destaque/fundo passa 3:1. Um teste automatizado calcula o contraste de cada
@@ -118,8 +139,7 @@ portfolio/
 │       ├── revy.ts
 │       ├── bddente.ts
 │       ├── office-timesheet.ts
-│       ├── autotune.ts
-│       └── gastos-do-mes.ts
+│       └── autotune.ts
 ├── lib/
 │   ├── contraste.ts                 # razão de contraste WCAG
 │   └── idioma.ts                    # resolve pt/en, cai no pt
@@ -216,7 +236,6 @@ Estado em 04/09/2026:
 | BDDente | faltam | o dono vai mandar os arquivos |
 | Office Timesheet | em andamento | subida local com seed fictício |
 | Autotune | usar `TCC_autotune/results/figures/` | gráficos de resultado já existem |
-| Gastos do mês | não existem | o app está em construção |
 
 ## 8. Estrutura das duas telas
 
@@ -266,10 +285,10 @@ A ordem das faixas alterna o lado do print para o olho não cansar.
 
 ## 11. Decisões ainda em aberto
 
-1. **Autotune e Gastos do mês entram na home como faixa ou numa seção menor no
-   fim?** Cinco faixas de largura total deixam a home longa. Proposta: as três
-   em produção viram faixa; Autotune e Gastos entram numa seção "outros
-   projetos" com cartão menor, e ainda assim ganham página própria.
+1. **O Autotune entra na home como faixa ou numa seção menor no fim?** Com
+   quatro projetos a home já não fica longa demais. Proposta: as três em
+   produção viram faixa; o Autotune entra numa seção "outros projetos" com
+   cartão menor, e ainda assim ganha página própria.
 2. **O assistente-virtual entra?** Ficou combinado que sim, como cartão menor,
    sem faixa.
 3. **Domínio e deploy.** `gacherubini.dev` na Vercel. Falta confirmar se o
