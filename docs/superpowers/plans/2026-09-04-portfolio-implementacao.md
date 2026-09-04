@@ -10,7 +10,8 @@
 quatro páginas de projeto exatamente como os comps aprovados em 04/09/2026.
 
 **Arquitetura:** Next.js 15 (App Router) estático. A cor não mora no CSS: cada
-projeto declara um objeto `tema` de nove hex, que vira custom properties inline
+projeto declara um objeto `tema` de oito hex (nove no Autotune, que tem
+`fundo3`), que vira custom properties inline
 no elemento raiz da faixa ou da página; uma folha só serve as quatro paletas.
 Um teste de contraste roda antes do `next build` e derruba a build se qualquer
 par declarado reprovar.
@@ -50,6 +51,13 @@ Valem em toda tarefa. Os valores são literais, copiados da spec.
 - **Opacidade mínima em texto: 0,72** nas faixas e páginas de projeto (abaixo
   disso o roxo do BDDente reprova: 4,22:1 a 0,65), e **0,85 dentro do
   fechamento azul** (branco a 0,72 sobre `#2A4FD7` dá 4,21:1). Ver Tarefa 2.
+- **Quem recebe `opacity` é sempre `--texto`.** `--calmo` já é a tinta
+  esmaecida do sistema e não aguenta um segundo desconto: nas quatro paletas
+  ele passa em cheio e reprova a 0,72 (3,12:1 no Office Timesheet, 3,37:1 no
+  BDDente). Elemento pintado com `var(--calmo)` fica em opacidade cheia.
+- **Opacidade compõe.** Pai a `.88` com filho a `.85` dá `.748`, e nenhum teste
+  de paleta pega isso: o hex não mudou, só o produto. Dentro de um bloco que já
+  esmaece, o filho vai em `opacity: 1`.
 - **Idioma:** `/pt` e `/en`; `/` redireciona para `/pt`. `en` faltando cai no
   `pt` e a build imprime aviso nomeando o campo — **não falha**.
 - **Prints:** nenhum com dado real de cliente, paciente ou empresa. Os 32
@@ -71,8 +79,9 @@ definido e uma linha de dado para fechar quando a informação chegar.
 ### Divergências deliberadas entre a spec e este plano
 
 A spec §5 foi escrita antes da rodada de comps de 04/09. Os comps aprovados
-exigem cinco relaxamentos no contrato. Cada um está listado aqui porque muda o
-tipo, não o desenho.
+exigem oito relaxamentos no contrato. Cada um está listado aqui porque muda o
+tipo, não o desenho — e a lista é exaustiva de propósito: divergência que não
+está aqui é erro, não decisão.
 
 1. **`destaque.prints` aceita 0, 1 ou 2** (spec: "1 ou 2"). Zero é o slot do
    print do assistente; um é o comp P2 (`.placa-larga`); dois é P1 e P4.
@@ -90,6 +99,15 @@ tipo, não o desenho.
    estado normal. Um projeto novo pode nascer só em português: quem o
    acrescentar relaxa `test/traducao.test.ts` de propósito, e essa decisão fica
    visível no diff em vez de virar um aviso que ninguém lê.
+7. **`Texto` é `{ pt: string; en?: string }`**, não `Record<Idioma, string>`
+   (spec §5, onde os dois idiomas são obrigatórios). É o que sustenta o
+   mecanismo inteiro da divergência 6: sem `en` opcional não existe queda para
+   o português nem aviso nomeando o campo.
+8. **`problema`, `oQueFaz`, `destaque.texto` e `tecnico.notas[].texto` são
+   `Texto[]`**, não `Texto` (spec §5). Todos os quatro comps aprovados escrevem
+   esses blocos em dois parágrafos; um campo só obrigaria a emendar os dois com
+   `
+` e a deixar o componente partir string.
 
 ---
 
@@ -179,7 +197,9 @@ portfolio/
 │   ├── tema.ts                   # Tema -> React.CSSProperties
 │   └── curriculo.ts              # o PDF existe? (slot)
 ├── test/
+│   ├── harness.test.tsx          # prova o portão, e que next/link e next/image renderizam
 │   ├── contraste.test.ts         # fixtures, incl. o caso 3,08:1
+│   ├── folha.test.ts             # lê globals.css: nenhuma opacity fora da lista
 │   ├── temas.test.ts             # itera os temas reais do indice
 │   ├── contrato.test.ts          # as três bordas: sem link, sem destaque, sem galeria
 │   ├── idioma.test.ts
@@ -226,7 +246,7 @@ Os gráficos `03` e `04` do Autotune ficam **fora** do site (recomendação do
 - Criar: `package.json`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`,
   `vitest.config.ts`, `vitest.setup.ts`, `vercel.json`, `app/globals.css`,
   `app/[lang]/layout.tsx`, `app/[lang]/page.tsx`
-- Criar teste: `test/harness.test.ts`
+- Criar teste: `test/harness.test.tsx`
 
 **Interfaces:**
 - Consome: nada.
@@ -277,8 +297,10 @@ Esperado: termina sem erro; `node_modules/` aparece (já está no `.gitignore`).
 
 - [ ] **Passo 3: `vercel.json`, para a Vercel não pular o portão**
 
-A Vercel detecta Next.js e pode chamar `next build` direto, o que passaria por
-cima do Vitest. Fixe o comando:
+A Vercel roda o script `build` do `package.json` quando ele existe, então o
+portão já valeria. Fixar o comando é redundância barata: deixa explícito no
+repositório qual comando a produção roda, e o dia em que alguém trocar o preset
+ou acrescentar um `vercel-build` o Vitest continua na frente.
 
 ```json
 { "buildCommand": "npm run build" }
@@ -361,8 +383,11 @@ import '@testing-library/jest-dom/vitest'
 
 - [ ] **Passo 8: escrever o teste que prova que o portão existe**
 
-```ts
-// test/harness.test.ts
+```tsx
+// test/harness.test.tsx
+import { render, screen } from '@testing-library/react'
+import Link from 'next/link'
+import Image from 'next/image'
 import { describe, expect, it } from 'vitest'
 
 describe('harness de teste', () => {
@@ -375,13 +400,34 @@ describe('harness de teste', () => {
     document.body.innerHTML = '<b id="x">ok</b>'
     expect(document.getElementById('x')).toHaveTextContent('ok')
   })
+
+  // Sete arquivos de teste deste plano renderizam componente que importa
+  // next/link ou next/image, e os dois contam com contexto que só existe
+  // dentro do Next. Se eles não renderizam em jsdom, isso tem que aparecer
+  // aqui, com duas linhas de conserto — não na Tarefa 8, com meia interface
+  // escrita em cima.
+  it('renderiza next/link fora do Next', () => {
+    render(<Link href="/pt">PT</Link>)
+    expect(screen.getByRole('link', { name: 'PT' })).toHaveAttribute('href', '/pt')
+  })
+
+  it('renderiza next/image fora do Next', () => {
+    render(
+      <Image src="/prints/revy/01-visao-geral.png" alt="painel" width={1897} height={938} />,
+    )
+    expect(screen.getByAltText('painel')).toBeInTheDocument()
+  })
 })
 ```
 
 - [ ] **Passo 9: rodar e ver passar**
 
 Rode: `npm test`
-Esperado: 2 testes passando.
+Esperado: 4 testes passando.
+
+Se um dos dois últimos falhar, conserte agora, em `vitest.config.ts`: um alias
+de `next/image` para um componente que devolve `<img>`, ou `vi.mock`. O resto
+do plano assume que os dois renderizam.
 
 - [ ] **Passo 10: casca mínima só para a build compilar**
 
@@ -599,6 +645,27 @@ describe('verificarTema', () => {
     expect(Math.min(...OPACIDADES_DE_TEXTO)).toBeGreaterThanOrEqual(0.72)
   })
 
+  // O outro lado do mesmo furo. `calmo` é a segunda tinta e passa em cheio nas
+  // quatro paletas — mas não sobra folga para esmaecer: a 0,72 as quatro
+  // reprovam. É de onde vem a regra da folha de que opacity só cai em `texto`.
+  // Sem isto escrito, `.regua .num span{color:var(--calmo)}` herda um
+  // `opacity:.72` de outra regra e ninguém percebe.
+  it('calmo passa em cheio e não aguenta opacidade nenhuma', () => {
+    const paletas: [string, string, string][] = [
+      ['revy', '#9AA39D', '#111111'],
+      ['bddente', '#CBBCE8', '#5A21B4'],
+      ['office-timesheet', '#55605C', '#ECECEC'],
+      ['autotune', '#9FBCB8', '#10312F'],
+    ]
+    for (const [nome, calmo, fundo] of paletas) {
+      expect(razaoDeContraste(calmo, fundo), nome).toBeGreaterThanOrEqual(MIN_TEXTO)
+      expect(
+        razaoDeContraste(misturar(calmo, fundo, 0.72), fundo),
+        nome,
+      ).toBeLessThan(MIN_TEXTO)
+    }
+  })
+
   it('expõe os mínimos da spec', () => {
     expect(MIN_TEXTO).toBe(4.5)
     expect(MIN_DESTAQUE).toBe(3)
@@ -636,9 +703,16 @@ export const MIN_TEXTO = 4.5
 export const MIN_DESTAQUE = 3
 
 /**
- * Os níveis de opacidade que `app/globals.css` usa em texto. Regra da folha:
- * nenhuma regra de texto usa opacity fora desta lista. 0,72 é o piso porque
- * 0,65 sobre o roxo do BDDente dá 4,22:1.
+ * Os níveis de opacidade que `app/globals.css` usa em texto. Duas regras da
+ * folha, e `test/folha.test.ts` (Tarefa 8) guarda a primeira:
+ *
+ * 1. Nenhuma regra usa opacity fora desta lista. 0,72 é o piso porque 0,65
+ *    sobre o roxo do BDDente dá 4,22:1.
+ * 2. Opacity só cai sobre `--texto`. `--calmo` fica em opacidade cheia: ele já
+ *    é a tinta esmaecida do sistema, e a 0,72 as quatro paletas reprovam.
+ *    Por isso o sweep abaixo roda em `tema.texto` e não em `tema.calmo` —
+ *    incluir `calmo` aqui derrubaria as quatro paletas aprovadas em vez de
+ *    consertar o CSS, que é onde o erro mora.
  */
 export const OPACIDADES_DE_TEXTO = [0.72, 0.85, 0.88, 0.9, 0.92]
 
@@ -1001,8 +1075,9 @@ export function ehIdioma(v: string): v is Idioma {
 export type Texto = { pt: string; en?: string }
 
 /**
- * A paleta do sistema. Nove hex por projeto, e é a única coisa que muda entre
- * uma faixa e outra: a folha de estilo é a mesma para as quatro.
+ * A paleta do sistema. Oito hex por projeto — nove no Autotune, que declara
+ * `fundo3` —, e é a única coisa que muda entre uma faixa e outra: a folha de
+ * estilo é a mesma para as quatro.
  *
  * `fundo2` é a superfície do bloco de destaque — mais escura nas páginas
  * escuras, branca na única página clara. `fundo3` só existe no Autotune, para
@@ -1263,7 +1338,9 @@ export type { Idioma, Texto } from '@/content/tipos'
 ```
 
 Apague o comentário "Os tipos abaixo migram para `content/tipos.ts` quando o
-site existir" — migraram.
+site existir" — migraram. Apague também o campo `titulo`: o comp aprovado
+titula o bloco com "Quem fez", que mora em `ui.sobreTitulo` (Tarefa 8), e um
+segundo título no arquivo de conteúdo só cria duas fontes para a mesma coisa.
 
 - [ ] **Passo 10: rodar tudo**
 
@@ -1658,6 +1735,10 @@ export const bddente: Projeto = {
     ],
   },
 
+  // Diferente da Revy: estes quatro saem do README do projeto, não de seed
+  // inventado, então entram como fato. O levantamento ainda lista "confirmar
+  // se 914 e 44.812 podem virar vitrine" — se o dono disser que não, o
+  // conserto é o mesmo da Revy: `numeros: []` e a régua some sozinha.
   numeros: [
     { valor: '~30', rotulo: { pt: 'anos de histórico migrados' } },
     { valor: '5.559', rotulo: { pt: 'pacientes no cadastro histórico' } },
@@ -1975,7 +2056,10 @@ export const officeTimesheet: Projeto = {
     { valor: '1.452', rotulo: { pt: 'casos de teste, contra Postgres real no CI' } },
     { valor: '148', rotulo: { pt: 'endpoints HTTP' } },
     { valor: '40', rotulo: { pt: 'tabelas no banco' } },
-    { valor: '34', rotulo: { pt: 'tools no assistente: 17 de leitura, 15 de escrita' } },
+    // O comp P3 escreve "34 · 17 de leitura, 15 de escrita", e 17+15 dá 32.
+    // O levantamento explica o resto: 34 = 17 leitura + 15 escrita + SQL
+    // ad-hoc + meta. Conta errada na tela é pior que rótulo comprido.
+    { valor: '34', rotulo: { pt: 'tools no assistente, 17 deles só de leitura' } },
   ],
 
   galeria: [
@@ -2480,10 +2564,10 @@ topo claro e a frase de abertura, sem faixa nenhuma ainda.
 - Criar: `content/ui.ts`, `components/Marca.tsx`, `components/AlternadorIdioma.tsx`,
   `components/CabecalhoCasca.tsx`
 - Modificar: `app/globals.css`, `app/[lang]/layout.tsx`, `app/[lang]/page.tsx`
-- Criar teste: `test/componentes/casca.test.tsx`
+- Criar teste: `test/componentes/casca.test.tsx`, `test/folha.test.ts`
 
 **Interfaces:**
-- Consome: `t`, `Idioma`, `ehIdioma`.
+- Consome: `t`, `Idioma`, `ehIdioma`, `OPACIDADES_DE_TEXTO`, `OPACIDADES_NO_AZUL`.
 - Produz:
   - `ui` — objeto de textos da casca, com `nav`, `abertura`, `situacao`,
     `verOProjeto`, `voltar`, `avisoTecnico`, `rodape`
@@ -2786,9 +2870,9 @@ import { t } from '@/lib/idioma'
 import { ui } from '@/content/ui'
 import { CabecalhoCasca } from '@/components/CabecalhoCasca'
 
-export function generateStaticParams() {
-  return [{ lang: 'pt' }, { lang: 'en' }]
-}
+// Sem `generateStaticParams` aqui: quem gera o segmento `[lang]` é o layout
+// raiz, e cada segmento é gerado uma vez só. Repetir a mesma chave nos dois
+// níveis é ruído no melhor caso e conflito no pior.
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
@@ -2808,19 +2892,59 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 }
 ```
 
-- [ ] **Passo 10: rodar os testes e ver passar**
+- [ ] **Passo 10: o teste que impede a folha de reimportar as opacidades do comp**
+
+Os comps traziam `.65`, `.7` e `.72` esmaecendo texto sobre o roxo e sobre o
+azul da marca. Portar CSS à mão reintroduz esses valores sem ninguém notar, e
+nenhum teste de paleta os pega: o hex não muda, só a opacidade. Daqui em diante
+toda tarefa acrescenta regra nesta folha, então o guarda entra agora.
+
+```ts
+// test/folha.test.ts
+import { readFileSync } from 'node:fs'
+import { describe, expect, it } from 'vitest'
+import { OPACIDADES_DE_TEXTO, OPACIDADES_NO_AZUL } from '@/lib/contraste'
+
+const folha = readFileSync('app/globals.css', 'utf8')
+
+describe('a regra da folha', () => {
+  it('não usa nenhuma opacity fora da lista medida', () => {
+    const permitidas = new Set([...OPACIDADES_DE_TEXTO, ...OPACIDADES_NO_AZUL, 0, 1])
+    const usadas = [...folha.matchAll(/opacity:\s*([\d.]+)/g)].map((m) => Number(m[1]))
+    expect(usadas.length).toBeGreaterThan(0)
+    expect(usadas.filter((o) => !permitidas.has(o))).toEqual([])
+  })
+
+  it('não esmaece nada pintado com --calmo', () => {
+    // `calmo` reprova a 0,72 nas quatro paletas (ver test/contraste.test.ts).
+    // Quem recebe opacity é `--texto`; quem usa `--calmo` fica em opacidade
+    // cheia. Regra grosseira, mas pega o caso real: uma declaração de opacity
+    // no mesmo bloco em que `--calmo` pinta a cor.
+    const blocos = folha.split('}')
+    const errados = blocos.filter(
+      (b) => /color:\s*var\(--calmo\)/.test(b) && /opacity:\s*(?!1)[\d.]+/.test(b),
+    )
+    expect(errados).toEqual([])
+  })
+})
+```
+
+Rode: `npm test -- test/folha.test.ts`
+Esperado: 2 testes passando.
+
+- [ ] **Passo 11: rodar os testes de componente e ver passar**
 
 Rode: `npm test -- test/componentes/casca.test.tsx`
 Esperado: 6 testes passando.
 
-- [ ] **Passo 11: olhar com o olho**
+- [ ] **Passo 12: olhar com o olho**
 
 Rode: `npm run dev` e abra `http://localhost:3000/` (deve cair em `/pt`).
 Confira: fundo `#FAFAF7`, marca com `.dev` azul, "Sobre" apontando para
 `#sobre`, `EN` levando para `/en`. Compare com o topo de
 `mockups/a3-autotune-ambar.html`.
 
-- [ ] **Passo 12: commit**
+- [ ] **Passo 13: commit**
 
 ```bash
 git add app content/ui.ts components test/componentes
@@ -2947,7 +3071,7 @@ import type { Tema } from '@/content/tipos'
 /**
  * A paleta vive no dado, não no CSS. Cada faixa e cada página de projeto
  * recebe o tema como custom properties inline, e uma folha só serve as quatro.
- * Cor de projeto novo = nove hex num arquivo.
+ * Cor de projeto novo = oito hex num arquivo.
  */
 export function estiloDoTema(tema: Tema): CSSProperties {
   const estilo: Record<string, string> = {
@@ -3127,10 +3251,16 @@ export function FaixaProjeto({
 
 - [ ] **Passo 6: acrescentar as regras da faixa em `app/globals.css`**
 
-Porte direto de `mockups/camaleao.css`, com duas mudanças anotadas: `.ficha`
-virou `.ficha-faixa` (a página do projeto também tem uma `.ficha`, e são coisas
-diferentes), e `.fechado` subiu de `opacity: .65` para `.72`, que é o piso
-medido no roxo do BDDente.
+Porte direto de `mockups/camaleao.css`, com três mudanças anotadas:
+
+1. `.ficha` virou `.ficha-faixa` — a página do projeto também tem uma `.ficha`,
+   e são coisas diferentes.
+2. `.fechado` subiu de `opacity: .65` para `.72`, e `.num span` de `.7` para
+   `.72`. É o piso medido no roxo do BDDente.
+3. `.num b` e `.num span` nascem escopados em `.faixa`. A régua da página do
+   projeto (Tarefa 13) reusa a classe `.num` mas pinta o rótulo com
+   `var(--calmo)`, e herdar daqui um `opacity: .72` derrubaria o contraste
+   para 3,12:1 no Office Timesheet sem mudar hex nenhum.
 
 ```css
 /* --- a faixa de projeto ------------------------------------------------- */
@@ -3155,11 +3285,13 @@ medido no roxo do BDDente.
 .resumo { font-size: 16.5px; margin: 0 0 26px; max-width: 46ch; opacity: .92; }
 
 .numeros { display: flex; gap: 36px; margin-bottom: 30px; flex-wrap: wrap; }
-.num b {
+/* Escopadas na faixa de propósito: a régua da página do projeto reusa `.num`
+   com o rótulo em `var(--calmo)`, e calmo não aguenta opacity. Ver Tarefa 13. */
+.faixa .num b {
   display: block; font-size: 24px; font-weight: 700;
   color: var(--destaque); letter-spacing: -.01em;
 }
-.num span { font-size: 12px; opacity: .72; display: block; max-width: 16ch; line-height: 1.35; }
+.faixa .num span { font-size: 12px; opacity: .72; display: block; max-width: 16ch; line-height: 1.35; }
 
 .botoes { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .cta {
@@ -3264,10 +3396,12 @@ describe('Sobre', () => {
   })
 
   it('abre com a lede e traz a ficha ao lado', () => {
-    render(<Sobre lang="pt" />)
+    const { container } = render(<Sobre lang="pt" />)
     expect(screen.getByText(/Sou desenvolvedor backend/)).toBeInTheDocument()
     expect(screen.getByText('Onde')).toBeInTheDocument()
-    expect(screen.getByText(/Porto Alegre/)).toBeInTheDocument()
+    // "Porto Alegre" sai duas vezes na tela: no segundo parágrafo e na ficha.
+    // `getByText` estoura com dois matches, e o que este teste quer é a ficha.
+    expect(container.querySelector('.rail dd')).toHaveTextContent('Porto Alegre')
   })
 })
 
@@ -3504,6 +3638,11 @@ Porte de `mockups/s3-sobre-na-home.html`. A ficha do Sobre agora usa
   display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
   font-size: 13px; opacity: .88;
 }
+/* Opacidade compõe. O `.85` do `.marca-dev` dentro do `.88` daqui dá `.748`,
+   que sobre o azul da marca é 4,42:1 — abaixo do mínimo, e invisível para
+   `verificarCasca`, que mede cada valor declarado isolado. Dentro de um bloco
+   que já esmaece, o filho vai em opacidade cheia. */
+.assinatura .marca--branca .marca-dev { opacity: 1; }
 .fechamento a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 @media (max-width: 820px) {
@@ -3520,6 +3659,12 @@ assinatura. Sobre `#2A4FD7` isso dá 3,78:1 e 4,21:1 — abaixo do mínimo de
 texto. Aqui o piso do fechamento é **0,85** (5,23:1), e é o que
 `OPACIDADES_NO_AZUL` guarda em `lib/contraste.ts`. Os perfis e a assinatura
 ficam em `.88`, o resto em `.85`.
+
+O que `verificarCasca` não vê é a composição: dois níveis de `opacity`
+aninhados multiplicam, e o par `.88` da assinatura com `.85` do `.marca-dev`
+cai para 4,42:1 sem que nenhum hex mude. Por isso a regra extra acima, e por
+isso `test/folha.test.ts` (Tarefa 8) confere a folha inteira e não só as
+paletas.
 
 - [ ] **Passo 7: pendurar os dois no fim da home**
 
@@ -3809,8 +3954,11 @@ import { ui } from '@/content/ui'
 import { CabecalhoProjeto } from '@/components/CabecalhoProjeto'
 import { AberturaProjeto } from '@/components/AberturaProjeto'
 
+// Só o segmento desta rota: o layout raiz já gera `[lang]`, e o Next chama
+// esta função uma vez por `lang` que ele gerou. Devolver `{ lang, slug }`
+// daqui repetiria uma chave que o pai já resolveu.
 export function generateStaticParams() {
-  return ['pt', 'en'].flatMap((lang) => projetos.map((p) => ({ lang, slug: p.slug })))
+  return projetos.map((p) => ({ slug: p.slug }))
 }
 
 export default async function PaginaProjeto({
@@ -3834,7 +3982,7 @@ export default async function PaginaProjeto({
       </main>
       <footer className="wrap rodape-projeto">
         <span>{t(ui.rodape.lugar, lang, 'ui.rodape.lugar')}</span>
-        <span>gacherubini.dev</span>
+        <span>{t(ui.rodape.dominio, lang, 'ui.rodape.dominio')}</span>
       </footer>
     </div>
   )
@@ -4420,6 +4568,9 @@ export function Prosa({ projeto, lang }: { projeto: Projeto; lang: Idioma }) {
 
 ```css
 /* --- régua de números e prosa ------------------------------------------- */
+/* A régua reusa `.num` da faixa, mas as regras de lá são escopadas em `.faixa`
+   (Tarefa 9). Aqui o rótulo é `var(--calmo)`, e calmo fica em opacidade cheia:
+   a 0,72 ele dá 3,12:1 no Office Timesheet. */
 .regua { padding: 48px 0; border-bottom: 1px solid var(--borda); display: grid; gap: 40px; }
 .regua--3 { grid-template-columns: repeat(3, 1fr); }
 .regua--4 { grid-template-columns: repeat(4, 1fr); gap: 34px; }
@@ -4780,9 +4931,13 @@ export function BlocoTecnico({ projeto, lang }: { projeto: Projeto; lang: Idioma
 .nota h3 { margin: 0 0 9px; font-size: 16px; font-weight: 700; letter-spacing: -.012em; }
 .nota p { margin: 0 0 12px; font-size: 15px; line-height: 1.6; opacity: .88; max-width: 46ch; }
 .nota p:last-child { margin-bottom: 0; }
+/* Sem `color` próprio: herda `--texto` do parágrafo, que já vem a `.88` e é o
+   nível que o contraste cobre. Pintar de `--calmo` aqui dentro daria calmo a
+   0,88 — 4,27:1 no Office Timesheet. O que separa código de prosa é a
+   monoespaçada, não a cor; é assim nos comps P2 e P4. */
 .nota code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px;
-  color: var(--calmo); word-break: break-word;
+  word-break: break-word;
 }
 /* No título, o código fica na tinta do corpo: 16px bold não é "texto grande",
    e o destaque do Office Timesheet só tem 3,08:1 — reprovaria aqui. */
@@ -5005,7 +5160,8 @@ antes do deploy.
 **Arquivos:**
 - Modificar: `app/[lang]/layout.tsx`, `app/[lang]/page.tsx`,
   `app/[lang]/[slug]/page.tsx`, `app/globals.css`, `next.config.ts`
-- Criar: `app/icon.svg`, `app/[lang]/not-found.tsx`
+- Criar: `app/icon.svg`, `app/sitemap.ts`, `app/robots.ts`,
+  `app/[lang]/not-found.tsx`
 - Criar teste: `test/acessibilidade.test.tsx`
 
 **Interfaces:**
@@ -5144,7 +5300,7 @@ export const metadata: Metadata = {
 }
 ```
 
-- [ ] **Passo 6: o ícone**
+- [ ] **Passo 6: o ícone, o sitemap e o robots**
 
 `app/icon.svg` — a marca reduzida à inicial, no azul do `.dev` sobre o neutro
 da casca. É a única cor fixa do site.
@@ -5157,6 +5313,43 @@ da casca. É a única cor fixa do site.
   <circle cx="50" cy="46" r="5" fill="#2A4FD7"/>
 </svg>
 ```
+
+São dez páginas e nenhum link externo apontando para cá ainda; sem sitemap o
+buscador depende de rastrear a home e seguir os links das faixas. O sitemap sai
+do mesmo índice que gera as rotas, então ele não pode discordar delas.
+
+```ts
+// app/sitemap.ts
+import type { MetadataRoute } from 'next'
+import { IDIOMAS } from '@/content/tipos'
+import { projetos } from '@/content/indice'
+
+const BASE = 'https://gacherubini.dev'
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const home = IDIOMAS.map((lang) => ({ url: `${BASE}/${lang}`, priority: 1 }))
+  const paginas = IDIOMAS.flatMap((lang) =>
+    projetos.map((p) => ({ url: `${BASE}/${lang}/${p.slug}`, priority: 0.8 })),
+  )
+  return [...home, ...paginas]
+}
+```
+
+```ts
+// app/robots.ts
+import type { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [{ userAgent: '*', allow: '/' }],
+    sitemap: 'https://gacherubini.dev/sitemap.xml',
+  }
+}
+```
+
+Os dois já apontam para o domínio final. Enquanto ele não existe, o site sai na
+URL `*.vercel.app` e essas URLs ficam erradas — de propósito: é preferível a
+alternativa, que é lembrar de trocar depois.
 
 - [ ] **Passo 7: a página 404**
 
@@ -5235,7 +5428,7 @@ Esperado: Vitest verde, 10 páginas estáticas, nenhum aviso de tradução.
 
 ```bash
 git add app next.config.ts test
-git commit -m "feat: metadata, icone, 404, foco de teclado e AVIF nas capturas"
+git commit -m "feat: metadata, sitemap, icone, 404, foco de teclado e AVIF"
 ```
 
 ---
@@ -5262,8 +5455,12 @@ Esperado: verde. Se o Vitest falhar aqui, falha lá — é para isso que o
 
 - [ ] **Passo 2: empurrar a branch e abrir o projeto na Vercel**
 
+O trabalho das Tarefas 1 a 17 vive numa branch, não na `main`: o passo 4 é um
+merge, e merge de branch na própria branch não existe.
+
 ```bash
-git push -u origin HEAD
+git switch -c site        # se ainda não estiver nela
+git push -u origin site
 ```
 
 Na Vercel: **Add New → Project**, importe `gacherubini/portfolio`, framework
@@ -5280,7 +5477,7 @@ Abra a URL de preview e passe pelas dez páginas: `/` redirecionando para `/pt`,
 
 - [ ] **Passo 4: promover para produção**
 
-Merge na `main` (ou **Promote to Production** no painel).
+Merge de `site` na `main` (ou **Promote to Production** no painel).
 
 - [ ] **Passo 5: o domínio, quando ele existir**
 
