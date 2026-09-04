@@ -1,0 +1,26 @@
+# Next.js
+/node_modules
+/.next
+/out
+/build
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel
+/.vercel
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# Prints com dado real de cliente ou paciente NUNCA entram no repo.
+# Ver public/prints/README.md.
+**/_referencia-privada/
+**/*REAL*
