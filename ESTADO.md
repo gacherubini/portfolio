@@ -1,6 +1,9 @@
 # Estado do trabalho — gacherubini.dev
 
 Atualizado: 2026-09-04. Este arquivo existe para sobreviver a um `/compact`.
+
+Repositório: **https://github.com/gacherubini/portfolio** — e ele é **público**.
+Nada entra aqui sem passar pela regra dos prints da seção correspondente.
 Se você é um agente retomando o trabalho, leia isto primeiro, depois
 `docs/superpowers/specs/2026-09-04-portfolio-design.md`.
 
@@ -40,9 +43,19 @@ está na spec.
 - **revy/** — 6 prints prontos: `01-visao-geral.png`, `02-agente-whatsapp.png`,
   `03-atendimento-lista.jpg`, `04-conversa-agente.jpg`, `05-estoque.jpg`,
   `06-resultado.jpg`
-- **bddente/** — vazio. O dono vai mandar os arquivos.
-- **office-timesheet/** — um agente estava subindo o projeto local e capturando.
-  Ver `scripts/seed-office-timesheet.js` se ele chegou a criar.
+- **office-timesheet/** — 7 prints prontos, conferidos um a um: escritório de
+  arquitetura fictício ("Gestão VOID"), pessoas e clientes inventados.
+  `01-dashboard-colaborador`, `02-registro-horas-projetos`, `03-tarefas-kanban`,
+  `04-projeto-etapas-e-quadro`, `05-historico-apontamentos`,
+  `06-performance-colaborador`, `07-agenda-equipe`.
+  Gerados por `scripts/seed-office-timesheet.js`.
+- **bddente/** — **vazio, e assim fica até existir instância local.** O dono
+  mandou dois prints (odontograma e agenda) em 04/09, mas eles vieram da
+  produção: nome completo de paciente, telefones e a agenda inteira da clínica.
+  Prontuário é dado de saúde; não vai para site nem para repo público, nem
+  borrado. O caminho é o mesmo da Revy: subir o `dentalis` local, popular com
+  pacientes inventados por um `scripts/seed-bddente.*`, e fotografar de lá.
+  Os dois prints originais **não foram salvos no repo** — o dono os tem.
 - **autotune/** — usar os gráficos de `../TCC_autotune/results/figures/`
   (`synthetic_rpa.png`, `vocadito_gpe.png`, etc). Falta o dono confirmar.
 - **gastos/** — não existem, o app está em construção.
@@ -97,8 +110,10 @@ Os contêineres podem estar de pé ainda. Derrubar com
 
 ## Pendências
 
-1. **Prints do BDDente** — o dono vai mandar.
-2. **Office Timesheet** — agente estava levantando docs e prints.
+1. **BDDente local com dados inventados** — ver a seção de prints. É a única
+   fonte de imagem aceitável para esse projeto.
+2. **Texto do Office Timesheet** — os prints existem, mas a descrição de produto
+   (o que é, para quem, números) ainda está com o agente que levantou o projeto.
 3. **Confirmar com o dono:**
    - Autotune usa os gráficos de `results/figures/` como print?
    - Botão do Revy aponta pro `revyapp.com.br` e um segundo pro catálogo público?
