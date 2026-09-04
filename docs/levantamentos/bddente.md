@@ -18,18 +18,18 @@ de atendimentos mostra tratamentos de 2012).
 
 ## A feature de destaque: lembrete automático
 
-**O sistema manda mensagem para o paciente um dia antes da consulta, sozinho.**
+**O sistema manda mensagem no WhatsApp do paciente um dia antes da consulta,
+sozinho.**
 
 Falta é o custo invisível de consultório: horário reservado que não gera receita
-e não dá para revender em cima da hora. O lembrete ataca isso sem ninguém
-precisar lembrar de mandar.
+e não dá para revender em cima da hora. O lembrete ataca isso sem ninguém na
+clínica precisar lembrar de mandar.
 
-Aparece na própria tela da agenda: cada consulta mostra ou o telefone do
-paciente, ou a marca **"sem lembrete"**.
-
-*A confirmar com o dono: por qual canal a mensagem vai (WhatsApp? SMS?), e se
-"sem lembrete" quer dizer paciente sem telefone cadastrado ou lembrete
-desligado manualmente.*
+A feature aparece na própria tela da agenda, e é o que dá para fotografar dela:
+cada consulta mostra o telefone do paciente, ou a marca **"sem lembrete"**
+quando não há telefone cadastrado. O sistema diz que não vai conseguir avisar,
+em vez de falhar calado — vale como nota de produto, porque a alternativa
+(silêncio) é o que a maioria dos sistemas faz.
 
 ## Telas (do menu lateral)
 
@@ -70,12 +70,16 @@ cancelada aparece riscada.
 
 ## A confirmar com o dono
 
-1. Canal do lembrete (WhatsApp? SMS?) e o que significa "sem lembrete".
-2. Números para a régua: quantos pacientes, quantos atendimentos registrados,
+1. Números para a régua: quantos pacientes, quantos atendimentos registrados,
    desde quando está no ar, quantos anos de histórico vieram do FoxPro.
-3. Stack e hospedagem (o domínio é Fly.io; falta linguagem e banco).
-4. O sistema tem link público? Não parece — provavelmente entra como fechado,
-   igual ao Office Timesheet, com prints e sem botão.
+2. Stack e hospedagem (o domínio é Fly.io; falta linguagem e banco).
+
+## Situação no site
+
+**Sem link.** Decisão do dono em 04/09/2026: prontuário é sistema de clínica, e
+visitante não deve alcançar nem a tela de entrada. Entra como o Office
+Timesheet — prints e texto, `links: []`, e o componente mostra "sistema
+fechado" no lugar do botão.
 
 ## Paleta (da spec)
 
