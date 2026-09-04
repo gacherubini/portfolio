@@ -150,10 +150,25 @@ publica.
 **Falta o print do `/assistente`, e agora ele é obrigatório** — o destaque da
 página precisa de imagem. Sem uma pergunta real a tela sai vazia ("Conversas
 0"), o que não demonstra nada. O agente parou aí para não gastar a chave paga,
-mas o modelo é DeepSeek V4 Flash: uma pergunta custa fração de centavo, não a
-conta do mês. Basta logar, fazer duas ou três perguntas boas (uma de leitura,
-uma que gere proposta de escrita para o print mostrar o botão de aprovar) e
-capturar.
+mas o custo não era o problema. **A chave do provedor está morta.**
+
+Tentativa em 04/09/2026: `POST /agent/chat` devolveu "Tive um problema para
+responder agora" depois de 30s. Chamando o provedor direto, a resposta vem em
+0,4s: `403 Forbidden — Authorization failed`. A `AGENT_API_KEY` do `.env` local
+(`nvapi-…`, NVIDIA NIM) não é mais válida.
+
+Para o print existir, é preciso uma chave que funcione — a oficial da DeepSeek
+(`AGENT_PROVIDER_BASE_URL=https://api.deepseek.com`, `AGENT_MODEL=deepseek-v4-flash`)
+ou uma nova da NVIDIA. Aí é fazer duas perguntas: uma de leitura e uma que gere
+proposta de escrita, para o print mostrar o botão de aprovar.
+
+**Observação de comportamento, não confirmada:** um 403 chegou ao usuário como
+timeout depois de 30 segundos de espera. A classificação em `client.js`
+(`estransitorio`) está certa no papel — 4xx não retenta, e só `status ===
+undefined` cai no retry. O que sugere que, no caminho de streaming, o erro chega
+sem `status` e vira "erro de rede desconhecido", retentando até o orçamento de
+tempo acabar. Vale conferir: chave errada é o erro mais comum de configuração, e
+hoje ele demora 30s para dar o diagnóstico errado.
 
 Os cards de projeto aparecem com miniatura cinza porque o upload de imagem
 depende do Tigris/S3, vazio no ambiente local.
