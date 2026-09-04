@@ -403,6 +403,48 @@ async function main() {
     }
     contagem.pedidos_de_correcao = candidatos.length
 
+    // ── Cronômetro por tarefa ───────────────────────────────────────────────
+    // Alimenta "Tipos de tarefa mais feitas" (agrupado por etapa) na tela de
+    // Performance e o nome da tarefa no Painel Live.
+    const { rows: tarefasComEtapa } = await client.query(
+      `SELECT t.id, t.assignee_id FROM tasks t WHERE t.assignee_id IS NOT NULL`,
+    )
+    let nLogs = 0
+    for (const t of tarefasComEtapa) {
+      const quantos = int(1, 3)
+      for (let i = 0; i < quantos; i++) {
+        // Metade no mês corrente (a tela de Performance só olha o mês aberto),
+        // metade nos meses anteriores para o histórico ter lastro.
+        const dia = rnd() < 0.5
+          ? new Date(ANO, MES, int(1, HOJE.getDate()))
+          : new Date(ANO, MES, int(-45, 0))
+        if (!ehDiaUtil(dia)) continue
+        const dur = int(25, 150)
+        const ini = em(dia, int(9, 16), pick([0, 15, 30, 45]))
+        await client.query(
+          `INSERT INTO task_time_logs (task_id, user_id, started_at, ended_at, duration_minutes)
+           VALUES ($1,$2,$3,$4,$5)`,
+          [t.id, t.assignee_id, ini.toISOString(),
+            new Date(ini.getTime() + dur * 60000).toISOString(), dur],
+        )
+        nLogs++
+      }
+    }
+    contagem.cronometros_de_tarefa = nLogs
+
+    // ── Simulador de performance ────────────────────────────────────────────
+    // Sem uma meta salva, a metade de baixo da tela de Performance fica vazia.
+    const ym = `${ANO}-${String(MES + 1).padStart(2, '0')}`
+    for (const p of apontadores) {
+      await client.query(
+        `INSERT INTO performance_simulations (user_id, ym, planned)
+         VALUES ($1,$2,$3::jsonb)
+         ON CONFLICT (user_id, ym) DO UPDATE SET planned = EXCLUDED.planned`,
+        [users[p.nome].id, ym, JSON.stringify({ target_amount: p.meta, overrides: {} })],
+      )
+    }
+    contagem.simulacoes = apontadores.length
+
     // ── Despesas ────────────────────────────────────────────────────────────
     const statusDespesa = ['pending', 'pending', 'approved', 'approved', 'rejected']
     let nDespesas = 0
@@ -446,7 +488,10 @@ async function main() {
     const pedidosFerias = [
       { pessoa: 'Gustavo Peçanha', ini: new Date(ANO, MES + 1, 6), dias: 10, st: 'pending', motivo: 'Viagem em família programada desde o começo do ano.' },
       { pessoa: 'Larissa Andrade', ini: new Date(ANO, MES + 1, 20), dias: 5, st: 'pending', motivo: 'Recesso curto entre as entregas.' },
-      { pessoa: 'Bruno Sampaio', ini: new Date(ANO, MES - 1, 10), dias: 15, st: 'approved', motivo: 'Férias regulares do período aquisitivo.' },
+      // Uma férias APROVADA dentro do mês corrente: sem ela o calendário da
+      // Agenda abre praticamente vazio.
+      { pessoa: 'Bruno Sampaio', ini: new Date(ANO, MES, 8), dias: 12, st: 'approved', motivo: 'Férias regulares do período aquisitivo.' },
+      { pessoa: 'Isabela Moreira', ini: new Date(ANO, MES, 16), dias: 8, st: 'approved', motivo: 'Recesso escolar.' },
       { pessoa: 'Camila Bastos', ini: new Date(ANO, MES + 2, 3), dias: 20, st: 'approved', motivo: 'Férias acumuladas do ano passado.' },
       { pessoa: 'Thiago Nakamura', ini: new Date(ANO, MES, 22), dias: 7, st: 'rejected', motivo: 'Semana de entrega do executivo do Alto da Serra.' },
     ]
