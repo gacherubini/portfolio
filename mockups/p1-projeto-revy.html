@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P1 · Página do projeto — Revy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* A página inteira veste a paleta do sistema — é o que a seção 8 da spec
+     pede. Aqui: Revy, amostrada do menu lateral e da barra do agente. */
+  :root{
+    --fundo:#111111; --texto:#EAF0EA; --borda:#2A322C; --destaque:#7FBFA3;
+    --ctaFundo:#7FBFA3; --ctaTexto:#111111; --calmo:#9AA39D; --fundo2:#171917;
+    --dev:#2A4FD7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);
+       font-family:Archivo,system-ui,sans-serif;font-size:15px;line-height:1.55;
+       -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* 1. topo, já na cor do sistema. A marca sai do neutro e vem para cá, então
+     o ".dev" azul não vale sobre preto: aqui ela é monocromática. */
+  header{border-bottom:1px solid var(--borda)}
+  .topo{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .marca{font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .marca span{opacity:.55}
+  .voltar{font-size:14px;color:var(--calmo);text-decoration:none}
+  .voltar:hover{color:var(--texto)}
+  .idioma{font-size:13px;color:var(--calmo)}
+  .idioma b{color:var(--texto);font-weight:600}
+
+  /* 2. nome + chamada + ficha lateral */
+  .abertura{padding:64px 0 56px;display:grid;grid-template-columns:1fr 300px;
+            gap:72px;align-items:start}
+  .abertura h1{margin:0 0 18px;font-size:52px;line-height:1.02;font-weight:800;
+               letter-spacing:-.032em}
+  .chamada{margin:0;font-size:22px;line-height:1.4;max-width:32ch;opacity:.92}
+
+  .ficha{border-top:2px solid var(--destaque);padding-top:18px}
+  .ficha dl{margin:0}
+  .ficha dt{font-size:12.5px;color:var(--calmo);margin-top:16px}
+  .ficha dt:first-child{margin-top:0}
+  .ficha dd{margin:2px 0 0;font-size:14px;font-weight:500;line-height:1.4}
+  .ficha .acoes{margin-top:26px;display:flex;flex-direction:column;gap:10px}
+  .cta{display:block;text-align:center;background:var(--ctaFundo);color:var(--ctaTexto);
+       text-decoration:none;font-weight:600;font-size:14.5px;padding:12px 18px;
+       border-radius:6px}
+  .cta.fantasma{background:transparent;color:var(--texto);border:1px solid var(--borda)}
+  .cta.fantasma:hover{border-color:var(--destaque)}
+
+  /* 3. destaque: o primeiro conteúdo depois da chamada, de propósito */
+  .destaque{background:var(--fundo2);border-top:1px solid var(--borda);
+            border-bottom:1px solid var(--borda);padding:64px 0}
+  .destaque .cabeca{max-width:56ch;margin-bottom:36px}
+  .destaque h2{margin:0 0 12px;font-size:30px;font-weight:700;letter-spacing:-.025em;
+               line-height:1.15}
+  .destaque p{margin:0;font-size:17px;line-height:1.6;opacity:.9}
+  .placas{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  figure{margin:0}
+  figure img{width:100%;height:auto;display:block;border:1px solid var(--borda);
+             border-radius:8px}
+  figcaption{margin-top:11px;font-size:12.5px;color:var(--calmo);line-height:1.45}
+
+  /* 4. régua de números */
+  .regua{padding:48px 0;border-bottom:1px solid var(--borda);
+         display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+  .num b{display:block;font-size:40px;font-weight:800;color:var(--destaque);
+         letter-spacing:-.03em;line-height:1}
+  .num span{display:block;font-size:13px;color:var(--calmo);margin-top:8px;
+            max-width:22ch;line-height:1.4}
+
+  /* 5. o problema / o que faz */
+  .prosa{padding:64px 0;display:grid;grid-template-columns:1fr 1fr;gap:72px}
+  .prosa h3{margin:0 0 14px;font-size:19px;font-weight:700;letter-spacing:-.015em}
+  .prosa p{margin:0 0 16px;font-size:16px;line-height:1.62;opacity:.88;max-width:48ch}
+  .prosa p:last-child{margin-bottom:0}
+
+  /* 6. galeria */
+  .galeria{padding:8px 0 64px}
+  .galeria h3{margin:0 0 22px;font-size:13px;font-weight:600;color:var(--calmo)}
+  .tiras{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+
+  /* 7. bloco técnico, marcado como pulável */
+  .tecnico{border-top:1px solid var(--borda);padding:56px 0 72px}
+  .tecnico .aviso{margin:0 0 30px;font-size:14px;color:var(--calmo);max-width:52ch}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
+  .chip{font-size:13px;font-weight:500;border:1px solid var(--borda);
+        border-radius:5px;padding:5px 11px;color:var(--calmo)}
+  .notas{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+  .nota h4{margin:0 0 9px;font-size:16px;font-weight:700;letter-spacing:-.012em}
+  .nota p{margin:0;font-size:15px;line-height:1.6;opacity:.85;max-width:46ch}
+
+  footer{border-top:1px solid var(--borda);padding:34px 0 56px;
+         display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+         font-size:13.5px;color:var(--calmo)}
+
+  @media(max-width:900px){
+    .abertura{grid-template-columns:1fr;gap:36px;padding:44px 0}
+    .abertura h1{font-size:36px}
+    .placas,.prosa,.notas{grid-template-columns:1fr;gap:28px}
+    .regua{grid-template-columns:1fr;gap:26px}
+    .tiras{grid-template-columns:1fr}
+  }
+  a:focus-visible{outline:2px solid var(--destaque);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap topo">
+    <div class="marca">gacherubini<span>.dev</span></div>
+    <a class="voltar" href="#">← Todos os projetos</a>
+    <div class="idioma"><b>PT</b> / EN</div>
+  </div>
+</header>
+
+<section class="wrap abertura">
+  <div>
+    <h1>Revy</h1>
+    <p class="chamada">Quem responde o cliente no WhatsApp é o sistema — e o dono
+      da loja vê exatamente o que ele respondeu.</p>
+  </div>
+  <aside class="ficha">
+    <dl>
+      <dt>Para quem</dt><dd>Revenda de veículos</dd>
+      <dt>Situação</dt><dd>No ar, com loja real usando</dd>
+      <dt>Tamanho</dt><dd>7 produtos, bancos separados</dd>
+      <dt>Desde</dt><dd>a confirmar</dd>
+    </dl>
+    <div class="acoes">
+      <a class="cta" href="#">Entrar no sistema</a>
+      <a class="cta fantasma" href="#">Ver o catálogo público</a>
+    </div>
+  </aside>
+</section>
+
+<section class="destaque">
+  <div class="wrap">
+    <div class="cabeca">
+      <h2>O agente de atendimento no WhatsApp</h2>
+      <p>Ele puxa a moto do estoque, responde preço e condição, e passa para uma
+        pessoa quando o assunto sai do roteiro. O valor não é ter um robô: é o
+        dono da loja ver quanto o robô resolveu sozinho, e a passagem para uma
+        pessoa ser explícita em vez de o cliente ficar preso falando com uma
+        máquina.</p>
+    </div>
+    <div class="placas">
+      <figure>
+        <img src="/public/prints/revy/02-agente-whatsapp.png" width="1896" height="932"
+             alt="Aba Agente: 96 atendimentos no mês, 72 resolvidos só com o agente, 24 transferidos, e o gráfico por dia.">
+        <figcaption>A aba Agente: 96 conversas no mês, 72 fechadas sem ninguém,
+          24 passadas para uma pessoa.</figcaption>
+      </figure>
+      <figure>
+        <img src="/public/prints/revy/04-conversa-agente.jpg" width="1896" height="932"
+             alt="Uma conversa: o diálogo do agente com o cliente, mensagem a mensagem.">
+        <figcaption>A conversa por dentro, com a resposta do agente ao lado da do
+          cliente.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="wrap regua">
+  <div class="num"><b>96</b><span>atendimentos no mês</span></div>
+  <div class="num"><b>75%</b><span>resolvidos sem passar por pessoa</span></div>
+  <div class="num"><b>7</b><span>produtos que só conversam por HTTP</span></div>
+</section>
+
+<section class="wrap prosa">
+  <div>
+    <h3>O problema</h3>
+    <p>Numa revenda de motos, a venda começa no WhatsApp e quase sempre passa por
+      financiamento. Alguém da loja responde a mesma pergunta de preço trinta
+      vezes por dia, e depois abre o site de cada banco, um por um, para simular
+      a parcela.</p>
+    <p>Enquanto isso o estoque vive numa planilha, o anúncio vive noutro lugar, e
+      ninguém sabe qual campanha trouxe qual cliente.</p>
+  </div>
+  <div>
+    <h3>O que o sistema faz</h3>
+    <p>Junta o conjunto do que a loja precisa para vender moto financiada: o
+      atendimento no WhatsApp, o estoque com preço e situação, a simulação de
+      financiamento nos bancos, a vitrine pública e o resultado do mês.</p>
+    <p>Do primeiro "oi" até a venda fechada no relatório, sem sair do sistema e
+      sem planilha no meio.</p>
+  </div>
+</section>
+
+<section class="wrap galeria">
+  <h3>As outras telas</h3>
+  <div class="tiras">
+    <figure>
+      <img src="/public/prints/revy/01-visao-geral.png" width="1897" height="938"
+           alt="Painel do lojista com os indicadores de estoque e de tráfego.">
+      <figcaption>O painel do lojista.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/revy/05-estoque.jpg" width="1896" height="932"
+           alt="Estoque de motos com preço e situação de cada uma.">
+      <figcaption>Estoque: preço, custo e situação.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/revy/06-resultado.jpg" width="1896" height="932"
+           alt="Vendas confirmadas, receita e margem do mês.">
+      <figcaption>Resultado do mês.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="wrap tecnico">
+  <p class="aviso">Esta parte é pra quem é da área. Se não for o seu caso, pode
+    pular — acabou aqui.</p>
+  <div class="chips">
+    <span class="chip">Python</span>
+    <span class="chip">FastAPI</span>
+    <span class="chip">PostgreSQL</span>
+    <span class="chip">Playwright</span>
+    <span class="chip">Docker</span>
+    <span class="chip">Cloudflare Pages</span>
+  </div>
+  <div class="notas">
+    <div class="nota">
+      <h4>Sete produtos, não um sistema</h4>
+      <p>O monorepo tem sete produtos que só conversam por HTTP. Nenhum importa
+        Python do outro, e cada um tem banco e migrations próprios. É a decisão
+        de engenharia mais forte do projeto, e é o que sustenta o resto:
+        o chatbot cair não derruba o estoque.</p>
+    </div>
+    <div class="nota">
+      <h4>O motor de simulação dirige o site do banco</h4>
+      <p>Banco que não oferece API não deixa alternativa elegante. Em vez de
+        fingir uma integração que não existe, o motor abre o site do banco no
+        Playwright e preenche o formulário — Santander, Fontecred, Bradesco,
+        Pan. É a solução feia que funciona, e vale contar como tal.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>Gabriel Cherubini · Porto Alegre</span>
+  <span>gacherubini.dev</span>
+</footer>
+
+</body>
+</html>

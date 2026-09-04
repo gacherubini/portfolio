@@ -34,7 +34,11 @@ formante importa mais que a latência.
 
 Isso é o que a página tem que contar, e as duas telas provam:
 
-- `02-plugin-parado-psola.png` — TD-PSOLA, **latência 61,72 ms** no rodapé
+- `05-plugin-cantando-psola.png` — TD-PSOLA corrigindo ao vivo, Low Latency
+  desmarcado, E3 na mira, cantado 154,0 Hz contra alvo 164,8 Hz, **+118 cents**,
+  gráfico cheio e **latência 61,72 ms** no rodapé. Entrou em 04/09 e substituiu
+  o `02` no par do destaque: com os dois motores cantando, a única diferença
+  entre as duas telas passa a ser o motor e o número da latência.
 - `01-plugin-cantando-v3.png` — Low Latency marcado, `pYIN -> PONTEIRO MOVEL
   (v3)` no topo, **latência 0,18 ms**, e o gráfico cheio com a voz sendo
   corrigida ao vivo (F3, cantado 170,9 Hz, alvo 174,6 Hz, **+38 cents**)
@@ -112,7 +116,8 @@ Em `public/prints/autotune/`:
 | Arquivo | O que é | Serve? |
 |---|---|---|
 | `01-plugin-cantando-v3.png` | plugin corrigindo voz ao vivo, v3, 0,18 ms | **sim, é o principal** |
-| `02-plugin-parado-psola.png` | plugin em repouso, TD-PSOLA, 61,72 ms | sim, faz o par |
+| `05-plugin-cantando-psola.png` | plugin corrigindo ao vivo, TD-PSOLA, 61,72 ms | **sim, faz o par** |
+| `02-plugin-parado-psola.png` | plugin em repouso, TD-PSOLA, 61,72 ms | não — o `05` mostra o mesmo motor em uso e ganha dele |
 | `03-comparativo-rpa.png` | RPA por algoritmo, dataset vocadito | **fraco** |
 | `04-comparativo-gpe.png` | GPE por algoritmo, dataset vocadito | **fraco** |
 

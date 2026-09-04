@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P2 · Página do projeto — BDDente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Mesma folha do P1, outra paleta. Aqui: BDDente, amostrada do item ativo do
+     menu lateral em 01-agenda-semana.png (seção 3 da spec).
+     O roxo cheio numa página inteira cansa, então o bloco de destaque senta
+     num roxo vizinho mais escuro (--fundo2) — mesma função do #171917 no P1. */
+  :root{
+    --fundo:#5A21B4; --texto:#F4EEFC; --borda:#7E4EC0; --destaque:#D9C4F5;
+    --ctaFundo:#FFFFFF; --ctaTexto:#4A1A8C; --calmo:#CBBCE8; --fundo2:#451890;
+    --dev:#2A4FD7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);
+       font-family:Archivo,system-ui,sans-serif;font-size:15px;line-height:1.55;
+       -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* 1. topo, já na cor do sistema. A marca sai do neutro da casca e vem para
+     cá, então o ".dev" azul não vale sobre roxo: aqui ela é monocromática. */
+  header{border-bottom:1px solid var(--borda)}
+  .topo{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .marca{font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .marca span{opacity:.55}
+  .voltar{font-size:14px;color:var(--calmo);text-decoration:none}
+  .voltar:hover{color:var(--texto)}
+  .idioma{font-size:13px;color:var(--calmo)}
+  .idioma b{color:var(--texto);font-weight:600}
+
+  /* 2. nome + chamada + ficha lateral */
+  .abertura{padding:64px 0 56px;display:grid;grid-template-columns:1fr 300px;
+            gap:72px;align-items:start}
+  .abertura h1{margin:0 0 18px;font-size:52px;line-height:1.02;font-weight:800;
+               letter-spacing:-.032em}
+  .chamada{margin:0;font-size:22px;line-height:1.4;max-width:32ch;opacity:.92}
+
+  .ficha{border-top:2px solid var(--destaque);padding-top:18px}
+  .ficha dl{margin:0}
+  .ficha dt{font-size:12.5px;color:var(--calmo);margin-top:16px}
+  .ficha dt:first-child{margin-top:0}
+  .ficha dd{margin:2px 0 0;font-size:14px;font-weight:500;line-height:1.4}
+
+  /* Sem link nenhum: prontuário de clínica real não tem tela de entrada
+     pública, então no lugar do botão vai o motivo. Botão morto seria pior. */
+  .fechado{margin-top:26px;border:1px dashed var(--destaque);border-radius:6px;
+           padding:14px 16px;background:var(--fundo2)}
+  .fechado b{display:block;font-size:14px;font-weight:700;margin-bottom:5px}
+  .fechado p{margin:0;font-size:13px;line-height:1.5;color:var(--calmo)}
+
+  /* 3. destaque: o primeiro conteúdo depois da chamada, de propósito */
+  .destaque{background:var(--fundo2);border-top:1px solid var(--borda);
+            border-bottom:1px solid var(--borda);padding:64px 0}
+  .destaque .cabeca{max-width:58ch;margin-bottom:36px}
+  .destaque h2{margin:0 0 12px;font-size:30px;font-weight:700;letter-spacing:-.025em;
+               line-height:1.15}
+  .destaque p{margin:0 0 14px;font-size:17px;line-height:1.6;opacity:.9}
+  .destaque p:last-child{margin-bottom:0}
+  .placa-larga{max-width:960px}
+  figure{margin:0}
+  figure img{width:100%;height:auto;display:block;border:1px solid var(--borda);
+             border-radius:8px}
+  figcaption{margin-top:11px;font-size:12.5px;color:var(--calmo);line-height:1.45;
+             max-width:64ch}
+
+  /* 4. régua de números */
+  .regua{padding:48px 0;border-bottom:1px solid var(--borda);
+         display:grid;grid-template-columns:repeat(4,1fr);gap:34px}
+  .num b{display:block;font-size:38px;font-weight:800;color:var(--destaque);
+         letter-spacing:-.03em;line-height:1}
+  .num span{display:block;font-size:13px;color:var(--calmo);margin-top:8px;
+            max-width:22ch;line-height:1.4}
+
+  /* 5. o problema / o que faz */
+  .prosa{padding:64px 0;display:grid;grid-template-columns:1fr 1fr;gap:72px}
+  .prosa h3{margin:0 0 14px;font-size:19px;font-weight:700;letter-spacing:-.015em}
+  .prosa p{margin:0 0 16px;font-size:16px;line-height:1.62;opacity:.88;max-width:48ch}
+  .prosa p:last-child{margin-bottom:0}
+
+  /* 6. galeria */
+  .galeria{padding:8px 0 64px}
+  .galeria h3{margin:0 0 22px;font-size:13px;font-weight:600;color:var(--calmo)}
+  .tiras{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+
+  /* 7. bloco técnico, marcado como pulável */
+  .tecnico{border-top:1px solid var(--borda);padding:56px 0 72px}
+  .tecnico .aviso{margin:0 0 30px;font-size:14px;color:var(--calmo);max-width:52ch}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
+  .chip{font-size:13px;font-weight:500;border:1px solid var(--borda);
+        border-radius:5px;padding:5px 11px;color:var(--calmo)}
+  .notas{display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
+  .nota h4{margin:0 0 9px;font-size:16px;font-weight:700;letter-spacing:-.012em}
+  .nota p{margin:0;font-size:15px;line-height:1.6;opacity:.85}
+  .nota code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px}
+
+  footer{border-top:1px solid var(--borda);padding:34px 0 56px;
+         display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+         font-size:13.5px;color:var(--calmo)}
+
+  @media(max-width:1000px){
+    .regua{grid-template-columns:1fr 1fr;gap:28px}
+    .notas{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:900px){
+    .abertura{grid-template-columns:1fr;gap:36px;padding:44px 0}
+    .abertura h1{font-size:36px}
+    .prosa,.notas{grid-template-columns:1fr;gap:28px}
+    .regua{grid-template-columns:1fr;gap:26px}
+    .tiras{grid-template-columns:1fr}
+    .destaque{padding:44px 0}
+    .destaque h2{font-size:25px}
+  }
+  a:focus-visible{outline:2px solid var(--destaque);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap topo">
+    <div class="marca">gacherubini<span>.dev</span></div>
+    <a class="voltar" href="#">← Todos os projetos</a>
+    <div class="idioma"><b>PT</b> / EN</div>
+  </div>
+</header>
+
+<section class="wrap abertura">
+  <div>
+    <h1>BDDente</h1>
+    <p class="chamada">Trinta anos de prontuário saíram de um sistema de 1996 — e
+      o novo se recusa a mandar mensagem para quem nunca foi perguntado.</p>
+  </div>
+  <aside class="ficha">
+    <dl>
+      <dt>Para quem</dt><dd>Consultório odontológico</dd>
+      <dt>Situação</dt><dd>No ar, com uma clínica real usando</dd>
+      <dt>Substituiu</dt><dd>Dentalis, em FoxPro, de 1996 a 2024</dd>
+      <dt>Desde</dt><dd>a confirmar</dd>
+    </dl>
+    <div class="fechado">
+      <b>Sistema fechado</b>
+      <p>Aqui dentro tem prontuário de gente de verdade. Não existe demonstração
+        aberta nem tela de entrada pública — o que dá para ver do sistema são os
+        prints desta página, feitos com pacientes inventados.</p>
+    </div>
+  </aside>
+</section>
+
+<section class="destaque">
+  <div class="wrap">
+    <div class="cabeca">
+      <h2>Quem pode receber mensagem — e quem nunca foi perguntado</h2>
+      <p>A agenda diz, consulta por consulta, quem está autorizado a receber o
+        lembrete de véspera. São três respostas, não duas: tem permissão, não
+        tem, e — a que importa — <b>nunca foi perguntado</b>. Os 5.559 pacientes
+        que vieram do sistema antigo entraram assim, porque o FoxPro nunca
+        perguntou, e presumir autorização de 5.559 pessoas é exatamente o que a
+        lei não permite. O botão “perguntar” é como isso vira sim ou não, uma
+        pessoa por vez, com ela na cadeira.</p>
+      <p>O envio em si está construído e desligado. A tarja no alto da tela é o
+        próprio sistema avisando que ninguém está sendo lembrado da consulta
+        hoje: a chave nasce fechada e só abre quando a clínica conectar o
+        WhatsApp. Um sistema que herda 5.559 cadastros e escolhe não mandar nada
+        para nenhum deles até perguntar.</p>
+    </div>
+    <figure class="placa-larga">
+      <img src="/public/prints/bddente/01-agenda-semana.png" width="3200" height="2000"
+           alt="Agenda da semana em grade por hora, com uma tarja amarela no topo avisando que os lembretes de WhatsApp estão desligados e ninguém está sendo avisado da consulta. Nos cartões de consulta aparecem os três estados: alguns só com nome, horário e telefone, um marcado «sem lembrete» por não ter telefone, e outros marcados «sem permissão de WhatsApp» com um botão «perguntar».">
+      <figcaption>A agenda da semana. A tarja no topo é o sistema admitindo que o
+        lembrete está desligado; nos cartões, “sem lembrete” é paciente sem
+        telefone cadastrado, e “sem permissão de WhatsApp · perguntar” é paciente
+        que ainda não foi perguntado. Consulta cancelada aparece riscada.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="wrap regua">
+  <div class="num"><b>~30</b><span>anos de histórico migrados</span></div>
+  <div class="num"><b>5.559</b><span>pacientes no cadastro histórico</span></div>
+  <div class="num"><b>44.812</b><span>lançamentos clínicos migrados</span></div>
+  <div class="num"><b>914</b><span>testes passando</span></div>
+</section>
+
+<section class="wrap prosa">
+  <div>
+    <h3>O problema</h3>
+    <p>O consultório da Dra. Kátia rodou num sistema em FoxPro de 1996 a 2024.
+      Ele parou de ser usável, e junto com ele ficaram presos o cadastro de
+      5.559 pacientes e 44.812 lançamentos clínicos — o que cada um tinha, o que
+      foi feito, quando e por quanto.</p>
+    <p>Trocar de sistema aqui não é começar do zero: é levar trinta anos de
+      prontuário para o outro lado sem perder e sem inventar nada. Por isso
+      migração, LGPD e backup foram escopo do primeiro dia, não fase 2 — o
+      sistema entrou em uso real já com prontuário de gente dentro, e não existe
+      “depois a gente arruma” nesse caso.</p>
+  </div>
+  <div>
+    <h3>O que o sistema faz</h3>
+    <p>É o consultório inteiro numa tela só: prontuário, agenda e dinheiro. O
+      odontograma desenha a arcada completa e guarda, dente por dente e face por
+      face, o que está planejado, o que já foi feito e o que já estava lá antes
+      de a Dra. Kátia assumir.</p>
+    <p>A agenda marca e atende por semana ou por mês. O financeiro separa duas
+      coisas que costumam ser confundidas — o que foi produzido no mês e o
+      dinheiro que de fato entrou. Anamnese, prontuário em PDF, backup com
+      restauração testada.</p>
+  </div>
+</section>
+
+<section class="wrap galeria">
+  <h3>As outras telas</h3>
+  <div class="tiras">
+    <figure>
+      <img src="/public/prints/bddente/02-odontograma.png" width="3200" height="2000"
+           alt="Odontograma: as duas arcadas completas em numeração FDI, com dentes contornados em vermelho (planejado), verde (realizado) e azul (já existente), o painel de lançamento aberto à direita com categoria, faces da coroa e situação, e o histórico de atendimentos por data logo abaixo.">
+      <figcaption>O odontograma. Vermelho é planejado, verde é realizado, azul é
+        o que já estava lá.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/bddente/03-pacientes.png" width="3200" height="2000"
+           alt="Lista de pacientes com idade, telefone, data do último atendimento, convênio, quantos tratamentos pendentes e quanto há a fazer em reais, com filtros por ativos, com pendência e com tratamento a fazer.">
+      <figcaption>A lista de pacientes, com quem tem tratamento pendente
+        separado de quem não tem.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/bddente/05-financeiro.png" width="3200" height="2000"
+           alt="Financeiro do mês com quatro cartões — recebido, produzido, a receber e tratamentos realizados — e o gráfico de barras do dinheiro recebido mês a mês no ano.">
+      <figcaption>Financeiro: recebido e produzido raramente batem no mesmo mês,
+        e a tela diz isso em vez de esconder.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="wrap tecnico">
+  <p class="aviso">Esta parte é pra quem é da área. Se não for o seu caso, pode
+    pular — acabou aqui.</p>
+  <div class="chips">
+    <span class="chip">Python</span>
+    <span class="chip">FastAPI</span>
+    <span class="chip">SQLAlchemy 2</span>
+    <span class="chip">Alembic</span>
+    <span class="chip">PostgreSQL 16</span>
+    <span class="chip">argon2</span>
+    <span class="chip">Fly.io</span>
+  </div>
+  <div class="notas">
+    <div class="nota">
+      <h4>Consentimento com três estados</h4>
+      <p>O campo <code>aceita_whatsapp</code> aceita <code>NULL</code>, e
+        <code>NULL</code> não é “não”: é <i>nunca perguntamos</i>. Os 5.559
+        pacientes migrados entraram assim, e nenhum recebe mensagem nesse
+        estado. Foi a decisão mais difícil de implementar e a mais fácil de
+        explicar para a clínica.</p>
+    </div>
+    <div class="nota">
+      <h4>Idempotência no banco, não num <code>if</code></h4>
+      <p>Um <code>UniqueConstraint(agendamento_id, tipo)</code> na tabela
+        <code>lembrete</code>: a segunda linha é recusada pelo banco. Vale se o
+        cron disparar duas vezes, se houver duas máquinas no ar durante um
+        deploy, e se alguém clicar em “enviar agora” enquanto o cron roda.</p>
+    </div>
+    <div class="nota">
+      <h4>Dado suspeito é marcado, nunca corrigido no chute</h4>
+      <p>Trinta anos de FoxPro produzem registro ambíguo. Em vez de adivinhar, o
+        paciente e o lançamento carregam <code>revisar_motivo</code> e ficam
+        sinalizados. Toda escrita ainda deixa linha em <code>auditoria</code>,
+        com o antes e o depois — é exigência de LGPD e a única forma de
+        responder quem mudou o prontuário e quando.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>Gabriel Cherubini · Porto Alegre</span>
+  <span>gacherubini.dev</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P4 · Página do projeto — Autotune</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Paleta da seção 3 da spec. É a única atribuída do site: o plugin real é
+     menta sobre preto-esverdeado, que repetia a dupla da Revy, então o dono
+     deu ao Autotune o âmbar em 04/09. Consequência prática para o layout:
+     o menta dos prints e o âmbar da página convivem na mesma tela. Os prints
+     ficam sobre uma placa mais escura, com moldura, e o âmbar não encosta
+     neles — ele vive nos números, nas réguas e nos rótulos. */
+  :root{
+    --fundo:#10312F; --texto:#E4F2F0; --borda:#2A5A56; --destaque:#F3B843;
+    --ctaFundo:#F3B843; --ctaTexto:#10312F; --calmo:#9FBCB8; --fundo2:#0D2827;
+    --fundo3:#0A211F;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);
+       font-family:Archivo,system-ui,sans-serif;font-size:15px;line-height:1.55;
+       -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* 1. topo, já na cor do sistema. Marca monocromática sobre o verde-escuro. */
+  header{border-bottom:1px solid var(--borda)}
+  .topo{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .marca{font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .marca span{opacity:.55}
+  .voltar{font-size:14px;color:var(--calmo);text-decoration:none}
+  .voltar:hover{color:var(--texto)}
+  .idioma{font-size:13px;color:var(--calmo)}
+  .idioma b{color:var(--texto);font-weight:600}
+
+  /* 2. nome + chamada + ficha lateral */
+  .abertura{padding:64px 0 56px;display:grid;grid-template-columns:1fr 300px;
+            gap:72px;align-items:start}
+  .abertura h1{margin:0 0 18px;font-size:52px;line-height:1.02;font-weight:800;
+               letter-spacing:-.032em}
+  .chamada{margin:0;font-size:22px;line-height:1.4;max-width:34ch}
+
+  .ficha{border-top:2px solid var(--destaque);padding-top:18px}
+  .ficha dl{margin:0}
+  .ficha dt{font-size:12.5px;color:var(--calmo);margin-top:16px}
+  .ficha dt:first-child{margin-top:0}
+  .ficha dd{margin:2px 0 0;font-size:14px;font-weight:500;line-height:1.4}
+  .ficha .acoes{margin-top:26px;display:flex;flex-direction:column;gap:10px}
+  .cta{display:block;text-align:center;background:var(--ctaFundo);color:var(--ctaTexto);
+       text-decoration:none;font-weight:600;font-size:14.5px;padding:12px 18px;
+       border-radius:6px}
+  .cta.fantasma{background:transparent;color:var(--texto);border:1px solid var(--borda)}
+  .cta.fantasma:hover{border-color:var(--destaque)}
+
+  /* 3. destaque: os dois motores. Esta página não tem galeria — só existem
+     quatro prints e dois deles são matplotlib default. Então o destaque
+     ganha o espaço que a galeria teria: respiro maior, o par em placas com
+     cabeçalho próprio, e a leitura da comparação embaixo. */
+  .destaque{background:var(--fundo2);border-top:1px solid var(--borda);
+            border-bottom:1px solid var(--borda);padding:72px 0 76px}
+  .destaque .cabeca{max-width:56ch;margin-bottom:42px}
+  /* A etiqueta "O DESTAQUE" saiu: a spec fecha tipografia em Archivo sozinha,
+     e um rótulo em caixa alta espaçada acima do título é decoração, não
+     informação. O gabarito da Revy abre o destaque direto no h2. */
+  .destaque h2{margin:0 0 12px;font-size:30px;font-weight:700;letter-spacing:-.025em;
+               line-height:1.15}
+  .destaque p{margin:0;font-size:17px;line-height:1.6;color:var(--texto)}
+
+  .placas{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  figure{margin:0}
+  /* os dois prints são capturas nativas de 639 e 642 px. Esticar borra:
+     a placa cresce, a imagem para no tamanho em que foi capturada. */
+  .placa{background:var(--fundo3);border:1px solid var(--borda);border-radius:10px;
+         padding:20px;display:flex;flex-direction:column;height:100%}
+  .placa .topo-placa{display:flex;align-items:baseline;justify-content:space-between;
+                     gap:16px;padding-bottom:14px;margin-bottom:18px;
+                     border-bottom:1px solid var(--borda)}
+  /* Nome de motor é nome, não código: volta para Archivo. */
+  .motor{font-size:14px;font-weight:600;letter-spacing:-.005em;color:var(--texto)}
+  .lat{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--destaque);
+       line-height:1;white-space:nowrap}
+  .pequeno img{display:block;width:100%;max-width:642px;height:auto;margin:0 auto;
+               border-radius:6px}
+  figcaption{margin-top:16px;font-size:13px;color:var(--calmo);line-height:1.5}
+  .leitura{margin:38px auto 0;max-width:62ch;border-top:1px solid var(--borda);
+           padding-top:22px;font-size:16px;line-height:1.62;color:var(--texto);
+           text-align:center}
+  .leitura b{color:var(--destaque);font-weight:700}
+
+  /* 4. régua de números */
+  .regua{padding:48px 0;border-bottom:1px solid var(--borda);
+         display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+  .num b{display:block;font-size:40px;font-weight:800;color:var(--destaque);
+         letter-spacing:-.03em;line-height:1}
+  .num span{display:block;font-size:13px;color:var(--calmo);margin-top:8px;
+            max-width:24ch;line-height:1.4}
+
+  /* 5. o problema / o que faz */
+  .prosa{padding:64px 0;display:grid;grid-template-columns:1fr 1fr;gap:72px}
+  .prosa h3{margin:0 0 14px;font-size:19px;font-weight:700;letter-spacing:-.015em}
+  .prosa p{margin:0 0 16px;font-size:16px;line-height:1.62;max-width:48ch}
+  .prosa p:last-child{margin-bottom:0}
+
+  /* 6. galeria: não existe nesta página. O peso foi para o destaque, acima,
+     e para o bloco técnico, abaixo — que ganha o terminal e uma terceira nota. */
+
+  /* 7. bloco técnico, marcado como pulável */
+  .tecnico{border-top:1px solid var(--borda);padding:56px 0 72px}
+  .tecnico .aviso{margin:0 0 30px;font-size:14px;color:var(--calmo);max-width:52ch}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:38px}
+  .chip{font-size:13px;font-weight:500;border:1px solid var(--borda);
+        border-radius:5px;padding:5px 11px;color:var(--calmo)}
+
+  /* o CLI vai como texto, não como print: fica nítido em qualquer tela,
+     dá para selecionar e o leitor de tela lê. */
+  .terminal{background:var(--fundo3);border:1px solid var(--borda);border-radius:8px;
+            padding:22px 24px;margin:0 0 14px;overflow-x:auto}
+  .terminal pre{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+                font-size:12.5px;line-height:1.7;color:var(--calmo);
+                white-space:pre}
+  .terminal pre b{color:var(--texto);font-weight:500}
+  .legenda-terminal{margin:0 0 40px;font-size:13px;color:var(--calmo);max-width:60ch}
+  .legenda-terminal b{color:var(--destaque);font-weight:700}
+
+  .notas{display:grid;grid-template-columns:1fr 1fr;gap:44px 48px}
+  .nota h4{margin:0 0 9px;font-size:16px;font-weight:700;letter-spacing:-.012em}
+  .nota p{margin:0 0 12px;font-size:15px;line-height:1.6;color:var(--texto);
+          max-width:46ch}
+  .nota p:last-child{margin-bottom:0}
+  .nota code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;
+             color:var(--calmo);word-break:break-word}
+
+  footer{border-top:1px solid var(--borda);padding:34px 0 56px;
+         display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+         font-size:13.5px;color:var(--calmo)}
+
+  @media(max-width:900px){
+    .abertura{grid-template-columns:1fr;gap:36px;padding:44px 0}
+    .abertura h1{font-size:36px}
+    .chamada{font-size:19px}
+    .placas,.prosa,.notas{grid-template-columns:1fr;gap:28px}
+    .regua{grid-template-columns:1fr;gap:26px}
+    .destaque{padding:48px 0 52px}
+    .leitura{text-align:left;margin-top:28px}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 20px}
+    .placa{padding:16px}
+    .placa .topo-placa{flex-direction:column;gap:6px}
+  }
+  a:focus-visible{outline:2px solid var(--destaque);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap topo">
+    <div class="marca">gacherubini<span>.dev</span></div>
+    <a class="voltar" href="#">← Todos os projetos</a>
+    <div class="idioma"><b>PT</b> / EN</div>
+  </div>
+</header>
+
+<section class="wrap abertura">
+  <div>
+    <h1>Autotune</h1>
+    <p class="chamada">Um corretor de afinação vocal em tempo real, feito do zero
+      em C++ — com dois motores de correção que resolvem a mesma nota de dois
+      jeitos opostos.</p>
+  </div>
+  <aside class="ficha">
+    <dl>
+      <dt>O que é</dt><dd>Parte prática do TCC, PUCRS</dd>
+      <dt>Situação</dt><dd>Publicado, código aberto</dd>
+      <dt>Entrega</dt><dd>Executáveis de linha de comando, núcleo de streaming
+        header-only e plugin VST3 / Standalone</dd>
+      <dt>Testado em</dt><dd>Ableton Live</dd>
+      <dt>Desde</dt><dd>a confirmar</dd>
+    </dl>
+    <div class="acoes">
+      <a class="cta" href="#">Ver o protótipo em C++</a>
+      <a class="cta fantasma" href="#">Ver o estudo de detecção de pitch</a>
+    </div>
+  </aside>
+</section>
+
+<section class="destaque">
+  <div class="wrap">
+    <div class="cabeca">
+      <h2>Dois motores para a mesma correção</h2>
+      <p>O sistema encontra a nota com pYIN e corrige por um de dois motores de
+        síntese, com o mesmo deslocamento. Um deles preserva os formantes: a voz
+        continua soando como a pessoa. O outro preserva a latência: oito amostras
+        fixas, e o cantor se escuta corrigido enquanto canta. Escolher entre os
+        dois é a principal contribuição de engenharia do trabalho.</p>
+    </div>
+    <div class="placas">
+      <figure class="placa">
+        <div class="topo-placa">
+          <span class="motor">TD-PSOLA</span>
+          <span class="lat">61,72 ms</span>
+        </div>
+        <div class="pequeno">
+          <img src="/public/prints/autotune/05-plugin-cantando-psola.png"
+               width="637" height="455"
+               alt="O plugin corrigindo ao vivo com TD-PSOLA, Low Latency desmarcado: nota-alvo E3, cantado 154,0 Hz contra alvo 164,8 Hz, correção de +118 cents, o gráfico cheio com a voz sendo corrigida, e latência de 61,72 ms no rodapé.">
+        </div>
+        <figcaption>O motor padrão, corrigindo. E3 na mira: cantado a 154,0 Hz,
+          alvo 164,8 Hz, +118 cents. Ele reconstrói o sinal preservando os
+          formantes — a voz continua soando como a pessoa —, e cobra 61,72 ms
+          por isso. Corrigindo uma faixa já gravada, esse é o motor certo: o
+          formante importa mais que a latência.</figcaption>
+      </figure>
+      <figure class="placa">
+        <div class="topo-placa">
+          <span class="motor">PONTEIRO MÓVEL (v3)</span>
+          <span class="lat">0,18 ms</span>
+        </div>
+        <div class="pequeno">
+          <img src="/public/prints/autotune/01-plugin-cantando-v3.png"
+               width="639" height="458"
+               alt="O mesmo plugin corrigindo voz ao vivo, com Low Latency marcado e o cabeçalho pYIN para ponteiro móvel (v3): nota-alvo F3, cantado 170,9 Hz contra alvo 174,6 Hz, correção de mais 38 cents, o gráfico cheio com a linha de correção ao longo do tempo e a latência de 0,18 ms.">
+        </div>
+        <figcaption>O mesmo plugin, o mesmo cantor, com Low Latency marcado. F3 na
+          mira: cantado a 170,9 Hz, alvo 174,6 Hz, correção de +38 cents ao vivo.
+          São 8 amostras fixas de atraso. Monitorando a própria voz, 61 ms é
+          intolerável — aqui esse problema some.</figcaption>
+      </figure>
+    </div>
+    <p class="leitura">Mesmo plugin, mesmo cantor, dois números de latência
+      separados por um fator de <b>340</b>. Não existe motor certo: existe o que
+      o cantor precisa naquele take.</p>
+  </div>
+</section>
+
+<section class="wrap regua">
+  <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+  <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+  <div class="num"><b>340×</b><span>de diferença entre os dois motores</span></div>
+</section>
+
+<section class="wrap prosa">
+  <div>
+    <h3>O problema</h3>
+    <p>Corrigir a afinação de uma voz parece um problema só, e são dois. Quem está
+      cantando precisa se ouvir corrigido no fone, na hora — qualquer atraso
+      perceptível atrapalha o próprio take. Quem está mixando uma gravação
+      antiga não tem pressa nenhuma, mas não aceita que a voz saia
+      descaracterizada.</p>
+    <p>Os dois pedidos puxam para lados opostos, e é comum ver o assunto tratado
+      como se houvesse uma resposta única.</p>
+  </div>
+  <div>
+    <h3>O que o sistema faz</h3>
+    <p>Encontra a nota que está sendo cantada com pYIN — o YIN probabilístico,
+      com HMM e Viterbi —, compara com a escala escolhida e desloca o sinal para
+      a nota alvo.</p>
+    <p>O deslocamento é o mesmo nos dois casos; o que muda é quem executa. Assumir
+      isso na interface, e deixar a escolha com quem está cantando, é o que o
+      trabalho defende. Junto vêm os controles de tessitura, tônica e escala, e a
+      correção regulada por Retune Speed, tolerância em cents, Natural Vibrato e
+      Humanize.</p>
+  </div>
+</section>
+
+<section class="wrap tecnico">
+  <p class="aviso">Esta parte é pra quem é da área. Se não for o seu caso, pode
+    pular — acabou aqui.</p>
+  <div class="chips">
+    <span class="chip">C++</span>
+    <span class="chip">JUCE</span>
+    <span class="chip">VST3</span>
+    <span class="chip">pYIN</span>
+    <span class="chip">TD-PSOLA</span>
+    <span class="chip">dr_wav</span>
+    <span class="chip">CMake</span>
+    <span class="chip">Python</span>
+  </div>
+
+  <div class="terminal">
+<pre><b>$ autotune.exe exemplo-antes.wav saida.wav 1.0 Am tol=15 glide=40</b>
+
+Sinal: 5.00 s | 44100 Hz | mix=1.00
+Escala: Am  (notas alvo: C D E F G A B )
+tol=15 ct | retune=40 ms | vibrato=1.00 | humanize=0.00
+
+Correcao planejada (1 leitura por segundo):
+  t=  1.0s   376.2 Hz -&gt; G4   ( 388.6 Hz)  correcao   +56 ct
+  t=  2.0s   371.9 Hz -&gt; G4   ( 388.6 Hz)  correcao   +76 ct
+  t=  3.0s   278.6 Hz -&gt; D4   ( 291.1 Hz)  correcao   +76 ct
+  t=  4.0s   194.7 Hz -&gt; G3   ( 194.7 Hz)  correcao    +0 ct
+
+real  0m0.207s</pre>
+  </div>
+  <p class="legenda-terminal">O mesmo núcleo roda fora do plugin, por linha de
+    comando. Cinco segundos de áudio em <b>0,207 s</b> — cerca de 24× mais
+    rápido que o tempo real.</p>
+
+  <div class="notas">
+    <div class="nota">
+      <h4>Um núcleo, três entregas</h4>
+      <p>O núcleo de streaming é header-only, e é o mesmo código nos três lugares:
+        nos executáveis de linha de comando, no plugin VST3 e no Standalone. Build
+        por CMake, leitura de WAV com <code>dr_wav</code>, interface e empacotamento
+        com JUCE.</p>
+      <p>O plugin foi validado no Ableton Live, que é onde a conta de latência
+        deixa de ser teórica.</p>
+    </div>
+    <div class="nota">
+      <h4>A escolha do pYIN veio de um estudo, não de um chute</h4>
+      <p>O segundo repositório, em Python, compara algoritmos de detecção de pitch
+        antes de o C++ existir. É esse estudo que fundamenta a escolha do pYIN
+        para o protótipo.</p>
+      <p>É trabalho que não aparece na interface e sustenta tudo o que aparece.</p>
+    </div>
+    <div class="nota">
+      <h4>O que reprovou no teste de usuário</h4>
+      <p>O teste reprovou dois requisitos: latência e naturalidade — a voz saía
+        "dura, robótica". O motor de ponteiro móvel (v3) responde à latência; a
+        naturalidade foi atacada pelo Retune Speed com fusão do Glide, tolerância
+        em cents e humanize.</p>
+      <p>O README não esconde nenhum dos dois, e isso está registrado de
+        propósito.</p>
+    </div>
+    <div class="nota">
+      <h4>A documentação corrige a própria documentação</h4>
+      <p>O projeto carrega uma errata da revisão bibliográfica e um documento
+        (<code>analise-v1-v2-v3.md</code>) que existe só para corrigir dois números
+        de latência errados em outros arquivos, aberto com o aviso "leia antes de
+        citar qualquer número".</p>
+      <p>Um trabalho que documenta os próprios erros vale mais que um que só mostra
+        o que deu certo.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>Gabriel Cherubini · Porto Alegre</span>
+  <span>gacherubini.dev</span>
+</footer>
+
+</body>
+</html>

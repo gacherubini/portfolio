@@ -1,0 +1,221 @@
+"""Gera as três variantes de tratamento do Autotune na home Camaleão.
+
+As três compartilham casca, conteúdo e as faixas de Revy, BDDente e Office
+Timesheet. Só o Autotune muda. Rode daqui: python mockups/gerar-variantes.py
+"""
+
+from pathlib import Path
+
+AQUI = Path(__file__).parent
+
+CABECA = """<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{titulo}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="camaleao.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap topo">
+    <div class="marca">gacherubini<span>.dev</span></div>
+    <nav><a href="#">Projetos</a><a href="#">Sobre</a></nav>
+    <div class="idioma"><b>PT</b> / EN</div>
+  </div>
+</header>
+
+<div class="wrap abertura">
+  <h1>Os sistemas que eu construí.</h1>
+  <p>Cada um com print, explicação em português comum e, quando o sistema é
+     público, link para entrar e clicar.</p>
+</div>
+
+<!-- REVY — cores amostradas do menu lateral e da barra do agente -->
+<section class="faixa" style="--fundo:#111111;--texto:#EAF0EA;--borda:#2A322C;--destaque:#7FBFA3;--ctaFundo:#7FBFA3;--ctaTexto:#111111">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="ficha">
+        <div class="nome">Revy</div>
+        <div class="paraquem">Revenda de veículos</div>
+        <div class="situacao">no ar</div>
+      </div>
+      <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa
+        a moto do estoque, responde preço e condição, e passa para uma pessoa
+        quando o assunto sai do roteiro.</p>
+      <div class="numeros">
+        <div class="num"><b>96</b><span>atendimentos no mês</span></div>
+        <div class="num"><b>75%</b><span>resolvidos sem passar por pessoa</span></div>
+        <div class="num"><b>7</b><span>produtos que só conversam por HTTP</span></div>
+      </div>
+      <div class="botoes">
+        <a class="cta" href="#">Entrar no sistema</a>
+        <a class="cta fantasma" href="#">Ver o projeto</a>
+      </div>
+    </div>
+    <div class="col-print">
+      <img src="/public/prints/revy/02-agente-whatsapp.png" width="1896" height="932"
+           alt="Aba Agente da Revy Loja: 96 atendimentos no mês, 72 resolvidos só com o agente, 24 transferidos.">
+    </div>
+  </div>
+</section>
+
+<!-- BDDENTE — cor amostrada do item ativo do menu -->
+<section class="faixa espelho" style="--fundo:#5A21B4;--texto:#F4EEFC;--borda:#7E4EC0;--destaque:#D9C4F5;--ctaFundo:#FFFFFF;--ctaTexto:#4A1A8C">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="ficha">
+        <div class="nome">BDDente</div>
+        <div class="paraquem">Consultório odontológico</div>
+        <div class="situacao">no ar</div>
+      </div>
+      <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a
+        2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup
+        foram escopo do primeiro dia, não fase dois.</p>
+      <div class="numeros">
+        <div class="num"><b>5.559</b><span>pacientes migrados</span></div>
+        <div class="num"><b>44.812</b><span>lançamentos clínicos</span></div>
+        <div class="num"><b>914</b><span>testes passando</span></div>
+      </div>
+      <div class="botoes">
+        <span class="fechado">Sistema fechado — prontuário de clínica real.</span>
+        <a class="cta" href="#">Ver o projeto</a>
+      </div>
+    </div>
+    <div class="col-print">
+      <img src="/public/prints/bddente/01-agenda-semana.png" width="3200" height="2000"
+           alt="Agenda da semana no BDDente, com a tarja de lembretes de WhatsApp desligados no topo.">
+    </div>
+  </div>
+</section>
+
+<!-- OFFICE TIMESHEET — verde #2E3D38 do topo, laranja #CB6D31 dos marcadores.
+     O azul #2563EB da spec não existe no produto. -->
+<section class="faixa" style="--fundo:#ECECEC;--texto:#1D2724;--borda:#C9CFCC;--destaque:#CB6D31;--ctaFundo:#2E3D38;--ctaTexto:#FFFFFF">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="ficha">
+        <div class="nome">Office Timesheet</div>
+        <div class="paraquem">Escritório de arquitetura</div>
+        <div class="situacao">fechado</div>
+      </div>
+      <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada
+        projeto custou. Tem um assistente que responde as perguntas chatas de
+        segunda-feira sem ninguém abrir sete telas.</p>
+      <div class="numeros">
+        <div class="num"><b>17</b><span>perguntas viraram função</span></div>
+        <div class="num"><b>15</b><span>ações que ele propõe, nunca executa sozinho</span></div>
+        <div class="num"><b>4</b><span>etapas por projeto</span></div>
+      </div>
+      <div class="botoes">
+        <span class="fechado">Sistema fechado — interno do escritório.</span>
+        <a class="cta" href="#">Ver o projeto</a>
+      </div>
+    </div>
+    <div class="col-print">
+      <img src="/public/prints/office-timesheet/03-tarefas-kanban.png" width="3200" height="2000"
+           alt="Quadro de tarefas do Office Timesheet, com colunas a fazer, fazendo, falta info, em revisão e concluído.">
+    </div>
+  </div>
+</section>
+"""
+
+RODAPE = """
+<footer class="wrap">
+  Gabriel Cherubini · Porto Alegre · <a href="mailto:bielcheeeeee@gmail.com">e-mail</a> · GitHub
+</footer>
+
+</body>
+</html>
+"""
+
+RESUMO_AUTOTUNE = """O que o Auto-Tune faz, feito do zero em C++. Dois motores
+        de correção com o mesmo deslocamento: um preserva a voz da pessoa, o
+        outro preserva a latência."""
+
+NUMEROS_AUTOTUNE = """<div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+        <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+        <div class="num"><b>340×</b><span>de diferença entre os dois</span></div>"""
+
+ALT_AUTOTUNE = ("Plugin do Autotune corrigindo ao vivo: nota-alvo F3, cantado "
+                "170,9 Hz, +38 cents, latência 0,18 ms.")
+
+# --- 1. cartão em "outros projetos" -----------------------------------------
+
+CARTAO = f"""
+<section class="outros">
+  <div class="wrap">
+    <h2>Outros projetos</h2>
+    <p class="lede">Não é sistema em produção, mas é código meu que roda e tem
+       página própria.</p>
+    <div class="cartao" style="--fundo:#0D1512;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#2EE6A0">
+      <img src="/public/prints/autotune/01-plugin-cantando-v3.png" width="639" height="458"
+           alt="{ALT_AUTOTUNE}">
+      <div>
+        <h3>Autotune</h3>
+        <div class="paraquem">Trabalho de conclusão, PUCRS · publicado</div>
+        <p>{RESUMO_AUTOTUNE}</p>
+        <div class="numeros">{NUMEROS_AUTOTUNE}</div>
+        <div class="botoes">
+          <a class="cta" href="#" style="--ctaFundo:#2EE6A0;--ctaTexto:#0D1512;background:#2EE6A0;color:#0D1512">Ver no GitHub</a>
+          <a class="cta fantasma" href="#">Ver o projeto</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+"""
+
+# --- 2 e 3. faixa de largura total, mudando só a paleta ---------------------
+
+def faixa_autotune(tema, comentario):
+    return f"""
+<!-- AUTOTUNE — {comentario} -->
+<section class="faixa espelho" style="{tema}">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="ficha">
+        <div class="nome">Autotune</div>
+        <div class="paraquem">Trabalho de conclusão, PUCRS</div>
+        <div class="situacao">publicado</div>
+      </div>
+      <p class="resumo">{RESUMO_AUTOTUNE}</p>
+      <div class="numeros">{NUMEROS_AUTOTUNE}</div>
+      <div class="botoes">
+        <a class="cta" href="#">Ver no GitHub</a>
+        <a class="cta fantasma" href="#">Ver o projeto</a>
+      </div>
+    </div>
+    <div class="col-print pequeno">
+      <img src="/public/prints/autotune/01-plugin-cantando-v3.png" width="639" height="458"
+           alt="{ALT_AUTOTUNE}">
+    </div>
+  </div>
+</section>
+"""
+
+TEMA_REAL = ("--fundo:#0D1512;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#2EE6A0;"
+             "--ctaFundo:#2EE6A0;--ctaTexto:#0D1512")
+TEMA_AMBAR = ("--fundo:#10312F;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#F3B843;"
+              "--ctaFundo:#F3B843;--ctaTexto:#10312F")
+
+VARIANTES = [
+    ("a1-autotune-cartao.html",
+     "A1 · Autotune como cartão — gacherubini.dev",
+     CARTAO),
+    ("a2-autotune-faixa.html",
+     "A2 · Autotune como faixa, cor real — gacherubini.dev",
+     faixa_autotune(TEMA_REAL, "menta #2EE6A0 amostrada do plugin")),
+    ("a3-autotune-ambar.html",
+     "A3 · Autotune com cor inventada — gacherubini.dev",
+     faixa_autotune(TEMA_AMBAR, "âmbar #F3B843: NÃO existe em nenhum print")),
+]
+
+for arquivo, titulo, corpo in VARIANTES:
+    (AQUI / arquivo).write_text(
+        CABECA.format(titulo=titulo) + corpo + RODAPE, encoding="utf-8")
+    print("escrito:", arquivo)

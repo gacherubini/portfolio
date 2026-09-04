@@ -32,9 +32,18 @@ Isso funciona porque as cores não são inventadas: são as dos produtos reais.
 A faixa deixa de parecer um cartão sobre o produto e passa a parecer um pedaço
 dele.
 
-Consequência de manutenção: **projeto sem identidade visual própria precisa
-receber uma antes de entrar no site.** Foi o que derrubou o app de finanças: sem
-tela, não tem cor, e cor inventada quebra a premissa da direção.
+Consequência de manutenção: **projeto sem identidade visual própria recebe uma
+paleta atribuída.** A regra original era mais dura — cor inventada estava
+proibida, e foi o que derrubou o app de finanças em 04/09. Ela caiu em 04/09,
+na decisão do Autotune (seção 3).
+
+A regra que ficou no lugar: **a origem de cada cor é declarada.** Cor amostrada
+do produto diz de qual tela saiu; cor atribuída diz que foi atribuída. A coluna
+"Origem" da tabela da seção 3 não é documentação, é o contrato.
+
+Pendência que isso reabre: o app de finanças ("Gastos do mês") saiu do site por
+essa regra. Com a regra relaxada, o motivo da remoção não existe mais. Ele volta
+ou fica fora por outro motivo — decisão do dono, ainda não tomada.
 
 ### Tipografia
 
@@ -48,6 +57,23 @@ sistema na faixa) · 24px (destaque) · 16.5px (lede) · 15px (corpo) ·
 13.5px (rótulo) · 12px (legenda).
 
 Texto corrido não passa de ~50 caracteres por linha (`max-width` em `ch`).
+
+**A exceção, aberta em 04/09: código e saída de terminal usam monoespaçada.**
+Nome de função (`quemNaoApontou`), nome de arquivo (`dr_wav`) e saída de CLI
+alinhada por coluna param de funcionar em fonte proporcional — a saída perde o
+alinhamento, e o identificador lê como prosa. A exceção é estreita e tem duas
+condições:
+
+- **Nenhuma fonte a mais é baixada.** A pilha é a do sistema
+  (`ui-monospace, SFMono-Regular, Menlo, monospace`). "Uma família só" continua
+  verdadeiro no que importa: o site carrega Archivo e nada além.
+- **Só onde o conteúdo é literalmente código.** Nome de produto, nome de motor
+  e rótulo de interface são Archivo. Mono como enfeite — etiqueta em caixa alta
+  espaçada, rótulo de dado pequeno — está fora.
+
+Três mockups de página de projeto chegaram nessa necessidade de forma
+independente, o que é o argumento a favor de escrever a regra em vez de deixar
+cada página resolver sozinha.
 
 ### A marca
 
@@ -99,10 +125,34 @@ todas as paletas. Cor de projeto novo = seis hex num arquivo.
 
 | Projeto | Fundo | Texto | Destaque | Origem da cor |
 |---|---|---|---|---|
-| Revy | `#0C0D0C` | `#EAF0EA` | `#7CE0A8` | painel da Revy Loja |
-| BDDente | `#5B21A8` | `#F4EEFC` | `#D9C4F5` | menu lateral do sistema |
-| Office Timesheet | `#EEF1F6` | `#151A22` | `#2563EB` | tema claro do front |
-| Autotune | `#10312F` | `#E4F2F0` | `#F3B843` | âmbar da curva de pitch |
+| Revy | `#111111` | `#EAF0EA` | `#7FBFA3` | amostrada: menu lateral e barra do agente, `02-agente-whatsapp.png` |
+| BDDente | `#5A21B4` | `#F4EEFC` | `#D9C4F5` | amostrada: item ativo do menu, `01-agenda-semana.png` |
+| Office Timesheet | `#ECECEC` | `#1D2724` | `#CB6D31` | amostrada: fundo e marcador de tarefa, `03-tarefas-kanban.png` |
+| Autotune | `#10312F` | `#E4F2F0` | `#F3B843` | **atribuída** — ver abaixo |
+
+Os três primeiros vieram de amostragem de pixel nos próprios prints, em
+04/09/2026. A tabela anterior errava dois:
+
+- **Office Timesheet não tem azul.** O `#2563EB` da versão anterior não existe
+  no produto. O sistema é verde-escuro `#2E3D38` no topo (usado aqui no botão
+  primário) com laranja queimado `#CB6D31` nos marcadores de tarefa. Efeito
+  colateral: some o conflito com o `#2A4FD7` da marca que a seção 2 listava.
+- **O âmbar do Autotune não existe em lugar nenhum.** A versão anterior dizia
+  "âmbar da curva de pitch". O plugin é menta `#2EE6A0` sobre `#0D1512`, e os
+  dois gráficos comparativos do TCC são `#1F77B4` puro, o azul default do
+  matplotlib. Não há âmbar em nenhum dos quatro prints.
+
+**A decisão sobre o Autotune, tomada em 04/09/2026 depois de três mockups:** a
+cor real do plugin repete a dupla da Revy (preto + menta), então o Autotune fica
+com faixa de largura total e paleta atribuída, o âmbar `#F3B843` sobre
+`#10312F`. É a primeira cor do site que não sai de um produto, e a seção 2 foi
+reescrita para permitir isso.
+
+Os quatro temas foram medidos em 04/09 e passam. Um deles passa raspando:
+o laranja do Office Timesheet dá **3,08:1** sobre `#ECECEC`, com 0,08 de folga
+para um mínimo de 3. Qualquer ajuste no fundo ou no laranja derruba o build.
+Se isso incomodar, `#B85F27` é o mesmo laranja um passo mais escuro e sobe para
+3,78:1.
 
 **Requisito de acessibilidade:** todo par texto/fundo passa 4.5:1, e todo par
 destaque/fundo passa 3:1. Um teste automatizado calcula o contraste de cada
@@ -172,7 +222,10 @@ export type Projeto = {
   nome: string
   paraQuem: Texto          // "Revenda de veículos"
   situacao: 'no-ar' | 'fechado' | 'publicado' | 'em-construcao'
-  desde: number
+
+  // A ficha lateral da página do projeto. Lista livre, não campos fixos:
+  // cada sistema tem um dado diferente que o descreve melhor. 2 a 5 linhas.
+  ficha: { rotulo: Texto; valor: Texto }[]
 
   tema: Tema
 
@@ -206,6 +259,16 @@ Regras que o tipo impõe:
   entende por imagem — o agente de WhatsApp do Revy tem; o Timesheet não.
 - **`links` pode ser vazio.** É o caso do Office Timesheet, que é fechado. O
   componente mostra "sistema fechado", nunca um botão morto.
+- **`galeria` pode ser vazia.** É o caso do Autotune: só existem quatro prints,
+  dois vão para o destaque e dois são matplotlib no default. Sem galeria, o
+  peso vai para o destaque e para o bloco técnico.
+- **`ficha` é lista livre, e foi o que a rodada de mockups de 04/09 provou.**
+  Campos fixos obrigavam o BDDente a esconder o dado mais forte que tem
+  ("Substituiu — Dentalis, em FoxPro, de 1996 a 2024") e o Office Timesheet a
+  inventar um "tamanho" que não existe. Cada projeto declara os rótulos que
+  fazem sentido para ele. `desde` saiu do tipo: virou uma linha da ficha, e o
+  projeto que não sabe a data simplesmente não declara essa linha, em vez de
+  ficar com um campo obrigatório escrito "a confirmar".
 
 ## 6. Idioma
 
@@ -249,12 +312,29 @@ Estado em 04/09/2026:
    - print grande de um lado, texto e números do outro
    - botão primário (entrar no sistema) e secundário (ver o projeto)
 
+4. **O "Sobre", como último bloco da home** — não como página. Decidido em
+   04/09 depois de três mockups (página neutra, página no azul, bloco na home).
+   O item "Sobre" da navegação é uma âncora, não uma rota. Texto à esquerda,
+   ficha à direita, tudo sobre o neutro da casca.
+5. **Fechamento no azul da marca.** Depois de quatro faixas com a cor dos
+   produtos, a última faixa da página é a cor da casa, `#2A4FD7`. Dentro dela,
+   e-mail e telefone em tamanho de leitura — são a informação, não botão —, o
+   currículo em PDF como o único item que o visitante leva embora, e GitHub e
+   LinkedIn em segundo plano. O rodapé mora aqui dentro.
+
 A ordem das faixas alterna o lado do print para o olho não cansar.
+
+Isso mata o `/sobre` como rota: são duas telas no site, não três. E ajusta a
+regra da seção 2 sobre a marca nunca entrar numa faixa colorida — ela continua
+valendo para as faixas dos produtos, mas o fechamento **é** a cor da marca, então
+lá o azul é o fundo e a assinatura vai em branco.
 
 ### Página do projeto
 
 1. Topo e voltar, já na cor do sistema.
-2. Nome + chamada + ficha lateral (situação, para quem, tamanho, desde, botões).
+2. Nome + chamada + ficha lateral. Os rótulos da ficha são por projeto, não
+   fixos (seção 5) — a Revy declara "Tamanho", o BDDente declara "Substituiu".
+   Onde o sistema é fechado, o lugar dos botões diz por que não há botão.
 3. **Destaque**, quando existe: título, texto e um ou dois prints grandes com
    legenda. É o primeiro conteúdo depois da chamada, de propósito.
 4. Régua de números (3 ou 4).
@@ -277,19 +357,29 @@ A ordem das faixas alterna o lado do print para o olho não cansar.
 
 - Blog, seção de artigos, newsletter.
 - CMS ou painel de administração. O conteúdo é código.
-- Analytics, cookie banner, formulário de contato com backend. Contato é um
-  e-mail e links.
+- Analytics, cookie banner, formulário de contato com backend. Contato é
+  e-mail, WhatsApp, currículo em PDF e dois perfis, tudo em link direto.
+- Página `/sobre`. O Sobre é bloco no fim da home (seção 8).
 - Tema claro/escuro escolhido pelo visitante. As paletas de projeto são fixas
   por definição da direção; um alternador brigaria com elas.
 - Animação de entrada por seção.
 
 ## 11. Decisões ainda em aberto
 
-1. **O Autotune entra na home como faixa ou numa seção menor no fim?** Com
-   quatro projetos a home já não fica longa demais. Proposta: as três em
-   produção viram faixa; o Autotune entra numa seção "outros projetos" com
-   cartão menor, e ainda assim ganha página própria.
+1. **O app de finanças volta?** Saiu em 04/09 porque não tinha tela e cor
+   inventada era proibida. A proibição caiu no mesmo dia (seções 2 e 3). O
+   motivo da remoção não existe mais; a remoção continua valendo até alguém
+   decidir o contrário.
 2. **O assistente-virtual entra?** Ficou combinado que sim, como cartão menor,
    sem faixa.
 3. **Domínio e deploy.** `gacherubini.dev` na Vercel. Falta confirmar se o
    domínio já está comprado e onde está o DNS.
+
+### Fechadas em 04/09/2026
+
+- **A direção visual.** Camaleão foi reaberta e comparada contra três
+  alternativas em mockup (casca editorial, azul da marca, vitrine). Confirmada.
+  A queixa que motivou a reabertura — "o site fica sem cara própria" — segue
+  valendo como crítica; a resposta escolhida foi manter a direção mesmo assim.
+- **O Autotune entra como faixa de largura total**, não como cartão em "outros
+  projetos". Ordem da home: Revy, BDDente, Office Timesheet, Autotune.

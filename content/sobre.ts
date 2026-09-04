@@ -12,6 +12,13 @@ export const sobre: {
   titulo: Texto
   paragrafos: Texto[]
   ficha: { rotulo: Texto; valor: Texto }[]
+  /** Os dois canais diretos, em tamanho de leitura no fim da home. */
+  contato: {
+    email: string
+    telefone: { href: string; exibicao: string; via: Texto }
+    curriculo: { href: string; rotulo: Texto }
+  }
+  /** Perfis, secundários ao lado do contato. */
   links: { rotulo: string; href: string }[]
 } = {
   titulo: {
@@ -33,8 +40,10 @@ export const sobre: {
       en: "I'm 23, and I'm finishing my Computer Science degree at PUC-RS.",
     },
     {
-      pt: 'Os sistemas aqui do lado são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.',
-      en: 'The systems next to this were built outside work hours. I built each one end to end, alone, and put it in front of real users.',
+      // "aqui do lado" virou "aqui de cima" em 04/09: o Sobre deixou de ser
+      // página e virou o último bloco da home, depois das quatro faixas.
+      pt: 'Os quatro sistemas aqui de cima são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.',
+      en: 'The four systems above were built outside work hours. I built each one end to end, alone, and put it in front of real users.',
     },
   ],
 
@@ -57,11 +66,26 @@ export const sobre: {
     },
   ],
 
-  // Sem telefone: o número do currículo é pessoal, e currículo você manda para
-  // quem escolhe. Site público, não.
+  // O telefone e o currículo entraram em 04/09, por decisão do dono, revertendo
+  // a regra anterior ("número e currículo você manda para quem escolhe, site
+  // público não"). O repositório é público e o histórico do git é permanente:
+  // uma vez commitados, os dois ficam registrados mesmo se saírem do site.
+  contato: {
+    email: 'bielcheeeeee@gmail.com',
+    telefone: {
+      href: 'https://wa.me/5551980336365',
+      exibicao: '(51) 98033-6365',
+      via: { pt: 'chama no WhatsApp', en: 'message me on WhatsApp' },
+    },
+    // O arquivo ainda não existe. Precisa ir para public/ antes do deploy.
+    curriculo: {
+      href: '/curriculo-gabriel-cherubini.pdf',
+      rotulo: { pt: 'Baixar o currículo', en: 'Download my résumé' },
+    },
+  },
+
   links: [
     { rotulo: 'GitHub', href: 'https://github.com/gacherubini' },
     { rotulo: 'LinkedIn', href: 'https://www.linkedin.com/in/gabrielabreuu' },
-    { rotulo: 'E-mail', href: 'mailto:bielcheeeeee@gmail.com' },
   ],
 }

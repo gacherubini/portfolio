@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C · Azul da marca — gacherubini.dev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#2A4FD7; --azul-fundo:#1F3CAE; --azul-claro:#EDF0FD;
+    --branco:#FFFFFF; --tinta:#0F1317; --calmo:#585D62; --regua:#E2E4EA;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--branco);color:var(--tinta);
+       font-family:Archivo,system-ui,sans-serif;font-size:15px;line-height:1.55;
+       -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 36px}
+
+  /* topo, dentro do azul */
+  .campo{background:var(--azul);color:var(--branco)}
+  .topo{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .marca{font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .marca span{opacity:.62}
+  nav{display:flex;gap:26px;font-size:14px}
+  nav a{text-decoration:none;opacity:.82}
+  nav a:hover{opacity:1;text-decoration:underline;text-underline-offset:4px}
+  .idioma{font-size:13px;opacity:.72}
+  .idioma b{opacity:1;font-weight:600}
+
+  .hero{padding:76px 0 92px;display:grid;grid-template-columns:1.35fr 1fr;
+        gap:56px;align-items:end}
+  .hero h1{margin:0;font-size:58px;line-height:1.02;font-weight:800;
+           letter-spacing:-.035em;max-width:14ch}
+  .hero p{margin:0;font-size:16.5px;line-height:1.6;opacity:.86;max-width:40ch}
+
+  /* projeto */
+  .projeto{padding:76px 0;border-bottom:1px solid var(--regua)}
+  .projeto .grade{display:grid;grid-template-columns:1fr 1.2fr;gap:60px;align-items:center}
+  .projeto.espelho .grade{grid-template-columns:1.2fr 1fr}
+  .projeto.espelho .col-texto{grid-column:2}
+  .projeto.espelho .col-print{grid-column:1}
+
+  .cabeca{margin-bottom:22px}
+  .cabeca h2{margin:0;font-size:38px;line-height:1.05;font-weight:800;letter-spacing:-.028em}
+  .cabeca p{margin:6px 0 0;font-size:14px;color:var(--calmo)}
+  .estado{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;
+          color:var(--azul);background:var(--azul-claro);border-radius:4px;padding:3px 9px}
+
+  .resumo{font-size:17px;margin:0 0 30px;max-width:48ch;color:#25292E}
+
+  .numeros{display:flex;gap:40px;flex-wrap:wrap;margin-bottom:32px}
+  .num b{display:block;font-size:30px;font-weight:800;color:var(--azul);
+         letter-spacing:-.028em;line-height:1.1}
+  .num span{display:block;font-size:12.5px;color:var(--calmo);max-width:17ch;line-height:1.35;
+            margin-top:4px}
+
+  .acoes{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .btn{background:var(--azul);color:var(--branco);text-decoration:none;font-weight:600;
+       font-size:14.5px;padding:12px 22px;border-radius:4px}
+  .btn:hover{background:var(--azul-fundo)}
+  .btn.linha{background:transparent;color:var(--azul);border:1.5px solid var(--azul);padding:10.5px 20px}
+  .btn.linha:hover{background:var(--azul-claro)}
+  .nota{font-size:13px;color:var(--calmo)}
+
+  /* o print com o bloco azul deslocado atrás */
+  .placa{position:relative}
+  .placa::before{content:"";position:absolute;inset:16px -16px -16px 16px;background:var(--azul)}
+  .placa img{position:relative;width:100%;height:auto;display:block;
+             border:1px solid var(--regua)}
+  .placa.contida{max-width:560px}
+
+  footer{background:var(--azul);color:var(--branco);padding:52px 0;font-size:14px}
+  footer .linha-rodape{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;opacity:.9}
+  footer a{text-decoration:underline;text-underline-offset:3px}
+
+  @media(max-width:880px){
+    .hero{grid-template-columns:1fr;gap:26px;padding:56px 0 64px}
+    .hero h1{font-size:38px}
+    .projeto .grade,.projeto.espelho .grade{grid-template-columns:1fr;gap:34px}
+    .projeto.espelho .col-texto{order:2}.projeto.espelho .col-print{order:1}
+    .placa::before{inset:10px -10px -10px 10px}
+  }
+  a:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
+</head>
+<body>
+
+<div class="campo">
+  <div class="wrap topo">
+    <div class="marca">gacherubini<span>.dev</span></div>
+    <nav><a href="#">Projetos</a><a href="#">Sobre</a></nav>
+    <div class="idioma"><b>PT</b> / EN</div>
+  </div>
+  <div class="wrap hero">
+    <h1>Eu construo o sistema inteiro.</h1>
+    <p>Backend na Ambush durante o dia. Estes quatro são de fora do expediente:
+       feitos sozinho, do banco ao botão, e colocados no ar com gente usando.</p>
+  </div>
+</div>
+
+<!-- REVY -->
+<section class="projeto">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="cabeca">
+        <h2>Revy</h2>
+        <p>Plataforma comercial para revendas de veículos</p>
+        <span class="estado">No ar</span>
+      </div>
+      <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa
+        a moto do estoque, responde preço e condição, e passa para uma pessoa
+        quando o assunto sai do roteiro.</p>
+      <div class="numeros">
+        <div class="num"><b>96</b><span>atendimentos no mês</span></div>
+        <div class="num"><b>75%</b><span>resolvidos sem passar por pessoa</span></div>
+        <div class="num"><b>7</b><span>produtos que só conversam por HTTP</span></div>
+      </div>
+      <div class="acoes">
+        <a class="btn" href="#">Entrar no sistema</a>
+        <a class="btn linha" href="#">Ver o projeto</a>
+      </div>
+    </div>
+    <div class="col-print">
+      <div class="placa">
+        <img src="/public/prints/revy/02-agente-whatsapp.png" width="1896" height="932"
+             alt="Aba Agente da Revy Loja: 96 atendimentos no mês, 72 resolvidos só com o agente, 24 transferidos.">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BDDENTE -->
+<section class="projeto espelho">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="cabeca">
+        <h2>BDDente</h2>
+        <p>Prontuário, agenda e financeiro de um consultório</p>
+        <span class="estado">No ar · sistema fechado</span>
+      </div>
+      <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a
+        2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup
+        foram escopo do primeiro dia, não fase dois.</p>
+      <div class="numeros">
+        <div class="num"><b>5.559</b><span>pacientes migrados</span></div>
+        <div class="num"><b>44.812</b><span>lançamentos clínicos</span></div>
+        <div class="num"><b>914</b><span>testes passando</span></div>
+      </div>
+      <div class="acoes">
+        <a class="btn linha" href="#">Ver o projeto</a>
+        <span class="nota">Sem link: prontuário de clínica real.</span>
+      </div>
+    </div>
+    <div class="col-print">
+      <div class="placa">
+        <img src="/public/prints/bddente/01-agenda-semana.png" width="3200" height="2000"
+             alt="Agenda da semana no BDDente, com a tarja de lembretes de WhatsApp desligados no topo.">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFICE TIMESHEET -->
+<section class="projeto">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="cabeca">
+        <h2>Office Timesheet</h2>
+        <p>Horas, projetos e custo de uma equipe de arquitetura</p>
+        <span class="estado">Em uso · sistema fechado</span>
+      </div>
+      <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada
+        projeto custou. Tem um assistente que responde as perguntas chatas de
+        segunda-feira sem ninguém abrir sete telas.</p>
+      <div class="numeros">
+        <div class="num"><b>17</b><span>perguntas viraram função</span></div>
+        <div class="num"><b>15</b><span>ações que ele propõe, nunca executa sozinho</span></div>
+        <div class="num"><b>4</b><span>etapas por projeto</span></div>
+      </div>
+      <div class="acoes">
+        <a class="btn linha" href="#">Ver o projeto</a>
+        <span class="nota">Sem link: sistema interno do escritório.</span>
+      </div>
+    </div>
+    <div class="col-print">
+      <div class="placa">
+        <img src="/public/prints/office-timesheet/03-tarefas-kanban.png" width="3200" height="2000"
+             alt="Quadro de tarefas do Office Timesheet, com colunas a fazer, fazendo, falta info, em revisão e concluído.">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTOTUNE -->
+<section class="projeto espelho">
+  <div class="wrap grade">
+    <div class="col-texto">
+      <div class="cabeca">
+        <h2>Autotune</h2>
+        <p>Correção de afinação vocal em tempo real, em C++</p>
+        <span class="estado">Publicado · código aberto</span>
+      </div>
+      <p class="resumo">O que o Auto-Tune faz, feito do zero. Dois motores de
+        correção com o mesmo deslocamento: um preserva a voz da pessoa, o outro
+        preserva a latência. Escolher entre eles é a contribuição do trabalho.</p>
+      <div class="numeros">
+        <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+        <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+        <div class="num"><b>340×</b><span>de diferença entre os dois</span></div>
+      </div>
+      <div class="acoes">
+        <a class="btn" href="#">Ver no GitHub</a>
+        <a class="btn linha" href="#">Ver o projeto</a>
+      </div>
+    </div>
+    <div class="col-print">
+      <div class="placa contida">
+        <img src="/public/prints/autotune/01-plugin-cantando-v3.png" width="639" height="458"
+             alt="Plugin do Autotune corrigindo ao vivo: nota-alvo F3, cantado 170,9 Hz, +38 cents, latência 0,18 ms.">
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap linha-rodape">
+    <div>Gabriel Cherubini · Porto Alegre · GMT−3</div>
+    <div><a href="mailto:bielcheeeeee@gmail.com">e-mail</a> · GitHub · LinkedIn</div>
+  </div>
+</footer>
+
+</body>
+</html>

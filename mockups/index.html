@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Direções — gacherubini.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--pg:#1A1C1E;--txt:#E8E9E7;--calmo:#9BA09E;--fio:#33373A;--acento:#7EA6FF}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--pg);color:var(--txt);
+       font-family:Archivo,system-ui,sans-serif;font-size:14px;line-height:1.55}
+  header{padding:20px 24px;border-bottom:1px solid var(--fio);
+         display:flex;gap:24px;align-items:baseline;flex-wrap:wrap}
+  h1{margin:0;font-size:16px;font-weight:600}
+  .sub{color:var(--calmo);font-size:13px;flex:1;min-width:280px}
+  .controles{display:flex;gap:6px}
+  button{font:inherit;font-size:13px;background:transparent;color:var(--calmo);
+         border:1px solid var(--fio);border-radius:4px;padding:5px 12px;cursor:pointer}
+  button:hover{color:var(--txt);border-color:var(--calmo)}
+  button[aria-pressed=true]{background:var(--txt);color:var(--pg);border-color:var(--txt)}
+
+  .grade{display:grid;gap:1px;background:var(--fio);border-top:1px solid var(--fio)}
+  .grade[data-cols="4"]{grid-template-columns:repeat(4,1fr)}
+  .grade[data-cols="2"]{grid-template-columns:repeat(2,1fr)}
+  .grade[data-cols="1"]{grid-template-columns:1fr}
+
+  .painel{background:var(--pg);display:flex;flex-direction:column;min-width:0}
+  .rotulo{padding:14px 16px;display:flex;gap:12px;align-items:baseline}
+  .letra{font-size:19px;font-weight:700;color:var(--acento);line-height:1}
+  .nome{font-weight:600}
+  .nome small{display:block;font-weight:400;color:var(--calmo);font-size:12.5px;
+              margin-top:3px;line-height:1.45}
+  .abrir{margin-left:auto;font-size:12.5px;color:var(--acento);text-decoration:none;
+         white-space:nowrap}
+  .abrir:hover{text-decoration:underline}
+
+  .janela{position:relative;overflow:hidden;border-top:1px solid var(--fio);
+          height:calc(100vh - 132px);min-height:420px}
+  .janela iframe{position:absolute;top:0;left:0;width:1440px;border:0;
+                 transform-origin:0 0;background:#fff}
+  .grade[data-cols="4"] iframe{height:calc((100vh - 132px) / var(--z));transform:scale(var(--z))}
+  .grade[data-cols="4"]{--z:.28}
+  .grade[data-cols="2"]{--z:.56}
+  .grade[data-cols="1"]{--z:1}
+  .grade[data-cols="2"] iframe{height:calc((100vh - 132px) / var(--z));transform:scale(var(--z))}
+  .grade[data-cols="1"] iframe{width:100%;height:calc(100vh - 132px);transform:none}
+
+  @media(max-width:1100px){.grade[data-cols="4"]{grid-template-columns:repeat(2,1fr);--z:.42}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Quatro direções para a home</h1>
+  <p class="sub">Mesmo conteúdo, mesmos prints. A pergunta: <b>o que é seu na
+     página, com o print colorido do produto do lado?</b> Role dentro de cada
+     painel.</p>
+  <a href="autotune.html" style="font-size:13px;color:var(--acento);text-decoration:none">o Autotune na home →</a>
+  <a href="sobre.html" style="font-size:13px;color:var(--acento);text-decoration:none">o Sobre →</a>
+  <a href="projetos.html" style="font-size:13px;color:var(--acento);text-decoration:none">as páginas de projeto →</a>
+  <div class="controles">
+    <button data-cols="4" aria-pressed="true">4 lado a lado</button>
+    <button data-cols="2" aria-pressed="false">2</button>
+    <button data-cols="1" aria-pressed="false">1</button>
+  </div>
+</header>
+
+<div class="grade" id="grade" data-cols="4">
+
+  <div class="painel">
+    <div class="rotulo">
+      <span class="letra">A</span>
+      <span class="nome">Camaleão <small>A atual. Cada faixa veste a cor do sistema.</small></span>
+      <a class="abrir" href="a-camaleao.html" target="_blank">abrir</a>
+    </div>
+    <div class="janela"><iframe src="a-camaleao.html" title="Direção A, Camaleão"></iframe></div>
+  </div>
+
+  <div class="painel">
+    <div class="rotulo">
+      <span class="letra">B</span>
+      <span class="nome">Caderno <small>Voz editorial: margem, régua, Archivo esticada.</small></span>
+      <a class="abrir" href="b-caderno.html" target="_blank">abrir</a>
+    </div>
+    <div class="janela"><iframe src="b-caderno.html" title="Direção B, Caderno de engenharia"></iframe></div>
+  </div>
+
+  <div class="painel">
+    <div class="rotulo">
+      <span class="letra">C</span>
+      <span class="nome">Azul <small>O #2A4FD7 do seu .dev vira a cor do site.</small></span>
+      <a class="abrir" href="c-azul.html" target="_blank">abrir</a>
+    </div>
+    <div class="janela"><iframe src="c-azul.html" title="Direção C, Azul da marca"></iframe></div>
+  </div>
+
+  <div class="painel">
+    <div class="rotulo">
+      <span class="letra">D</span>
+      <span class="nome">Vitrine <small>Silêncio e passe-partout. O print é a obra.</small></span>
+      <a class="abrir" href="d-vitrine.html" target="_blank">abrir</a>
+    </div>
+    <div class="janela"><iframe src="d-vitrine.html" title="Direção D, Vitrine"></iframe></div>
+  </div>
+
+</div>
+
+<script>
+  const grade = document.getElementById('grade');
+  document.querySelectorAll('.controles button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.controles button')
+        .forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+      grade.dataset.cols = b.dataset.cols;
+    });
+  });
+</script>
+
+</body>
+</html>

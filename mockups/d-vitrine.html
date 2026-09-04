@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D · Vitrine — gacherubini.dev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --chao:#F7F7F4; --mat:#FFFFFF; --tinta:#181A1C; --calmo:#6C7074;
+    --fio:#DEDED6; --marca:#0F1317; --dev:#2A4FD7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--chao);color:var(--tinta);
+       font-family:Archivo,system-ui,sans-serif;font-size:14.5px;line-height:1.65;
+       -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .sala{max-width:1000px;margin:0 auto;padding:0 40px}
+
+  header{padding:26px 0}
+  .topo{display:flex;align-items:center;justify-content:space-between}
+  .marca{font-weight:600;font-size:15.5px;letter-spacing:.005em;color:var(--marca)}
+  .marca span{color:var(--dev)}
+  nav{display:flex;gap:24px;font-size:13.5px;color:var(--calmo)}
+  nav a{text-decoration:none}
+  nav a:hover{color:var(--tinta)}
+  .idioma{font-size:12.5px;color:var(--calmo)}
+  .idioma b{color:var(--tinta);font-weight:600}
+
+  .abertura{padding:120px 0 116px;max-width:46ch}
+  .abertura h1{margin:0 0 14px;font-size:21px;font-weight:600;letter-spacing:-.008em;
+               line-height:1.35}
+  .abertura p{margin:0;color:var(--calmo);max-width:50ch}
+
+  /* a peça: passe-partout + placa */
+  .peca{padding-bottom:132px}
+  .quadro{background:var(--mat);border:1px solid var(--fio);
+          padding:34px;aspect-ratio:16/9;display:grid;place-items:center}
+  .quadro img{max-width:100%;max-height:100%;width:auto;height:auto;display:block;
+              object-fit:contain}
+
+  .placa{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;margin-top:26px;
+         align-items:start}
+  .placa .esq{display:flex;gap:11px}
+  .amostra{width:11px;height:11px;flex:0 0 11px;margin-top:6px;background:var(--cor);
+           border-radius:1px}
+  .titulo{margin:0;font-size:16.5px;font-weight:600;letter-spacing:-.005em;line-height:1.35}
+  .quem{margin:2px 0 0;font-size:13px;color:var(--calmo)}
+  .estado{margin:10px 0 0;font-size:12.5px;color:var(--calmo)}
+
+  .dir p{margin:0 0 14px;max-width:52ch}
+  .medidas{margin:0;padding:0;list-style:none;display:flex;gap:26px;flex-wrap:wrap;
+           font-size:12.5px;color:var(--calmo);border-top:1px solid var(--fio);
+           padding-top:12px}
+  .medidas b{color:var(--tinta);font-weight:600}
+  .ir{margin-top:16px;display:flex;gap:20px;flex-wrap:wrap;font-size:13.5px}
+  .ir a{text-decoration:none;border-bottom:1px solid var(--tinta);padding-bottom:1px}
+  .ir a:hover{border-bottom-color:transparent}
+  .ir .nota{color:var(--calmo)}
+
+  footer{padding:40px 0 80px;border-top:1px solid var(--fio);color:var(--calmo);
+         font-size:13px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+  @media(max-width:820px){
+    .abertura{padding:64px 0}
+    .peca{padding-bottom:76px}
+    .quadro{padding:16px;aspect-ratio:4/3}
+    .placa{grid-template-columns:1fr;gap:18px}
+  }
+  a:focus-visible{outline:2px solid var(--dev);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header class="sala">
+  <div class="topo">
+    <div class="marca">gacherubini<span>.dev</span></div>
+    <nav><a href="#">Projetos</a><a href="#">Sobre</a></nav>
+    <div class="idioma"><b>PT</b> / EN</div>
+  </div>
+</header>
+
+<main class="sala">
+
+  <section class="abertura">
+    <h1>Quatro sistemas que eu construí inteiros, sozinho, e coloquei no ar
+        com gente usando.</h1>
+    <p>Cada um com print, explicação em português comum e, quando o sistema é
+       público, link para entrar e clicar.</p>
+  </section>
+
+  <!-- REVY -->
+  <article class="peca" style="--cor:#0C0D0C">
+    <div class="quadro">
+      <img src="/public/prints/revy/02-agente-whatsapp.png" width="1896" height="932"
+           alt="Aba Agente da Revy Loja: 96 atendimentos no mês, 72 resolvidos só com o agente, 24 transferidos.">
+    </div>
+    <div class="placa">
+      <div class="esq">
+        <span class="amostra"></span>
+        <div>
+          <h2 class="titulo">Revy</h2>
+          <p class="quem">Revenda de veículos</p>
+          <p class="estado">No ar, com loja real usando</p>
+        </div>
+      </div>
+      <div class="dir">
+        <p>Quem responde o cliente no WhatsApp é o sistema. Ele puxa a moto do
+          estoque, responde preço e condição, e passa para uma pessoa quando o
+          assunto sai do roteiro.</p>
+        <ul class="medidas">
+          <li><b>96</b> atendimentos no mês</li>
+          <li><b>75%</b> sem passar por pessoa</li>
+          <li><b>7</b> produtos que só falam HTTP</li>
+        </ul>
+        <div class="ir">
+          <a href="#">Entrar no sistema</a>
+          <a href="#">Ver o projeto</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- BDDENTE -->
+  <article class="peca" style="--cor:#5B21A8">
+    <div class="quadro">
+      <img src="/public/prints/bddente/01-agenda-semana.png" width="3200" height="2000"
+           alt="Agenda da semana no BDDente, com a tarja de lembretes de WhatsApp desligados no topo.">
+    </div>
+    <div class="placa">
+      <div class="esq">
+        <span class="amostra"></span>
+        <div>
+          <h2 class="titulo">BDDente</h2>
+          <p class="quem">Consultório odontológico</p>
+          <p class="estado">No ar. Sistema fechado</p>
+        </div>
+      </div>
+      <div class="dir">
+        <p>Substituiu um FoxPro que rodou no consultório de 1996 a 2024. Trinta
+          anos de prontuário entraram junto — migração, LGPD e backup foram escopo
+          do primeiro dia, não fase dois.</p>
+        <ul class="medidas">
+          <li><b>5.559</b> pacientes migrados</li>
+          <li><b>44.812</b> lançamentos clínicos</li>
+          <li><b>914</b> testes passando</li>
+        </ul>
+        <div class="ir">
+          <a href="#">Ver o projeto</a>
+          <span class="nota">Sem link: prontuário de clínica real.</span>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- OFFICE TIMESHEET -->
+  <article class="peca" style="--cor:#2C3B36">
+    <div class="quadro">
+      <img src="/public/prints/office-timesheet/03-tarefas-kanban.png" width="3200" height="2000"
+           alt="Quadro de tarefas do Office Timesheet, com colunas a fazer, fazendo, falta info, em revisão e concluído.">
+    </div>
+    <div class="placa">
+      <div class="esq">
+        <span class="amostra"></span>
+        <div>
+          <h2 class="titulo">Office Timesheet</h2>
+          <p class="quem">Escritório de arquitetura</p>
+          <p class="estado">Em uso. Sistema fechado</p>
+        </div>
+      </div>
+      <div class="dir">
+        <p>Saber onde o tempo da equipe foi parar e quanto cada projeto custou.
+          Tem um assistente que responde as perguntas chatas de segunda-feira sem
+          ninguém abrir sete telas.</p>
+        <ul class="medidas">
+          <li><b>17</b> perguntas viraram função</li>
+          <li><b>15</b> ações que ele propõe</li>
+          <li><b>4</b> etapas por projeto</li>
+        </ul>
+        <div class="ir">
+          <a href="#">Ver o projeto</a>
+          <span class="nota">Sem link: sistema interno do escritório.</span>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- AUTOTUNE -->
+  <article class="peca" style="--cor:#10312F">
+    <div class="quadro">
+      <img src="/public/prints/autotune/01-plugin-cantando-v3.png" width="639" height="458"
+           alt="Plugin do Autotune corrigindo ao vivo: nota-alvo F3, cantado 170,9 Hz, +38 cents, latência 0,18 ms.">
+    </div>
+    <div class="placa">
+      <div class="esq">
+        <span class="amostra"></span>
+        <div>
+          <h2 class="titulo">Autotune</h2>
+          <p class="quem">Trabalho de conclusão, PUCRS</p>
+          <p class="estado">Publicado, código aberto</p>
+        </div>
+      </div>
+      <div class="dir">
+        <p>O que o Auto-Tune faz, feito do zero em C++. Dois motores de correção
+          com o mesmo deslocamento: um preserva a voz da pessoa, o outro preserva
+          a latência. Escolher entre eles é a contribuição do trabalho.</p>
+        <ul class="medidas">
+          <li><b>61,72 ms</b> TD-PSOLA</li>
+          <li><b>0,18 ms</b> ponteiro móvel</li>
+          <li><b>340×</b> de diferença</li>
+        </ul>
+        <div class="ir">
+          <a href="#">Ver no GitHub</a>
+          <a href="#">Ver o projeto</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<div class="sala">
+  <footer>
+    <div>Gabriel Cherubini · Porto Alegre · GMT−3</div>
+    <div><a href="mailto:bielcheeeeee@gmail.com">e-mail</a> · GitHub · LinkedIn</div>
+  </footer>
+</div>
+
+</body>
+</html>

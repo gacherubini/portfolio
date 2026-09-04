@@ -17,15 +17,29 @@ seeds, prints e o texto do "Sobre". Falta o plano de implementação e o código
 ## Decisões fechadas (não reabrir)
 
 - **Direção visual "Camaleão".** O site não tem cor própria: veste a de cada
-  sistema. Escolhida depois de seis alternativas em mockup.
+  sistema. Escolhida depois de seis alternativas em mockup, e **reaberta e
+  reconfirmada em 04/09** contra outras três (casca editorial, azul da marca,
+  vitrine). Não reabrir uma terceira vez sem argumento novo. A queixa que
+  motivou a reabertura foi "o site fica sem cara própria", e ela continua de pé
+  como crítica — a escolha foi manter a direção mesmo assim.
+- **Cor pode ser atribuída quando o produto não tem uma.** A regra antiga
+  proibia cor inventada. Caiu em 04/09, na decisão do Autotune. O que ficou no
+  lugar: a origem de cada cor é declarada na tabela da seção 3 da spec —
+  amostrada de qual print, ou atribuída.
 - **Marca**: `gacherubini` em `#0F1317` + `.dev` em `#2A4FD7`. Única cor fixa do
   site, sempre sobre o neutro da casca.
 - Tipografia: **Archivo** sozinha.
 - Stack: **Next.js + Tailwind**. Astro foi descartado ("react").
 - Idioma: **PT e EN com alternador**, `/pt` e `/en`, `/` cai no `/pt`.
-- **Projetos: Revy, BDDente, Office Timesheet, Autotune.** Scraping Maps está
-  fora. **O app de finanças ("Gastos do mês") foi removido em 04/09** — sem tela,
-  não tem cor, e cor inventada quebra a premissa da direção.
+- **Projetos: Revy, BDDente, Office Timesheet, Autotune**, todos como faixa de
+  largura total, nessa ordem. Scraping Maps está fora. O app de finanças
+  ("Gastos do mês") foi removido em 04/09 por não ter tela e cor própria — mas
+  **o motivo caiu junto com a regra**, e a volta dele virou pendência.
+- **As paletas foram amostradas dos prints em 04/09** e duas estavam erradas na
+  spec. Office Timesheet não tem azul: é verde `#2E3D38` com laranja `#CB6D31`.
+  O âmbar do Autotune não existe em print nenhum — o plugin é menta `#2EE6A0` e
+  os gráficos do TCC são azul matplotlib. O âmbar ficou assim mesmo, atribuído.
+  Tabela corrigida na seção 3 da spec.
 - **BDDente e Office Timesheet entram sem link.** São sistemas fechados.
 - **Nenhum print pode ter dado real de cliente ou paciente.** Sistema em produção
   é fotografado de instância local com dados inventados.
@@ -41,19 +55,38 @@ seeds, prints e o texto do "Sobre". Falta o plano de implementação e o código
 | `docs/levantamentos/autotune.md` | idem, Autotune |
 | `content/sobre.ts` | **o único conteúdo de site que existe** — PT e EN |
 | `scripts/seed-*.{py,js}` | os três seeds de dados fictícios |
-| `public/prints/<slug>/` | 31 prints |
+| `public/prints/<slug>/` | 32 prints |
+| `mockups/` | os comps das decisões de 04/09 — **ver abaixo** |
+
+### Os mockups aprovados
+
+`mockups/` é HTML descartável, não é código do site. Existe porque a primeira
+rodada de seis mockups se perdeu e a decisão teve que ser refeita do zero.
+Rode `python -m http.server 4321` na raiz e abra `/mockups/`.
+
+| Arquivo | O que é |
+|---|---|
+| `a3-autotune-ambar.html` | **a home aprovada** — quatro faixas, paletas corrigidas, Autotune em âmbar |
+| `s3-sobre-na-home.html` | **o Sobre aprovado** — bloco no fim + fechamento azul com contato e currículo |
+| `p1-projeto-revy.html` | **a página de projeto** — os sete blocos da seção 8, o caso completo |
+| `p2-projeto-bddente.html` | idem, o caso **sem link** |
+| `p3-projeto-office-timesheet.html` | idem, o caso **sem link e sem destaque**, e a única página clara |
+| `p4-projeto-autotune.html` | idem, o caso **sem galeria** |
+| `camaleao.css` | a casca compartilhada; a folha real do site nasce daqui |
+| `index.html`, `autotune.html`, `sobre.html` | comparadores das três rodadas de decisão |
+| os outros | as alternativas descartadas, guardadas para não refazer a discussão |
 
 Nada em `docs/` aparece no site. O texto que o visitante lê vai morar em
 `content/projetos/*.ts`, que ainda não existe.
 
-## Prints: 31, todos conferidos
+## Prints: 32, todos conferidos
 
 | Projeto | Quantos | Origem |
 |---|---|---|
 | `revy/` | 6 | stack local, loja fictícia "Garagem Vale Motos" |
 | `office-timesheet/` | 13 | instância local, "Studio Aurora Arquitetura" |
 | `bddente/` | 8 | instância local, "Consultório Bela Vista" |
-| `autotune/` | 4 | 2 do plugin + 2 gráficos do repo Python |
+| `autotune/` | 5 | 3 do plugin + 2 gráficos do repo Python |
 
 Cada imagem foi aberta e verificada. Nenhum nome, e-mail, telefone ou empresa
 real aparece em nenhuma.
@@ -85,12 +118,15 @@ Os quatro levantamentos seguem o mesmo formato: uma feature abre a página.
 
 1. **Escrever o plano de implementação.** É o passo que trava tudo. A spec diz
    o quê; falta a ordem.
-2. **Print do `/assistente` do Office Timesheet.** Bloqueado: a `AGENT_API_KEY`
+2. **O PDF do currículo não existe.** O fechamento da home linka
+   `/curriculo-gabriel-cherubini.pdf` e o arquivo precisa entrar em `public/`
+   antes do deploy, senão é botão morto. Confirmar também se o currículo tem
+   versão em inglês — o rótulo do botão é bilíngue, o arquivo é um só.
+3. **Print do `/assistente` do Office Timesheet.** Bloqueado: a `AGENT_API_KEY`
    do `.env` local do office-timesheet responde `403 Forbidden`. Precisa de uma
    chave válida da DeepSeek ou da NVIDIA.
-3. **Confirmar com o dono:**
-   - Paleta do Autotune: a spec deu âmbar `#F3B843`, mas a interface real é
-     verde menta, que colide com a Revy. Três saídas no levantamento.
+4. **Confirmar com o dono:**
+   - O app de finanças volta? O motivo da remoção não existe mais.
    - Os gráficos `03`/`04` do Autotune entram? São matplotlib no default e não
      separam nada. Recomendação: deixar de fora.
    - Números de vitrine da Revy (os do seed são inventados e não servem).

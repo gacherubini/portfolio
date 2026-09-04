@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>P3 · Página do projeto — Office Timesheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Mesma página do P1, na paleta do Office Timesheet — seção 3 da spec,
+     amostrada de 03-tarefas-kanban.png: fundo cinza claro, topo verde-escuro,
+     laranja queimado nos marcadores de tarefa. Este sistema não é azul.
+
+     É a única das quatro páginas que é clara, então as superfícies invertem:
+     onde a Revy usa um preto mais claro para destacar um bloco, aqui o bloco
+     sobe para o branco. */
+  :root{
+    --fundo:#ECECEC; --texto:#1D2724; --borda:#C9CFCC; --destaque:#CB6D31;
+    --ctaFundo:#2E3D38; --ctaTexto:#FFFFFF; --calmo:#55605C; --fundo2:#FFFFFF;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);
+       font-family:Archivo,system-ui,sans-serif;font-size:15px;line-height:1.55;
+       -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* 1. topo, já na cor do sistema */
+  header{border-bottom:1px solid var(--borda)}
+  .topo{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .marca{font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .marca span{opacity:.55}
+  .voltar{font-size:14px;color:var(--calmo);text-decoration:none}
+  .voltar:hover{color:var(--texto)}
+  .idioma{font-size:13px;color:var(--calmo)}
+  .idioma b{color:var(--texto);font-weight:600}
+
+  /* 2. nome + chamada + ficha lateral */
+  .abertura{padding:64px 0 44px;display:grid;grid-template-columns:1fr 300px;
+            gap:72px;align-items:start}
+  .abertura h1{margin:0 0 18px;font-size:52px;line-height:1.02;font-weight:800;
+               letter-spacing:-.032em}
+  .chamada{margin:0;font-size:22px;line-height:1.4;max-width:32ch}
+
+  .ficha{border-top:2px solid var(--destaque);padding-top:18px}
+  .ficha dl{margin:0}
+  .ficha dt{font-size:12.5px;color:var(--calmo);margin-top:16px}
+  .ficha dt:first-child{margin-top:0}
+  .ficha dd{margin:2px 0 0;font-size:14px;font-weight:500;line-height:1.4}
+  /* sistema fechado: não existe botão para entrar, então o lugar do botão
+     diz por que ele não existe em vez de ficar um link morto */
+  /* Sem a barra colorida de 3px na esquerda: o fundo e a borda de 1px já
+     delimitam o cartão, e a barra lateral não carregava informação nenhuma. */
+  .semlink{margin-top:26px;background:var(--fundo2);border:1px solid var(--borda);
+           border-radius:6px;padding:14px 16px}
+  .semlink b{display:block;font-size:14px;font-weight:700;margin-bottom:4px}
+  .semlink p{margin:0;font-size:13.5px;line-height:1.5;color:var(--calmo)}
+
+  /* a tela de abertura. Não é o bloco de destaque: é o quadro de tarefas,
+     e é de onde a cor desta página foi amostrada. */
+  .abre{padding:0 0 8px}
+  figure{margin:0}
+  figure img{width:100%;height:auto;display:block;border:1px solid var(--borda);
+             border-radius:8px;background:var(--fundo2)}
+  figcaption{margin-top:11px;font-size:12.5px;color:var(--calmo);line-height:1.45}
+  .abre figcaption{max-width:60ch}
+
+  /* 3. o assistente. Não há bloco de destaque nesta página — o print do
+     assistente não existe —, então a feature é contada com peso próprio:
+     a lista das 17 leituras é a imagem. */
+  .assistente{background:var(--fundo2);border-top:1px solid var(--borda);
+              border-bottom:1px solid var(--borda);padding:64px 0;margin-top:56px}
+  .assistente .cabeca{max-width:56ch;margin-bottom:34px}
+  .assistente h2{margin:0 0 12px;font-size:30px;font-weight:700;
+                 letter-spacing:-.025em;line-height:1.15}
+  .assistente .cabeca p{margin:0 0 14px;font-size:17px;line-height:1.6}
+  .assistente .cabeca p:last-child{margin-bottom:0}
+
+  .rotulo{font-size:13px;font-weight:600;color:var(--calmo);margin:0 0 16px}
+  /* 17 itens: fluxo por coluna, 6+6+5, para a lista fechar sem sobra */
+  .tools{display:grid;grid-template-columns:repeat(3,1fr);
+         grid-template-rows:repeat(6,auto);grid-auto-flow:column;gap:0 32px;
+         list-style:none;padding:0;margin:0 0 36px}
+  .tools li{display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--borda);
+            padding:9px 2px;font-family:var(--mono);font-size:13.5px;
+            letter-spacing:-.01em;word-break:break-word}
+  .tools li::before{content:"";flex:none;width:9px;height:9px;
+                    background:var(--destaque)}
+
+  .amarras{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;
+           border-top:1px solid var(--borda);padding-top:26px}
+  .amarra h4{margin:0 0 6px;font-size:15px;font-weight:700;letter-spacing:-.012em}
+  .amarra p{margin:0;font-size:14px;line-height:1.55;color:var(--calmo);max-width:34ch}
+
+  /* 4. régua de números */
+  .regua{padding:48px 0;border-bottom:1px solid var(--borda);
+         display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .num b{display:block;font-size:40px;font-weight:800;color:var(--destaque);
+         letter-spacing:-.03em;line-height:1}
+  .num span{display:block;font-size:13px;color:var(--calmo);margin-top:8px;
+            max-width:22ch;line-height:1.4}
+
+  /* 5. o problema / o que faz */
+  .prosa{padding:64px 0;display:grid;grid-template-columns:1fr 1fr;gap:72px}
+  .prosa h3{margin:0 0 14px;font-size:19px;font-weight:700;letter-spacing:-.015em}
+  .prosa p{margin:0 0 16px;font-size:16px;line-height:1.62;max-width:48ch}
+  .prosa p:last-child{margin-bottom:0}
+
+  /* 6. galeria, em duas fileiras nomeadas */
+  .galeria{padding:8px 0 64px}
+  .galeria h3{margin:0 0 22px;font-size:13px;font-weight:600;color:var(--calmo)}
+  .galeria h3+.tiras{margin-bottom:44px}
+  .tiras{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+
+  /* 7. bloco técnico, marcado como pulável */
+  .tecnico{border-top:1px solid var(--borda);padding:56px 0 72px}
+  .tecnico .aviso{margin:0 0 30px;font-size:14px;color:var(--calmo);max-width:52ch}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:34px}
+  .chip{font-size:13px;font-weight:500;border:1px solid var(--borda);
+        border-radius:5px;padding:5px 11px;color:var(--calmo);background:var(--fundo2)}
+  .notas{display:grid;grid-template-columns:repeat(3,1fr);gap:36px}
+  .nota h4{margin:0 0 9px;font-size:16px;font-weight:700;letter-spacing:-.012em}
+  .nota p{margin:0;font-size:15px;line-height:1.6;color:var(--texto);max-width:44ch}
+  .nota code{font-family:var(--mono);font-size:13.5px;background:var(--fundo2);
+             border:1px solid var(--borda);border-radius:4px;padding:1px 5px}
+  /* laranja aqui reprovaria: 16px bold não é texto grande, e o destaque só
+     tem 3,08:1. O código no título fica na tinta do corpo. */
+  .nota h4 code{font-size:.94em;background:none;border:0;padding:0;
+                color:var(--texto);font-weight:700}
+
+  footer{border-top:1px solid var(--borda);padding:34px 0 56px;
+         display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+         font-size:13.5px;color:var(--calmo)}
+
+  @media(max-width:1000px){
+    .regua{grid-template-columns:repeat(2,1fr);gap:32px 24px}
+    .notas{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:900px){
+    .abertura{grid-template-columns:1fr;gap:36px;padding:44px 0 32px}
+    .abertura h1{font-size:36px}
+    .chamada{font-size:19px}
+    .assistente{margin-top:40px;padding:48px 0}
+    .assistente h2{font-size:25px}
+    .tools{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(9,auto);
+           gap:0 20px}
+    .amarras,.prosa,.notas{grid-template-columns:1fr;gap:28px}
+    .regua{grid-template-columns:1fr;gap:26px}
+    .tiras{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 20px}
+    .abertura h1{font-size:32px}
+    .tools{grid-template-columns:1fr;grid-auto-flow:row;grid-template-rows:none}
+  }
+  a:focus-visible{outline:2px solid var(--destaque);outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap topo">
+    <div class="marca">gacherubini<span>.dev</span></div>
+    <a class="voltar" href="#">← Todos os projetos</a>
+    <div class="idioma"><b>PT</b> / EN</div>
+  </div>
+</header>
+
+<section class="wrap abertura">
+  <div>
+    <h1>Office Timesheet</h1>
+    <p class="chamada">O escritório de arquitetura descobre onde o tempo da equipe
+      foi parar — e quanto cada projeto custou — sem depender de planilha.</p>
+  </div>
+  <aside class="ficha">
+    <dl>
+      <dt>Para quem</dt><dd>Escritório de arquitetura</dd>
+      <dt>Situação</dt><dd>Sistema fechado, interno do escritório</dd>
+      <dt>Tamanho</dt><dd>26 páginas, 4 papéis de acesso</dd>
+      <dt>Desde</dt><dd>a confirmar</dd>
+    </dl>
+    <div class="semlink">
+      <b>Sem link para entrar</b>
+      <p>É um sistema interno: não tem área pública nem conta de visitante. O que
+        dá para mostrar aqui são os prints.</p>
+    </div>
+  </aside>
+</section>
+
+<section class="wrap abre">
+  <figure>
+    <img src="/public/prints/office-timesheet/03-tarefas-kanban.png"
+         width="3200" height="2000"
+         alt="Quadro de tarefas com cinco colunas — A fazer, Fazendo, Falta info, Em revisão e Concluído. Cada cartão traz o projeto, a etapa, o responsável, as horas já contadas, o prazo e um botão Contar horas.">
+    <figcaption>O quadro de tarefas, com todas as tarefas de todos os projetos.
+      O marcador laranja de cada cartão é de onde saiu a cor desta página.</figcaption>
+  </figure>
+</section>
+
+<section class="assistente">
+  <div class="wrap">
+    <div class="cabeca">
+      <h2>O assistente, e as 17 perguntas que ele sabe responder</h2>
+      <p>Um assistente construído com DeepSeek, dentro do sistema. Em vez de
+        abrir sete telas para montar a resposta, a pessoa pergunta.</p>
+      <p>A lista dos tools de leitura explica melhor do que qualquer descrição
+        para que ele serve: são as perguntas chatas de segunda-feira, cada uma
+        virada função.</p>
+    </div>
+
+    <p class="rotulo">O que ele lê</p>
+    <ul class="tools">
+      <li>quemNaoApontou</li>
+      <li>tasksTravadas</li>
+      <li>cargaEquipe</li>
+      <li>feriasEConflitos</li>
+      <li>custoPorProjeto</li>
+      <li>aprovacoesPendentes</li>
+      <li>apontamentosAbertos</li>
+      <li>andamentoDeProjeto</li>
+      <li>despesasDoPeriodo</li>
+      <li>agendaDoPeriodo</li>
+      <li>simulacaoPerformance</li>
+      <li>gerarRelatorio</li>
+      <li>statusProjeto</li>
+      <li>listarEquipe</li>
+      <li>bonusDoPeriodo</li>
+      <li>meusBonus</li>
+      <li>aniversariantes</li>
+    </ul>
+
+    <div class="amarras">
+      <div class="amarra">
+        <h4>Ele propõe, não executa</h4>
+        <p>Nada é escrito no sistema pelo assistente. Ele monta a proposta, e a
+          pessoa aprova ou descarta.</p>
+      </div>
+      <div class="amarra">
+        <h4>Não é um canal privilegiado</h4>
+        <p>Cada pessoa alcança pelo assistente exatamente o que alcançaria
+          navegando o site. A mesma régua de permissão vale nos dois caminhos.</p>
+      </div>
+      <div class="amarra">
+        <h4>Cada resposta declara suas fontes</h4>
+        <p>No rodapé da resposta vai a lista de quais leituras a produziram. Dá
+          para conferir em vez de acreditar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap regua">
+  <div class="num"><b>1.452</b><span>casos de teste, contra Postgres real no CI</span></div>
+  <div class="num"><b>148</b><span>endpoints HTTP</span></div>
+  <div class="num"><b>40</b><span>tabelas no banco</span></div>
+  <div class="num"><b>34</b><span>tools no assistente: 17 de leitura, 15 de escrita</span></div>
+</section>
+
+<section class="wrap prosa">
+  <div>
+    <h3>O problema</h3>
+    <p>Num escritório de arquitetura, a hora trabalhada é o que se vende. Só que
+      ela fica espalhada: cada pessoa em vários projetos no mesmo dia, cada
+      projeto em várias etapas, e o registro disso vivendo numa planilha.</p>
+    <p>No fim do mês, ninguém consegue responder com segurança as duas perguntas
+      que importam — onde o tempo da equipe foi parar, e quanto cada projeto
+      custou de verdade.</p>
+  </div>
+  <div>
+    <h3>O que o sistema faz</h3>
+    <p>Marcar hora por projeto sem planilha: abre o projeto, clica em apontar
+      horas, o cronômetro roda, pausa no almoço, retoma, encerra.</p>
+    <p>Tocar os projetos: cada um tem as quatro etapas — Levantamento, Estudo
+      Preliminar, Anteprojeto, Projeto Executivo — e um quadro de tarefas com
+      responsável, prazo e cronômetro por tarefa.</p>
+    <p>E fechar o mês: o admin vê quanto a equipe trabalhou e quanto cada projeto
+      custou, e resolve numa fila só as três coisas que precisam de gente —
+      correção de ponto, reembolso de despesa e pedido de férias. Em volta disso,
+      um cadastro que junta colaboradores, clientes e fornecedores, e uma agenda
+      com férias, feriados, prazos e o Google Calendar de cada um.</p>
+  </div>
+</section>
+
+<section class="wrap galeria">
+  <h3>O dia de quem aponta</h3>
+  <div class="tiras">
+    <figure>
+      <img src="/public/prints/office-timesheet/02-registro-horas-projetos.png"
+           width="3200" height="2000"
+           alt="Lista de projetos em cartões, cada um com o cliente, a contagem de tarefas por coluna e o botão Apontar horas; num deles o cronômetro está rodando, com pausar e encerrar ao lado.">
+      <figcaption>Os projetos da pessoa, e o cronômetro rodando num deles.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/office-timesheet/04-projeto-etapas-e-quadro.png"
+           width="3200" height="2000"
+           alt="Página de um projeto: as quatro etapas em régua no topo, cada uma com prazo e horas acumuladas, o briefing, o quadro de tarefas do projeto e, na coluna da direita, contratante e horas do mês.">
+      <figcaption>Um projeto por dentro: etapas, briefing e o quadro só dele.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/office-timesheet/07-agenda-equipe.png"
+           width="3200" height="2000"
+           alt="Agenda em vista de mês com férias da equipe, feriados, prazos de tarefa e quem está no escritório; à esquerda, a conexão com o Google Calendar e as agendas ligadas.">
+      <figcaption>A agenda junta férias, feriados, prazos e o Google Calendar.</figcaption>
+    </figure>
+  </div>
+
+  <h3>O fechamento do mês</h3>
+  <div class="tiras">
+    <figure>
+      <img src="/public/prints/office-timesheet/08-dashboard-admin.png"
+           width="3200" height="2000"
+           alt="Visão geral da operação: horas da equipe no período, quem está com cronômetro rodando agora, a lista da equipe com horas e número de projetos, e a coluna Precisa de você com os pedidos e os botões aprovar e rejeitar.">
+      <figcaption>A visão do admin, com quem está trabalhando agora.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/office-timesheet/11-aprovacoes.png"
+           width="3200" height="2000"
+           alt="Tela de aprovações em três colunas: correções de apontamento, despesas e pedidos de férias, cada item com a justificativa de quem pediu e os botões aprovar e rejeitar.">
+      <figcaption>A fila única: ponto, despesa e férias no mesmo lugar.</figcaption>
+    </figure>
+    <figure>
+      <img src="/public/prints/office-timesheet/13-relatorio-financeiro.png"
+           width="3200" height="2000"
+           alt="Relatório financeiro por período: total a pagar, custo de horas, despesas aprovadas e bônus, com as tabelas de maiores pagamentos por colaborador e de projetos com maior custo, em horas e em reais.">
+      <figcaption>Quanto custou o período, por pessoa e por projeto.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="wrap tecnico">
+  <p class="aviso">Esta parte é pra quem é da área. Se não for o seu caso, pode
+    pular — acabou aqui.</p>
+  <div class="chips">
+    <span class="chip">Node 20</span>
+    <span class="chip">Express 5</span>
+    <span class="chip">PostgreSQL 16</span>
+    <span class="chip">React 19</span>
+    <span class="chip">Vite 6</span>
+    <span class="chip">Tailwind</span>
+    <span class="chip">DeepSeek</span>
+    <span class="chip">Fly.io</span>
+    <span class="chip">GitHub Actions</span>
+  </div>
+  <div class="notas">
+    <div class="nota">
+      <h4>Os quinze tools de escrita começam com <code>propor</code></h4>
+      <p>Nenhum se chama <code>criar</code> ou <code>aprovar</code>:
+        <code>proporCriarTask</code>, <code>proporAprovarDespesa</code>,
+        <code>proporPedirFerias</code>, e assim os quinze. A regra não está num
+        comentário nem numa checagem solta — está no nome de cada função que o
+        modelo pode chamar. Escrever direto é uma coisa que não existe para ele.</p>
+    </div>
+    <div class="nota">
+      <h4>A regra vive no banco, não só no código</h4>
+      <p>Índice único parcial garantindo um apontamento aberto por pessoa,
+        <code>EXCLUDE</code> barrando férias sobrepostas, um pedido pendente por
+        apontamento e <code>ON DELETE RESTRICT</code> entre apontamento e
+        projeto. Onde não dá para burlar.</p>
+    </div>
+    <div class="nota">
+      <h4>O valor/hora congela no apontamento</h4>
+      <p>O custo de uma hora é gravado no momento em que ela é apontada. Aumento
+        de salário depois não reescreve o custo do que já passou, e o relatório
+        de um mês fechado continua dando o mesmo número no ano que vem.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>Gabriel Cherubini · Porto Alegre</span>
+  <span>gacherubini.dev</span>
+</footer>
+
+</body>
+</html>

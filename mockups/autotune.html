@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Autotune na home — três tratamentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--pg:#1A1C1E;--txt:#E8E9E7;--calmo:#9BA09E;--fio:#33373A;--acento:#7EA6FF;
+        --alerta:#FFB86B}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--pg);color:var(--txt);
+       font-family:Archivo,system-ui,sans-serif;font-size:14px;line-height:1.55}
+  header{padding:18px 24px;border-bottom:1px solid var(--fio);
+         display:flex;gap:22px;align-items:baseline;flex-wrap:wrap}
+  h1{margin:0;font-size:16px;font-weight:600}
+  .sub{color:var(--calmo);font-size:13px;flex:1;min-width:300px}
+  .voltar{font-size:13px;color:var(--acento);text-decoration:none}
+  .voltar:hover{text-decoration:underline}
+  .controles{display:flex;gap:6px}
+  button{font:inherit;font-size:13px;background:transparent;color:var(--calmo);
+         border:1px solid var(--fio);border-radius:4px;padding:5px 12px;cursor:pointer}
+  button:hover{color:var(--txt);border-color:var(--calmo)}
+  button[aria-pressed=true]{background:var(--txt);color:var(--pg);border-color:var(--txt)}
+
+  .grade{display:grid;gap:1px;background:var(--fio);border-top:1px solid var(--fio)}
+  .grade[data-cols="3"]{grid-template-columns:repeat(3,1fr);--z:.38}
+  .grade[data-cols="1"]{grid-template-columns:1fr;--z:1}
+
+  .painel{background:var(--pg);display:flex;flex-direction:column;min-width:0}
+  .rotulo{padding:13px 16px;display:flex;gap:11px;align-items:baseline}
+  .letra{font-size:17px;font-weight:700;color:var(--acento);line-height:1}
+  .nome{font-weight:600;min-width:0}
+  .nome small{display:block;font-weight:400;color:var(--calmo);font-size:12.5px;
+              margin-top:3px;line-height:1.45}
+  .nome small.aviso{color:var(--alerta)}
+  .abrir{margin-left:auto;font-size:12.5px;color:var(--acento);text-decoration:none;
+         white-space:nowrap}
+  .abrir:hover{text-decoration:underline}
+
+  .janela{position:relative;overflow:hidden;border-top:1px solid var(--fio);
+          height:calc(100vh - 148px);min-height:440px}
+  .janela iframe{position:absolute;top:0;left:0;width:1440px;border:0;
+                 transform-origin:0 0;background:#fff;
+                 height:calc((100vh - 148px) / var(--z));transform:scale(var(--z))}
+  .grade[data-cols="1"] iframe{width:100%;height:calc(100vh - 148px);transform:none}
+
+  @media(max-width:1000px){.grade[data-cols="3"]{grid-template-columns:1fr;--z:1}
+                           .grade[data-cols="3"] iframe{width:100%;height:calc(100vh - 148px);transform:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>O Autotune na home</h1>
+  <p class="sub">Camaleão confirmado, paletas corrigidas pelos pixels dos prints.
+     A pergunta que sobrou: <b>o menta do Autotune repete o menta da Revy?</b>
+     Os painéis abrem já rolados até onde o Autotune aparece.</p>
+  <a class="voltar" href="index.html">← as quatro direções</a>
+  <div class="controles">
+    <button data-cols="3" aria-pressed="true">3 lado a lado</button>
+    <button data-cols="1" aria-pressed="false">1</button>
+    <button id="topo">ver do topo</button>
+    <button id="fim">ver o fim</button>
+  </div>
+</header>
+
+<div class="grade" id="grade" data-cols="3">
+
+  <div class="painel">
+    <div class="rotulo">
+      <span class="letra">1</span>
+      <span class="nome">Cartão em "outros projetos"
+        <small>Três faixas + uma seção menor no fim. O menta some da sequência de faixas.</small></span>
+      <a class="abrir" href="a1-autotune-cartao.html" target="_blank">abrir</a>
+    </div>
+    <div class="janela"><iframe src="a1-autotune-cartao.html" title="Autotune como cartão"></iframe></div>
+  </div>
+
+  <div class="painel">
+    <div class="rotulo">
+      <span class="letra">2</span>
+      <span class="nome">Faixa, cor real
+        <small>Quatro faixas. Menta #2EE6A0 do plugin, com o roxo e a clara separando da Revy.</small></span>
+      <a class="abrir" href="a2-autotune-faixa.html" target="_blank">abrir</a>
+    </div>
+    <div class="janela"><iframe src="a2-autotune-faixa.html" title="Autotune como faixa com a cor real"></iframe></div>
+  </div>
+
+  <div class="painel">
+    <div class="rotulo">
+      <span class="letra">3</span>
+      <span class="nome">Faixa, cor inventada
+        <small class="aviso">Âmbar #F3B843. Não aparece em nenhum dos 4 prints — quebra a premissa.</small></span>
+      <a class="abrir" href="a3-autotune-ambar.html" target="_blank">abrir</a>
+    </div>
+    <div class="janela"><iframe src="a3-autotune-ambar.html" title="Autotune como faixa com cor inventada"></iframe></div>
+  </div>
+
+</div>
+
+<script>
+  const grade = document.getElementById('grade');
+  const quadros = () => [...document.querySelectorAll('.janela iframe')];
+
+  document.querySelectorAll('.controles button[data-cols]').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.controles button[data-cols]')
+        .forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+      grade.dataset.cols = b.dataset.cols;
+    });
+  });
+
+  function rolar(para) {
+    quadros().forEach(f => {
+      try {
+        const d = f.contentDocument;
+        if (!d) return;
+        const y = para === 'fim'
+          ? d.documentElement.scrollHeight
+          : 0;
+        f.contentWindow.scrollTo(0, y);
+      } catch (e) { /* outro origin: ignora */ }
+    });
+  }
+
+  document.getElementById('fim').addEventListener('click', () => rolar('fim'));
+  document.getElementById('topo').addEventListener('click', () => rolar('topo'));
+
+  // abre já mostrando o fim, que é onde o Autotune mora nas três
+  let prontos = 0;
+  quadros().forEach(f => f.addEventListener('load', () => {
+    if (++prontos === quadros().length) setTimeout(() => rolar('fim'), 400);
+  }));
+</script>
+
+</body>
+</html>
