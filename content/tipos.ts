@@ -86,8 +86,6 @@ export type Projeto = {
     texto: Texto[]
     /** 0, 1 ou 2. Zero é o slot do print que ainda não existe. */
     prints: Print[]
-    /** P3: os 17 tools de leitura, em monoespaçada porque são nomes de função. */
-    lista?: { rotulo: Texto; itens: string[] }
     /** P3: as três garantias abaixo da lista. */
     amarras?: Nota[]
     /** P4: a frase que fecha o bloco, centralizada. */
@@ -100,6 +98,23 @@ export type Projeto = {
    * diferente ("5.559" vira "5,559"), e o campo precisa carregar os dois.
    */
   numeros: { valor: Texto; rotulo: Texto }[]
+
+  /**
+   * A régua da **faixa da home**, quando ela precisa ser diferente da régua da
+   * página do projeto. Ausente, a home usa `numeros`.
+   *
+   * Existe por causa do Office Timesheet: os quatro números dele ("1.452 casos
+   * de teste", "148 endpoints HTTP") são de tech lead, e a home é vitrine. Eles
+   * continuam existindo — na página do projeto, que é onde essa plateia chega.
+   */
+  numerosHome?: { valor: Texto; rotulo: Texto }[]
+
+  /**
+   * Pílula curta ao lado de "no ar"/"fechado" na faixa da home. Hoje só marca
+   * quem tem IA por dentro: Revy e Office Timesheet.
+   */
+  selo?: Texto
+
   galeria: FileiraGaleria[]
   links: { rotulo: Texto; href: string; primario?: boolean }[]
 
@@ -136,6 +151,16 @@ export function validarProjeto(p: Projeto): string[] {
 
   if (p.numeros.length !== 0 && !entre(p.numeros.length, 3, 4)) {
     erro(`numeros tem ${p.numeros.length}; o contrato pede 0, 3 ou 4`)
+  }
+
+  // Mesma régua de `numeros`: 0, 3 ou 4. Dois números numa faixa nunca ficam
+  // de pé — sobra um vão do tamanho de uma coluna.
+  if (p.numerosHome && p.numerosHome.length !== 0 && !entre(p.numerosHome.length, 3, 4)) {
+    erro(`numerosHome tem ${p.numerosHome.length}; o contrato pede 0, 3 ou 4`)
+  }
+
+  if (p.selo && !p.selo.pt.trim()) {
+    erro('selo está em branco; sem texto ele vira uma pílula vazia')
   }
 
   if (p.destaque && !entre(p.destaque.prints.length, 0, 2)) {

@@ -195,3 +195,53 @@ describe('validarProjeto — o que ele recusa', () => {
     expect(validarProjeto(p).join(' ')).toMatch(/texto\/fundo/)
   })
 })
+
+describe('numerosHome', () => {
+  it('aceita ausente: quem não declara usa `numeros` na home', () => {
+    expect(validarProjeto(BASE)).toEqual([])
+  })
+
+  it('aceita 3 e aceita 4', () => {
+    const tres = [
+      { valor: txt('1'), rotulo: txt('um') },
+      { valor: txt('2'), rotulo: txt('dois') },
+      { valor: txt('3'), rotulo: txt('três') },
+    ]
+    expect(validarProjeto({ ...BASE, numerosHome: tres })).toEqual([])
+    expect(
+      validarProjeto({ ...BASE, numerosHome: [...tres, { valor: txt('4'), rotulo: txt('quatro') }] }),
+    ).toEqual([])
+  })
+
+  it('aceita vazio: é o estado de "ainda não confirmado"', () => {
+    expect(validarProjeto({ ...BASE, numerosHome: [] })).toEqual([])
+  })
+
+  it('recusa 2, que nunca fica de pé na faixa', () => {
+    const falhas = validarProjeto({
+      ...BASE,
+      numerosHome: [
+        { valor: txt('1'), rotulo: txt('um') },
+        { valor: txt('2'), rotulo: txt('dois') },
+      ],
+    })
+    expect(falhas).toHaveLength(1)
+    expect(falhas[0]).toContain('numerosHome')
+  })
+})
+
+describe('selo', () => {
+  it('aceita ausente', () => {
+    expect(validarProjeto(BASE)).toEqual([])
+  })
+
+  it('aceita texto', () => {
+    expect(validarProjeto({ ...BASE, selo: txt('IA · agente no WhatsApp') })).toEqual([])
+  })
+
+  it('recusa selo em branco, que desenharia uma pílula vazia', () => {
+    const falhas = validarProjeto({ ...BASE, selo: { pt: '   ', en: '' } })
+    expect(falhas).toHaveLength(1)
+    expect(falhas[0]).toContain('selo')
+  })
+})
