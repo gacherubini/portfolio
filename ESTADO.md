@@ -19,7 +19,7 @@ projeto em PT/EN e a suíte de verificação. A retomada deve começar na Task 1
 
 | Item | Estado |
 |---|---|
-| Commit HEAD | `53deb4d` — rota e topo da página de projeto |
+| Commit HEAD | `54e76fa` — documentação do estado; última implementação em `53deb4d` |
 | Tasks concluídas | 1–11 |
 | Testes | 128/128 em 12 arquivos |
 | Build | aprovado; 13 páginas estáticas, incluindo `/pt`, `/en` e 8 páginas de projeto |
