@@ -10,10 +10,11 @@ as oito páginas de projeto com os sete blocos, Sobre e fechamento, tradução
 inglesa inteira, metadata, sitemap, robots, ícone e página 404. A branch `v2`
 acrescenta as 11 tasks de uma segunda rodada — números reais de vitrine da
 Revy, o selo de IA, o Sobre reescrito, e a galeria de prints virando pranchas
-com abertura em tela cheia — e está completa. Falta só o merge em `main` e o
-deploy, a Task 18, deixados para o dono executar.
+que abrem a 1320px na própria página — e está completa, com uma onda de
+conserto do que a revisão ampla da branch encontrou. Falta só o merge em `main`
+e o deploy, a Task 18, deixados para o dono executar.
 
-Verificação do último estado completo: `npm test` com 207 testes em 21
+Verificação do último estado completo: `npm test` com 214 testes em 21
 arquivos, `npm run build` verde e `git diff --check` limpo. O PDF do currículo
 continua deliberadamente ausente; a build avisa e o botão não aparece.
 

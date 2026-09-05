@@ -16,7 +16,7 @@ as 11 tasks do plano de segunda rodada
 (`docs/superpowers/plans/2026-09-05-portfolio-v2.md`), agora todas concluídas.
 A v2 não troca a base: acrescenta números reais de vitrine, o selo de IA,
 reescreve o Sobre e o bloco do Office Timesheet, e troca a galeria por pranchas
-com abertura em tela cheia. O resumo, tarefa a tarefa:
+com abertura em prancha de 1320px, na própria página. O resumo, tarefa a tarefa:
 
 - **Contrato** (`content/tipos.ts`): ganhou `numerosHome?` (régua da faixa da
   home, quando difere da régua da página) e `selo?` (pílula de IA ao lado de
@@ -47,24 +47,29 @@ com abertura em tela cheia. O resumo, tarefa a tarefa:
   prancha nem é link. Em tela estreita a abertura é desligada.
 - **Movimento** (`components/Movimento.tsx`): brilho seguindo o cursor, botões
   magnéticos, prancha que inclina, entrada na rolagem — o primeiro `'use
-  client'` do site, montado uma vez em `app/[lang]/layout.tsx` e valendo para
-  toda página.
+  client'` do site, montado uma vez em `app/[lang]/layout.tsx`. O layout é
+  compartilhado pela home e pelas páginas de projeto e a navegação entre elas
+  é do cliente, então o efeito é escopado a `usePathname()`: ele se remonta a
+  cada rota, sobre o DOM da página nova. Ver a revisão ampla, abaixo.
 - **Entrada**: um véu cobre a home enquanto a marca se revela e uma régua
   atravessa as quatro cores dos quatro sistemas. CSS puro mais um script inline
   curto; toca uma vez por sessão.
-- **Fechamento (Task 11, esta)**: o portão de acessibilidade da prancha —
-  nenhuma tem `aria-hidden`, todo print continua com `alt` — e a atualização
-  deste arquivo.
+- **Fechamento (Task 11)**: o portão de acessibilidade da prancha — nenhuma tem
+  `aria-hidden`, todo print continua com `alt` — e a atualização deste arquivo.
+- **Conserto da revisão ampla (depois das 11 tasks)**: o efeito do movimento
+  escopado à rota, o alinhamento da pílula de situação nas faixas sem selo, a
+  prancha de volta a `<figure>`/`<figcaption>`, e três reparos de uma linha.
+  Detalhado logo abaixo.
 
 Último estado completo:
 
 | Item | Estado |
 |---|---|
-| Commit HEAD | `161905e` — movimento: brilho, ímãs, inclinação e entrada na rolagem |
-| Tasks concluídas | 1–17 (`main`) + 1–11 da v2 (`v2`) |
-| Testes | 207/207 em 21 arquivos |
+| Commit HEAD | `a69edc6` — fix: o que a revisão ampla da branch encontrou; este arquivo entra no commit de docs logo em seguida |
+| Tasks concluídas | 1–17 (`main`) + 1–11 da v2 (`v2`), mais a onda de conserto da revisão ampla da v2 |
+| Testes | 214/214 em 21 arquivos |
 | Build | aprovada; único aviso é o do currículo ausente, que é esperado; nenhum aviso de tradução |
-| Working tree | limpa antes desta task |
+| Working tree | limpa |
 | Próxima task | nenhuma — a v2 está completa; falta o merge em `main` e a Task 18 (deploy), que continua do dono |
 
 Cada task foi implementada por um subagente e revisada por outro antes de
@@ -90,6 +95,41 @@ com todas as decisões tomadas, está em
    quatro vírgula oito para um leitor de inglês. `numeros[].valor` e
    `Print.valor` viraram `Texto`; `/en` agora serve `44,812` e `61.72 ms`, e o
    português segue igual.
+
+### O que a revisão ampla da v2 encontrou
+
+Mesmo desenho: cada uma das 11 tasks foi implementada e revisada em separado, e
+depois uma revisão ampla olhou a costura entre elas. Achou um defeito Critical e
+três Important; todos foram consertados na onda única de conserto, com testes.
+
+1. **A segunda página ficava em branco.** `components/Movimento.tsx` montava o
+   efeito com `[]`, e `app/[lang]/layout.tsx` é compartilhado pela home e pelas
+   páginas de projeto — a navegação entre elas é `next/link`, então o layout
+   nunca era desmontado e o efeito nunca rodava de novo. Depois do primeiro
+   clique, `html[data-anima]` continuava posto sobre `.revela` que ninguém
+   observava (o `<h1>`, a ficha, a régua, a prosa, a galeria inteira em
+   `opacity: 0`), e a lista de pranchas era o retrato da primeira página —
+   clicar num print saía do site para o PNG cru. O efeito agora depende de
+   `usePathname()`. Coberto por `test/componentes/movimento.test.tsx`.
+2. **A pílula "no ar"/"fechado" perdia o alinhamento à direita** nas duas faixas
+   sem selo (BDDente e Autotune): `.ficha-faixa .situacao { margin-left: 0 }`,
+   (0,2,0), vencia a `margin: 0 0 0 auto` de (0,1,0) mesmo sem selo nenhum para
+   fazer o empurrão. Virou `.ficha-faixa .selo ~ .situacao`.
+3. **A legenda da prancha tinha perdido a ligação com a imagem.** A v1
+   desenhava `<figure>`/`<figcaption>`; a reescrita em pranchas trocou por dois
+   `<div>` irmãos, que não dão nada à tecnologia assistiva. O elemento voltou, e
+   com ele saíram as ~14 linhas de regra de `figure` da v1 que estavam mortas na
+   folha e voltariam a competir com as regras de prancha.
+4. **Este arquivo e o `README.md` estavam velhos** — contagem de testes e HEAD
+   defasados, e os dois chamavam a abertura da prancha de "abertura em tela
+   cheia", que é justamente o desenho **construído, testado e rejeitado**
+   (spec §2 e §8).
+
+Mais três reparos de uma linha que entraram junto: `altKey` no desvio de
+modificadores do clique (alt-clique é "baixar o link" no Chrome e no Firefox),
+um `background` de fallback antes do `color-mix` do véu da entrada (sem ele a
+declaração inteira é inválida e o véu vira uma camada transparente e clicável
+por 1,48s), e dois testes que prometiam no nome mais do que afirmavam no corpo.
 
 ## Decisões fechadas (não reabrir)
 
@@ -132,7 +172,7 @@ com todas as decisões tomadas, está em
 | `docs/levantamentos/autotune.md` | idem, Autotune |
 | `content/sobre.ts` | conteúdo PT e EN do Sobre |
 | `content/projetos/*.ts` | conteúdo PT/EN de Revy, BDDente, Office Timesheet e Autotune |
-| `app/`, `components/`, `lib/`, `test/` | implementação das Tasks 1–17 (`main`) e das Tasks 1–11 da v2 (`v2`), suíte de 207 testes em 21 arquivos |
+| `app/`, `components/`, `lib/`, `test/` | implementação das Tasks 1–17 (`main`) e das Tasks 1–11 da v2 (`v2`), suíte de 214 testes em 21 arquivos |
 | `docs/superpowers/plans/2026-09-04-portfolio-implementacao.md` | plano executável de 18 tasks da v1 |
 | `docs/superpowers/plans/2026-09-05-portfolio-v2.md` | plano executável de 11 tasks da v2, **esta task fecha ele** |
 | `docs/superpowers/specs/2026-09-05-portfolio-v2-design.md` | a spec de design da v2 |
@@ -310,6 +350,12 @@ página servida de verdade.
    tem a lógica do 1,5×, o desligamento em tela estreita e o foco visível
    cobertos por teste — mas a sensação do movimento em si, se ele fica solto
    ou trava, só um navegador real mostra.
+3. **A navegação interna, depois do conserto da revisão ampla.** O efeito do
+   movimento agora se remonta a cada rota, e o teste prova que os `.revela` da
+   página nova são revelados e que as pranchas dela são avaliadas. O que o
+   teste não vê é a costura visual: clicar em "Ver o projeto", voltar para a
+   home, trocar de idioma — e conferir que nada pisca escondido no meio do
+   caminho. Vale um passeio de três cliques na página servida.
 
 ## Ambientes locais
 
