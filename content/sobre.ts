@@ -1,15 +1,11 @@
 /**
  * O "Sobre" do site. Texto curto de propósito: quem chega aqui veio ver os
  * sistemas, não ler biografia.
- *
- * Os tipos abaixo migram para `content/tipos.ts` quando o site existir.
  */
-
-export type Idioma = 'pt' | 'en'
-export type Texto = Record<Idioma, string>
+import type { Texto } from '@/content/tipos'
+export type { Idioma, Texto } from '@/content/tipos'
 
 export const sobre: {
-  titulo: Texto
   paragrafos: Texto[]
   ficha: { rotulo: Texto; valor: Texto }[]
   /** Os dois canais diretos, em tamanho de leitura no fim da home. */
@@ -21,11 +17,6 @@ export const sobre: {
   /** Perfis, secundários ao lado do contato. */
   links: { rotulo: string; href: string }[]
 } = {
-  titulo: {
-    pt: 'Sobre',
-    en: 'About',
-  },
-
   paragrafos: [
     {
       pt: 'Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.',
