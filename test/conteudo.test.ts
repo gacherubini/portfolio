@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { validarProjeto } from '@/content/tipos'
+import { bddente } from '@/content/projetos/bddente'
 import { revy } from '@/content/projetos/revy'
 
 describe('revy', () => {
@@ -29,5 +30,28 @@ describe('revy', () => {
 
   it('não declara "Desde" — o contrato deixa a linha de fora quando não se sabe', () => {
     expect(revy.ficha.some((l) => /a confirmar/i.test(l.valor.pt))).toBe(false)
+  })
+})
+
+describe('bddente', () => {
+  it('passa no contrato', () => {
+    expect(validarProjeto(bddente)).toEqual([])
+  })
+
+  it('não tem link nenhum — prontuário de clínica real não tem tela pública', () => {
+    expect(bddente.links).toEqual([])
+    expect(bddente.semLink?.curto.pt).toMatch(/fechado/i)
+  })
+
+  it('tem destaque com um print só', () => {
+    expect(bddente.destaque?.prints).toHaveLength(1)
+  })
+
+  it('tem quatro números', () => {
+    expect(bddente.numeros).toHaveLength(4)
+  })
+
+  it('tem três notas técnicas', () => {
+    expect(bddente.tecnico.notas).toHaveLength(3)
   })
 })
