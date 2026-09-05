@@ -19,6 +19,22 @@ function montarPrancha(largura: number, exibida: number) {
   return alvo
 }
 
+// A consulta de tela estreita é relida a cada resize, não guardada na
+// montagem: o stub responde ao que `tela.estreita` disser na hora.
+function fingirTela(tela: { estreita: boolean }) {
+  vi.spyOn(window, 'matchMedia').mockImplementation(
+    (consulta: string) =>
+      ({
+        get matches() {
+          return consulta.includes('max-width') && tela.estreita
+        },
+        media: consulta,
+        addEventListener() {},
+        removeEventListener() {},
+      }) as unknown as MediaQueryList,
+  )
+}
+
 afterEach(() => vi.restoreAllMocks())
 beforeEach(() => document.documentElement.removeAttribute('data-mov'))
 
@@ -67,6 +83,49 @@ describe('a regra que decide se a prancha abre', () => {
     render(<Movimento />)
     alvo.click()
     expect(alvo.closest('.prancha')?.classList.contains('aberta')).toBe(true)
+  })
+
+  // A prancha aberta é exibida na largura ABERTA. Medindo 1,5× contra ela, um
+  // print de 1568 — que existe no conteúdo — reprovava aberto a 1320, ganhava
+  // `prancha--fixa` no primeiro resize e o clique parava de fechá-lo: o cursor
+  // continuava prometendo `zoom-out` e só `Esc` salvava.
+  it('a prancha aberta continua fechando depois de um resize', () => {
+    const alvo = montarPrancha(1568, 880)
+    render(<Movimento />)
+    alvo.click()
+
+    // Aberta, o alvo passa a ocupar a largura de abertura.
+    alvo.getBoundingClientRect = () =>
+      ({ width: 1320, height: 818, left: 0, top: 0, right: 1320, bottom: 0 }) as DOMRect
+    dispatchEvent(new Event('resize'))
+
+    expect(alvo.closest('.prancha')?.classList.contains('prancha--fixa')).toBe(false)
+    alvo.click()
+    expect(alvo.closest('.prancha')?.classList.contains('aberta')).toBe(false)
+  })
+
+  it('em tela estreita a prancha não abre e não é link', () => {
+    fingirTela({ estreita: true })
+    const alvo = montarPrancha(3200, 880)
+    render(<Movimento />)
+    expect(alvo.hasAttribute('href')).toBe(false)
+    alvo.click()
+    expect(alvo.closest('.prancha')?.classList.contains('aberta')).toBe(false)
+  })
+
+  it('a janela que encolhe para estreita fecha a prancha que estava aberta', () => {
+    const tela = { estreita: false }
+    fingirTela(tela)
+    const alvo = montarPrancha(3200, 880)
+    render(<Movimento />)
+    alvo.click()
+    expect(alvo.closest('.prancha')?.classList.contains('aberta')).toBe(true)
+
+    tela.estreita = true
+    dispatchEvent(new Event('resize'))
+
+    expect(alvo.closest('.prancha')?.classList.contains('aberta')).toBe(false)
+    expect(alvo.hasAttribute('href')).toBe(false)
   })
 
   it('Esc fecha', () => {

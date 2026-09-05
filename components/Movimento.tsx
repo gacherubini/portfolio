@@ -15,6 +15,11 @@ export function Movimento() {
   useEffect(() => {
     const raiz = document.documentElement
     const menos = matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Numa tela estreita a prancha já ocupa quase tudo: abrir não acrescenta, e
+    // a abertura é desligada junto com o resto do movimento. Fica guardada a
+    // consulta, e não o `.matches`: `aoRedimensionar` a relê a cada quadro de
+    // redimensionamento, porque atravessar 900px muda a resposta.
+    const estreito = matchMedia('(max-width: 900px)')
     const pranchas = [...document.querySelectorAll<HTMLElement>('.prancha')]
     let aberta: HTMLElement | null = null
 
@@ -27,13 +32,19 @@ export function Movimento() {
      * servida, e a conta erraria.
      */
     function avaliar(p: HTMLElement) {
+      // A prancha aberta está exibida na largura ABERTA, não na de leitura:
+      // medir 1,5× contra ela é medir a coisa errada. Um print de 1568 passa
+      // fechado a 880 e reprovaria aberto a 1320 — ganharia `prancha--fixa` no
+      // primeiro resize, perderia o href, e o clique deixaria de fechá-la.
+      if (p === aberta) return
+
       const alvo = p.querySelector<HTMLAnchorElement>('.prancha-alvo')
       if (!alvo) return
       const arquivo = Number(alvo.dataset.largura)
       const exibida = alvo.getBoundingClientRect().width
       if (!arquivo || !exibida) return
 
-      const vale = arquivo >= exibida * 1.5
+      const vale = !estreito.matches && arquivo >= exibida * 1.5
       p.classList.toggle('prancha--fixa', !vale)
 
       if (vale) {
@@ -52,6 +63,34 @@ export function Movimento() {
     }
 
     /**
+     * `--esq` é a distância da COLUNA do print até a borda da tela. Dentro da
+     * faixa da home, `50%` no centramento resolve contra a coluna, não contra a
+     * página — e a coluna não está no meio da tela.
+     *
+     * Quem é medido é a prancha, não o alvo: com a prancha aberta o alvo já
+     * carrega a margem que esta conta produziu, e medi-lo devolveria o lugar
+     * deslocado no lugar do lugar da coluna. Fechada, os dois coincidem.
+     */
+    function medirEsq(p: HTMLElement) {
+      if (!p.closest('.faixa')) return
+      const alvo = p.querySelector<HTMLElement>('.prancha-alvo')
+      alvo?.style.setProperty('--esq', `${p.getBoundingClientRect().left}px`)
+    }
+
+    // Uma animação por prancha, para poder cancelar a que ainda está no ar.
+    const voos = new WeakMap<HTMLElement, Animation>()
+
+    /** Tira a prancha do estado aberto sem passar pelo FLIP. */
+    function desmarcar(p: HTMLElement) {
+      // Uma animação dela no ar ficaria deslizando para uma geometria que já
+      // não existe: é o caso de trocar de prancha aberta, e o de encolher a
+      // janela para estreito com uma prancha aberta.
+      voos.get(p)?.cancel()
+      p.classList.remove('aberta')
+      p.querySelector<HTMLElement>('.prancha-alvo')!.dataset.convite = 'ver maior'
+    }
+
+    /**
      * FLIP. Mede onde a imagem está, muda o layout de uma vez, mede de novo, e
      * devolve a imagem ao lugar antigo com um `transform` — daí anima esse
      * transform até zero.
@@ -62,11 +101,19 @@ export function Movimento() {
      */
     function virar(p: HTMLElement, mudar: () => void) {
       const alvo = p.querySelector<HTMLElement>('.prancha-alvo')!
+
+      // Antes de medir: uma animação no ar deforma a caixa que `antes` vai ler,
+      // e sem cancelá-la clicar em B com A voando deixa A deslizando para uma
+      // geometria que já não existe. Clicar duas vezes na mesma prancha é pior:
+      // o `.then` da primeira tiraria `prancha--virando` no meio da segunda.
+      voos.get(p)?.cancel()
+
       const antes = alvo.getBoundingClientRect()
 
-      // Dentro da faixa da home, `50%` no centramento resolve contra a coluna
-      // do print, não contra a página — e a coluna não está no meio da tela.
-      if (p.closest('.faixa')) alvo.style.setProperty('--esq', `${antes.left}px`)
+      // Só ao abrir: com a prancha já aberta o valor está aplicado, e remedir
+      // aqui mexeria na geometria que `antes` acabou de capturar. Fechando,
+      // `--esq` não vale mais nada — a regra que o usa pede `.aberta`.
+      if (!p.classList.contains('aberta')) medirEsq(p)
 
       if (menos || !alvo.animate) { mudar(); return }
 
@@ -92,17 +139,21 @@ export function Movimento() {
         ],
         { duration: DURACAO, easing: CURVA },
       )
-      anim.finished.catch(() => {}).then(() => p.classList.remove('prancha--virando'))
+      voos.set(p, anim)
+      anim.finished.catch(() => {}).then(() => {
+        // Quem limpa é só a última: uma animação cancelada não pode tirar a
+        // classe de baixo da que a substituiu.
+        if (voos.get(p) !== anim) return
+        voos.delete(p)
+        p.classList.remove('prancha--virando')
+      })
     }
 
     function fechar() {
       if (!aberta) return
       const p = aberta
       aberta = null
-      virar(p, () => {
-        p.classList.remove('aberta')
-        p.querySelector<HTMLElement>('.prancha-alvo')!.dataset.convite = 'ver maior'
-      })
+      virar(p, () => desmarcar(p))
     }
 
     function abrir(p: HTMLElement) {
@@ -110,8 +161,7 @@ export function Movimento() {
       if (aberta) {
         // Sem animar: duas pranchas se mexendo ao mesmo tempo é movimento
         // demais, e a rolagem iria para o lugar errado.
-        aberta.classList.remove('aberta')
-        aberta.querySelector<HTMLElement>('.prancha-alvo')!.dataset.convite = 'ver maior'
+        desmarcar(aberta)
       }
       aberta = p
       virar(p, () => {
@@ -137,7 +187,19 @@ export function Movimento() {
 
     const aoTeclar = (e: KeyboardEvent) => { if (e.key === 'Escape') fechar() }
     // Redimensionar muda a largura exibida, e com ela a conta do 1,5×.
-    const aoRedimensionar = () => pranchas.forEach(avaliar)
+    const aoRedimensionar = () => {
+      // A janela atravessou para estreito com prancha aberta: lá a abertura não
+      // existe, então ela fecha. Sem animar — é o mesmo caso de trocar de
+      // prancha aberta, e animar uma coisa que está sendo desligada é gratuito.
+      if (estreito.matches && aberta) {
+        desmarcar(aberta)
+        aberta = null
+      }
+      pranchas.forEach(avaliar)
+      // `--aberta` acompanha `100vw` sozinha; `--esq` não. Sem remedir, a
+      // prancha da faixa sai do centro no primeiro redimensionamento.
+      if (aberta) medirEsq(aberta)
+    }
     document.addEventListener('keydown', aoTeclar)
     addEventListener('resize', aoRedimensionar)
 

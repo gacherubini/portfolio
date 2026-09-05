@@ -560,9 +560,14 @@ html[data-entrada="visto"] .entrada { display: none; }
   margin-left: calc(50vw - var(--larga) / 2 - var(--esq, 0px));
 }
 /* Uma coluna `1fr` tem piso de `min-content`: com o print a 1320px ela estoura
-   e arrasta a faixa 102px de lado, e o centramento erra por exatamente isso. */
-.faixa:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
-.faixa.espelho:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+   e arrasta a faixa 102px de lado, e o centramento erra por exatamente isso.
+   Presas acima de 820px porque `(0,4,0)` passaria por cima do empilhamento em
+   coluna única do bloco de 820 — `(0,2,0)`, e media query não soma
+   especificidade: no telefone, abrir uma prancha devolveria as duas colunas. */
+@media (min-width: 821px) {
+  .faixa:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+  .faixa.espelho:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+}
 
 /* A legenda salta de 196px para 64ch centrada: interpolar isso nunca fica bom. */
 .prancha-nota { transition: opacity .18s ease; }
@@ -570,8 +575,12 @@ html[data-entrada="visto"] .entrada { display: none; }
 .prancha--virando .prancha-alvo { will-change: transform; }
 
 /* O convite só aparece no hover. Ícone permanente pousado em cima de toda tela
-   do sistema seria sujeira. */
-.prancha-alvo::after {
+   do sistema seria sujeira.
+
+   Preso a `[data-convite]`: sem JavaScript o atributo não existe, e um
+   `content` de string vazia ainda desenharia a pílula — borda e padding em
+   volta de nada. */
+.prancha-alvo[data-convite]::after {
   content: attr(data-convite);
   position: absolute; right: 14px; bottom: 14px;
   background: var(--fundo); color: var(--texto);
@@ -580,12 +589,18 @@ html[data-entrada="visto"] .entrada { display: none; }
   opacity: 0; transform: translateY(6px); pointer-events: none;
   transition: opacity .22s ease, transform .28s cubic-bezier(.2,.7,.3,1);
 }
-.prancha-alvo:hover::after, .prancha-alvo:focus-visible::after { opacity: 1; transform: none; }
+.prancha-alvo[data-convite]:hover::after,
+.prancha-alvo[data-convite]:focus-visible::after { opacity: 1; transform: none; }
 .prancha--fixa .prancha-alvo::after { content: none; }
 
 @media (max-width: 900px) {
-  /* Numa tela estreita a prancha já ocupa quase tudo: abrir não acrescenta. */
-  .prancha.aberta .prancha-alvo { width: 100%; margin-left: 0; }
+  /* Numa tela estreita a prancha já ocupa quase tudo: abrir não acrescenta —
+     e o JS nem abre. Isto aqui é o cinto: se uma prancha atravessar aberta o
+     limiar, ela cabe na coluna. O seletor da faixa vem junto porque
+     `.prancha.aberta .prancha-alvo` é `(0,3,0)` e nunca venceria
+     `.faixa .prancha.aberta .prancha-alvo`, `(0,4,0)`. */
+  .prancha.aberta .prancha-alvo,
+  .faixa .prancha.aberta .prancha-alvo { width: 100%; margin-left: 0; }
   .prancha-alvo::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
