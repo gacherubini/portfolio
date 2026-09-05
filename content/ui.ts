@@ -25,6 +25,10 @@ export const ui = {
     pt: 'Esta parte é pra quem é da área. Se não for o seu caso, pode pular — acabou aqui.',
     en: "This part is for the technical crowd. If that's not you, feel free to stop here.",
   },
+  prosa: {
+    problema: { pt: 'O problema', en: 'The problem' },
+    oQueFaz: { pt: 'O que o sistema faz', en: 'What the system does' },
+  },
   rodape: {
     lugar: { pt: 'Gabriel Cherubini · Porto Alegre · GMT−3', en: 'Gabriel Cherubini · Porto Alegre, Brazil · GMT−3' },
     dominio: { pt: 'gacherubini.dev', en: 'gacherubini.dev' },

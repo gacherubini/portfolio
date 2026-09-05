@@ -345,3 +345,33 @@ nav a:hover { color: var(--tinta); }
 .abre figcaption { max-width: 60ch; }
 .abre + .destaque { margin-top: 56px; }
 @media (max-width: 900px) { .abre + .destaque { margin-top: 40px; } }
+
+/* --- régua de números e prosa ------------------------------------------- */
+/* A régua reusa `.num` da faixa, mas as regras de lá são escopadas em `.faixa`
+   (Tarefa 9). Aqui o rótulo é `var(--calmo)`, e calmo fica em opacidade cheia:
+   a 0,72 ele dá 3,12:1 no Office Timesheet. */
+.regua { padding: 48px 0; border-bottom: 1px solid var(--borda); display: grid; gap: 40px; }
+.regua--3 { grid-template-columns: repeat(3, 1fr); }
+.regua--4 { grid-template-columns: repeat(4, 1fr); gap: 34px; }
+.regua .num b {
+  display: block; font-size: 40px; font-weight: 800; color: var(--destaque);
+  letter-spacing: -.03em; line-height: 1;
+}
+.regua--4 .num b { font-size: 38px; }
+.regua .num span {
+  display: block; font-size: 13px; color: var(--calmo); margin-top: 8px;
+  max-width: 24ch; line-height: 1.4;
+}
+
+.prosa { padding: 64px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
+.prosa h2 { margin: 0 0 14px; font-size: 19px; font-weight: 700; letter-spacing: -.015em; }
+.prosa p { margin: 0 0 16px; font-size: 16px; line-height: 1.62; opacity: .88; max-width: 48ch; }
+.prosa p:last-child { margin-bottom: 0; }
+
+@media (max-width: 1000px) {
+  .regua--4 { grid-template-columns: repeat(2, 1fr); gap: 32px 24px; }
+}
+@media (max-width: 900px) {
+  .prosa { grid-template-columns: 1fr; gap: 28px; }
+  .regua, .regua--3, .regua--4 { grid-template-columns: 1fr; gap: 26px; }
+}
