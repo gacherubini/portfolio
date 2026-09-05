@@ -15,6 +15,11 @@ primary_region = 'iad'
 [http_service]
   internal_port = 3000
   force_https = true
+  # `stop`, e nao `suspend`, apesar de suspend acordar mais rapido e custar o
+  # mesmo. Testado em 05/09/2026: a maquina volta em 342ms, mas a PRIMEIRA
+  # requisicao depois da suspensao levava 502 aos 30s, reprodutivel, porque o
+  # proxy da Fly tentava uma rota que nao respondia mais. Trocar 6s de partida
+  # por um 502 na cara do primeiro visitante e um mau negocio.
   auto_stop_machines = 'stop'
   auto_start_machines = true
   # Zero: ninguém no site, nenhuma máquina de pé, nenhuma cobrança.
