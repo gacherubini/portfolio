@@ -528,3 +528,66 @@ html[data-entrada="visto"] .entrada { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .entrada { display: none; }
 }
+
+/* --- abrir a prancha ----------------------------------------------------- */
+/* 1320px: a 100vw a prancha deixa de ser prancha e vira tomada de tela; a
+   1180 o salto não paga o clique. `--nat` limita: nenhum print é esticado
+   além de onde foi capturado. */
+:root { --aberta: min(1320px, calc(100vw - 64px)); }
+
+.prancha-alvo { cursor: zoom-in; }
+.prancha--fixa .prancha-alvo { cursor: default; }
+
+.prancha.aberta,
+.prancha--margem.aberta:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.prancha.aberta .prancha-alvo { grid-column: 1; grid-row: 1; }
+.prancha.aberta .prancha-nota { grid-column: 1; grid-row: 2; }
+
+.prancha.aberta .prancha-alvo {
+  --larga: min(var(--aberta), var(--nat, 100000px));
+  width: var(--larga);
+  margin-left: calc(50% - var(--larga) / 2);
+  cursor: zoom-out;
+}
+.prancha.aberta .prancha-alvo img { max-width: 100%; }
+.prancha.aberta .prancha-nota {
+  border-top: 0; padding-top: 0; max-width: 64ch; margin: 0 auto; text-align: center;
+}
+
+/* Dentro da faixa, `50%` resolve contra a coluna do print, não contra a
+   página. `--esq` é a distância do print até a borda da tela, medida no JS. */
+.faixa .prancha.aberta .prancha-alvo {
+  margin-left: calc(50vw - var(--larga) / 2 - var(--esq, 0px));
+}
+/* Uma coluna `1fr` tem piso de `min-content`: com o print a 1320px ela estoura
+   e arrasta a faixa 102px de lado, e o centramento erra por exatamente isso. */
+.faixa:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+.faixa.espelho:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+
+/* A legenda salta de 196px para 64ch centrada: interpolar isso nunca fica bom. */
+.prancha-nota { transition: opacity .18s ease; }
+.prancha--virando .prancha-nota { opacity: 0; }
+.prancha--virando .prancha-alvo { will-change: transform; }
+
+/* O convite só aparece no hover. Ícone permanente pousado em cima de toda tela
+   do sistema seria sujeira. */
+.prancha-alvo::after {
+  content: attr(data-convite);
+  position: absolute; right: 14px; bottom: 14px;
+  background: var(--fundo); color: var(--texto);
+  border: 1px solid var(--borda); border-radius: 999px;
+  padding: 6px 14px; font-size: 12.5px; font-weight: 600;
+  opacity: 0; transform: translateY(6px); pointer-events: none;
+  transition: opacity .22s ease, transform .28s cubic-bezier(.2,.7,.3,1);
+}
+.prancha-alvo:hover::after, .prancha-alvo:focus-visible::after { opacity: 1; transform: none; }
+.prancha--fixa .prancha-alvo::after { content: none; }
+
+@media (max-width: 900px) {
+  /* Numa tela estreita a prancha já ocupa quase tudo: abrir não acrescenta. */
+  .prancha.aberta .prancha-alvo { width: 100%; margin-left: 0; }
+  .prancha-alvo::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prancha-nota, .prancha-alvo::after { transition-duration: .01ms; }
+}

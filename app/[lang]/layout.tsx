@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { Archivo } from 'next/font/google'
 import { ehIdioma } from '@/content/tipos'
 import { Entrada } from '@/components/Entrada'
+import { Movimento } from '@/components/Movimento'
 import './../globals.css'
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default async function LayoutRaiz({
       <body>
         <Entrada />
         {children}
+        <Movimento />
       </body>
     </html>
   )
