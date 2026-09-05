@@ -385,3 +385,55 @@ nav a:hover { color: var(--tinta); }
 @media (max-width: 900px) {
   .tiras { grid-template-columns: 1fr; }
 }
+
+/* --- bloco técnico ------------------------------------------------------ */
+.tecnico { border-top: 1px solid var(--borda); padding: 56px 0 72px; }
+.tecnico .aviso { margin: 0 0 30px; font-size: 14px; color: var(--calmo); max-width: 52ch; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 34px; }
+.chip {
+  font-size: 13px; font-weight: 500; border: 1px solid var(--borda);
+  border-radius: 5px; padding: 5px 11px; color: var(--calmo); background: var(--fundo2);
+}
+
+/* O CLI vai como texto, não como print: fica nítido em qualquer tela, dá para
+   selecionar, e o leitor de tela lê. */
+.terminal {
+  background: var(--fundo3, var(--fundo2)); border: 1px solid var(--borda);
+  border-radius: 8px; padding: 22px 24px; margin: 0 0 14px; overflow-x: auto;
+}
+.terminal pre {
+  margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px; line-height: 1.7; color: var(--calmo); white-space: pre;
+}
+.terminal pre b { color: var(--texto); font-weight: 500; }
+.legenda-terminal { margin: 0 0 40px; font-size: 13px; color: var(--calmo); max-width: 60ch; }
+.legenda-terminal b { color: var(--destaque); font-weight: 700; }
+
+.notas { display: grid; gap: 44px 48px; }
+.notas--2 { grid-template-columns: 1fr 1fr; }
+.notas--3 { grid-template-columns: repeat(3, 1fr); gap: 34px; }
+.notas--4 { grid-template-columns: 1fr 1fr; }
+.nota h3 { margin: 0 0 9px; font-size: 16px; font-weight: 700; letter-spacing: -.012em; }
+.nota p { margin: 0 0 12px; font-size: 15px; line-height: 1.6; opacity: .88; max-width: 46ch; }
+.nota p:last-child { margin-bottom: 0; }
+/* Sem `color` próprio: herda `--texto` do parágrafo, que já vem a `.88` e é o
+   nível que o contraste cobre. Pintar de `--calmo` aqui dentro daria calmo a
+   0,88 — 4,27:1 no Office Timesheet. O que separa código de prosa é a
+   monoespaçada, não a cor; é assim nos comps P2 e P4. */
+.nota code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px;
+  word-break: break-word;
+}
+/* No título, o código fica na tinta do corpo: 16px bold não é "texto grande",
+   e o destaque do Office Timesheet só tem 3,08:1 — reprovaria aqui. */
+.nota h3 code {
+  font-size: .94em; background: none; border: 0; padding: 0;
+  color: var(--texto); font-weight: 700;
+}
+
+@media (max-width: 1000px) {
+  .notas--3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 900px) {
+  .notas, .notas--2, .notas--3, .notas--4 { grid-template-columns: 1fr; gap: 28px; }
+}

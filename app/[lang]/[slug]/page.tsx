@@ -11,6 +11,7 @@ import { Destaque } from '@/components/Destaque'
 import { ReguaNumeros } from '@/components/ReguaNumeros'
 import { Prosa } from '@/components/Prosa'
 import { Galeria } from '@/components/Galeria'
+import { BlocoTecnico } from '@/components/BlocoTecnico'
 
 // Só o segmento desta rota: o layout raiz já gera `[lang]`, e o Next chama
 // esta função uma vez por `lang` que ele gerou. Devolver `{ lang, slug }`
@@ -52,7 +53,7 @@ export default async function PaginaProjeto({
         <ReguaNumeros projeto={projeto} lang={lang} />
         <Prosa projeto={projeto} lang={lang} />
         <Galeria projeto={projeto} lang={lang} />
-        {/* Técnico entra na Tarefa 15. */}
+        <BlocoTecnico projeto={projeto} lang={lang} />
       </main>
       <footer className="wrap rodape-projeto">
         <span>{t(ui.rodape.lugar, lang, 'ui.rodape.lugar')}</span>
