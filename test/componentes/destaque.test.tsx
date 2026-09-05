@@ -41,6 +41,15 @@ describe('Destaque', () => {
     expect(screen.getByText(/function calling/)).toBeInTheDocument()
   })
 
+  // Regressão: **duplo** não é a convenção do componente (TextoComMarcas usa
+  // asterisco simples), e o regex deixa o par sobrando como texto literal.
+  it('a ênfase de "chamando funções do sistema" usa asterisco simples, sem sobrar * na tela', () => {
+    const { container } = render(<Destaque projeto={officeTimesheet} lang="pt" />)
+    expect(container.textContent).not.toContain('*')
+    const negrito = container.querySelector('.cabeca b')
+    expect(negrito).toHaveTextContent('chamando funções do sistema')
+  })
+
   // As três garantias são o que o bloco tem de melhor e continuam.
   it('mantém as três amarras', () => {
     const { container } = render(<Destaque projeto={officeTimesheet} lang="pt" />)

@@ -91,8 +91,8 @@ export const officeTimesheet: Projeto = {
         en: 'A chat inside the system itself, built on a language model, DeepSeek. Instead of opening seven screens to piece the answer together, the person just asks in plain language.',
       },
       {
-        pt: 'Ele não adivinha: responde **chamando funções do sistema**, o function calling. Cada pergunta vira uma ou mais chamadas, ele decide quais precisa, junta o que voltou e escreve a resposta. É o mesmo dado que a pessoa veria navegando, só que sem navegar.',
-        en: 'It does not guess: it answers by **calling functions in the system**, function calling. Each question turns into one or more calls, it decides which ones it needs, puts together what came back and writes the answer. It is the same data the person would see browsing, minus the browsing.',
+        pt: 'Ele não adivinha: responde *chamando funções do sistema*, o function calling. Cada pergunta vira uma ou mais chamadas, ele decide quais precisa, junta o que voltou e escreve a resposta. É o mesmo dado que a pessoa veria navegando, só que sem navegar.',
+        en: 'It does not guess: it answers by *calling functions in the system*, function calling. Each question turns into one or more calls, it decides which ones it needs, puts together what came back and writes the answer. It is the same data the person would see browsing, minus the browsing.',
       },
     ],
     // SLOT: a AGENT_API_KEY do .env local responde 403, então não há captura da
