@@ -29,4 +29,24 @@ describe('a regra da folha', () => {
     expect(regraSobre).toContain('padding-block: 84px 92px')
     expect(regraSobre).not.toMatch(/padding\s*:/)
   })
+
+  it('prende .col-texto e .col-print na mesma linha na faixa espelhada', () => {
+    // `grid-column` explícito avança o cursor de auto-placement em DOM order:
+    // sem `grid-row` fixo, `.col-texto` (coluna 2) ocupa a linha 1 e
+    // `.col-print` (coluna 1), vindo depois no DOM, não cabe mais nela — cai
+    // para a linha 2 e abre uma faixa vazia da cor do sistema ao lado do texto.
+    const texto = folha.match(/\.faixa\.espelho \.col-texto \{([^}]*)\}/)?.[1] ?? ''
+    const print = folha.match(/\.faixa\.espelho \.col-print \{([^}]*)\}/)?.[1] ?? ''
+    expect(texto).toMatch(/grid-row:\s*1\b/)
+    expect(print).toMatch(/grid-row:\s*1\b/)
+  })
+
+  it('não deixa o grid-row da faixa espelhada vazar para o empilhamento mobile', () => {
+    const inicio = folha.indexOf('@media (max-width: 820px) {\n  .faixa .grade')
+    const fim = folha.indexOf('@media (max-width: 820px) {\n  .abertura-home')
+    const blocoMobile = folha.slice(inicio, fim)
+    const reset =
+      blocoMobile.match(/\.faixa\.espelho \.col-texto, \.faixa\.espelho \.col-print \{([^}]*)\}/)?.[1] ?? ''
+    expect(reset).not.toMatch(/grid-row:\s*1\b/)
+  })
 })

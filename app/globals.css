@@ -69,8 +69,11 @@ nav a:hover { color: var(--tinta); }
   display: grid; grid-template-columns: 1fr 1.15fr; gap: 56px; align-items: center;
 }
 .faixa.espelho .grade { grid-template-columns: 1.15fr 1fr; }
-.faixa.espelho .col-texto { grid-column: 2; }
-.faixa.espelho .col-print { grid-column: 1; }
+/* `grid-column` explícito avança o cursor de auto-placement em DOM order:
+   sem `grid-row` fixo, `.col-texto` (que vem primeiro no DOM) tomava a
+   linha 1 e `.col-print` não cabia mais nela, caindo para a linha 2. */
+.faixa.espelho .col-texto { grid-column: 2; grid-row: 1; }
+.faixa.espelho .col-print { grid-column: 1; grid-row: 1; }
 
 .ficha-faixa {
   display: flex; align-items: baseline; gap: 14px;
@@ -108,7 +111,10 @@ nav a:hover { color: var(--tinta); }
 
 @media (max-width: 820px) {
   .faixa .grade, .faixa.espelho .grade { grid-template-columns: 1fr; gap: 28px; }
-  .faixa.espelho .col-texto, .faixa.espelho .col-print { grid-column: 1; }
+  /* No empilhamento em coluna única a linha fixa da faixa espelhada
+     sobraria: com as duas em grid-row: 1 e grid-column: 1 elas se
+     empilhariam por cima uma da outra, e não abaixo. */
+  .faixa.espelho .col-texto, .faixa.espelho .col-print { grid-column: 1; grid-row: auto; }
 }
 
 @media (max-width: 820px) {
