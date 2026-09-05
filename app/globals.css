@@ -34,10 +34,17 @@ body {
 a { color: inherit; }
 a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 
-.wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+/* `.wrap` é a goteira, e SÓ a goteira: eixo inline, nunca o block. A seção
+   que divide o elemento com ele cuida do vertical, e nunca do lateral.
+   Não é preciosismo — as duas classes têm a mesma especificidade, (0,1,0), e
+   um atalho `padding` de qualquer um dos dois lados leva os quatro lados
+   junto. Quem vence é quem vier depois na folha, o que fez o site perder
+   padding vertical no telefone num grupo de seções e a goteira lateral em
+   toda largura no outro. Ver os testes em `test/folha.test.ts`. */
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 32px; }
 
 .casca-topo { border-bottom: 1px solid var(--regua); }
-.topo { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+.topo { display: flex; align-items: center; justify-content: space-between; padding-block: 20px; }
 
 .marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
 .marca--casca { color: var(--marca); }
@@ -56,7 +63,7 @@ nav a:hover { color: var(--tinta); }
 .idioma a { text-decoration: none; }
 .idioma a:hover { color: var(--tinta); }
 
-.abertura-home { padding: 64px 0 56px; }
+.abertura-home { padding-block: 64px 56px; }
 .abertura-home h1 {
   font-size: 44px; line-height: 1.1; font-weight: 700;
   letter-spacing: -.025em; margin: 0 0 16px; max-width: 16ch;
@@ -212,7 +219,7 @@ nav a:hover { color: var(--tinta); }
 .pagina-projeto .idioma [aria-current] { color: var(--texto); }
 
 .abertura-projeto {
-  padding: 64px 0 56px; display: grid; grid-template-columns: 1fr 300px;
+  padding-block: 64px 56px; display: grid; grid-template-columns: 1fr 300px;
   gap: 72px; align-items: start;
 }
 .abertura-projeto h1 {
@@ -244,7 +251,7 @@ nav a:hover { color: var(--tinta); }
 .semlink p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--calmo); }
 
 .rodape-projeto {
-  border-top: 1px solid var(--borda); padding: 34px 0 56px;
+  border-top: 1px solid var(--borda); padding-block: 34px 56px;
   display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
   font-size: 13.5px; color: var(--calmo);
 }
@@ -252,12 +259,12 @@ nav a:hover { color: var(--tinta); }
 .pagina-projeto a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
 
 @media (max-width: 900px) {
-  .abertura-projeto { grid-template-columns: 1fr; gap: 36px; padding: 44px 0 32px; }
+  .abertura-projeto { grid-template-columns: 1fr; gap: 36px; padding-block: 44px 32px; }
   .abertura-projeto h1 { font-size: 36px; }
   .chamada { font-size: 19px; }
 }
 @media (max-width: 560px) {
-  .wrap { padding: 0 20px; }
+  .wrap { padding-inline: 20px; }
   .abertura-projeto h1 { font-size: 32px; }
 }
 
@@ -318,7 +325,7 @@ nav a:hover { color: var(--tinta); }
   .placa .topo-placa { flex-direction: column; gap: 6px; }
 }
 
-.abre { padding: 0 0 8px; }
+.abre { padding-block: 0 8px; }
 .abre + .destaque { margin-top: 56px; }
 @media (max-width: 900px) { .abre + .destaque { margin-top: 40px; } }
 
@@ -326,7 +333,7 @@ nav a:hover { color: var(--tinta); }
 /* A régua reusa `.num` da faixa, mas as regras de lá são escopadas em `.faixa`
    (Tarefa 9). Aqui o rótulo é `var(--calmo)`, e calmo fica em opacidade cheia:
    a 0,72 ele dá 3,12:1 no Office Timesheet. */
-.regua { padding: 48px 0; border-bottom: 1px solid var(--borda); display: grid; gap: 40px; }
+.regua { padding-block: 48px; border-bottom: 1px solid var(--borda); display: grid; gap: 40px; }
 .regua--3 { grid-template-columns: repeat(3, 1fr); }
 .regua--4 { grid-template-columns: repeat(4, 1fr); gap: 34px; }
 .regua .num b {
@@ -339,7 +346,7 @@ nav a:hover { color: var(--tinta); }
   max-width: 24ch; line-height: 1.4;
 }
 
-.prosa { padding: 64px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
+.prosa { padding-block: 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
 .prosa h2 { margin: 0 0 14px; font-size: 19px; font-weight: 700; letter-spacing: -.015em; }
 .prosa p { margin: 0 0 16px; font-size: 16px; line-height: 1.62; opacity: .88; max-width: 48ch; }
 .prosa p:last-child { margin-bottom: 0; }
@@ -353,12 +360,12 @@ nav a:hover { color: var(--tinta); }
 }
 
 /* --- galeria ------------------------------------------------------------ */
-.galeria { padding: 8px 0 64px; }
+.galeria { padding-block: 8px 64px; }
 .galeria h2 { margin: 0 0 22px; font-size: 13px; font-weight: 600; color: var(--calmo); }
 .galeria > div + div { margin-top: 44px; }
 
 /* --- bloco técnico ------------------------------------------------------ */
-.tecnico { border-top: 1px solid var(--borda); padding: 56px 0 72px; }
+.tecnico { border-top: 1px solid var(--borda); padding-block: 56px 72px; }
 /* Era `<p>`; virou `<h2>` para dar landmark de heading ao bloco técnico sem
    mudar a aparência — por isso `font-weight: 400` cancela o negrito padrão
    do navegador para `h2`. */
@@ -570,6 +577,18 @@ html[data-entrada="visto"] .entrada { display: none; }
   .faixa.espelho:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
 }
 
+/* As duas placas do destaque dividem UMA linha do grid. Aberta, a prancha passa
+   dos 1320px e transborda a coluna dela; a irmã continua parada na coluna da
+   direita e é desenhada por cima — a 1456px de janela são 302px de imagem em
+   cima de imagem. Ocupar a linha inteira empurra a irmã para a linha de baixo,
+   no tamanho de leitura em que ela já estava.
+
+   O segundo seletor é o Autotune, onde quem é filho do grid é a `.placa` e não
+   a prancha. Lá os prints são capturas de ~640px e reprovam no 1,5×, então a
+   regra fica dormente — mas se um print maior entrar, ela já está de pé. */
+.placas > .prancha.aberta,
+.placas > :has(.prancha.aberta) { grid-column: 1 / -1; }
+
 /* A legenda salta de 196px para 64ch centrada: interpolar isso nunca fica bom. */
 .prancha-nota { transition: opacity .18s ease; }
 .prancha--virando .prancha-nota { opacity: 0; }
@@ -642,6 +661,19 @@ html[data-anima] .revela.dentro { opacity: 1; transform: none; }
   html[data-mov] .cta,
   html[data-mov] .col-print .prancha-alvo { transform: none; }
   [data-brilho]::before { display: none; }
+
+  /* Onde não há cursor, o alvo é o dedo. Medido a 390px: a régua de idioma é
+     um alvo de 18×14 e os links do topo têm 22px de altura — os dois abaixo
+     dos 24×24 da WCAG 2.5.8.
+
+     Cresce por pseudo-elemento, e não por padding: `.topo` é um flex com
+     `space-between`, e engordar a caixa empurraria o vizinho de lado. Os
+     11px de folga vertical cabem inteiros nos 66px do topo, e os 8px laterais
+     deixam 10px de sobra entre "Projetos" e "Sobre" — nenhum alvo encosta no
+     outro. Só o idioma de destino é link; o corrente é um `<span>`. */
+  .topo a, .idioma a { position: relative; }
+  .topo a::after,
+  .idioma a::after { content: ''; position: absolute; inset: -11px -8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html[data-anima] .revela { opacity: 1; transform: none; }

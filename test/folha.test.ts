@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { OPACIDADES_DE_TEXTO, OPACIDADES_NO_AZUL } from '@/lib/contraste'
 
@@ -28,6 +28,63 @@ describe('a regra da folha', () => {
     const regraSobre = folha.match(/\.sobre\s*\{([^}]*)\}/)?.[1] ?? ''
     expect(regraSobre).toContain('padding-block: 84px 92px')
     expect(regraSobre).not.toMatch(/padding\s*:/)
+  })
+
+  // As classes que dividem o elemento com `.wrap`, lidas dos componentes: um
+  // `.wrap` novo entra nesta lista sozinho, sem ninguém lembrar de vir aqui.
+  const secoesDeWrap = [...new Set(
+    ['components', 'app', 'app/[lang]', 'app/[lang]/[slug]']
+      .flatMap((dir) =>
+        readdirSync(dir, { withFileTypes: true })
+          .filter((f) => f.isFile() && f.name.endsWith('.tsx'))
+          .flatMap((f) => [...readFileSync(`${dir}/${f.name}`, 'utf8').matchAll(/className=\{?["'`]([^"'`]*\bwrap\b[^"'`]*)["'`]/g)]),
+      )
+      .flatMap((m) => m[1].split(/\s+/))
+      .filter((c) => c && c !== 'wrap' && c !== 'revela' && c !== 'dentro' && !c.includes('$')),
+  )]
+
+  it('lê as seções de .wrap dos componentes', () => {
+    // Se a leitura falhar, os dois testes abaixo passariam vazios.
+    expect(secoesDeWrap).toContain('regua')
+    expect(secoesDeWrap).toContain('topo')
+    expect(secoesDeWrap.length).toBeGreaterThan(6)
+  })
+
+  it('nenhuma seção de .wrap disputa o atalho padding com ele', () => {
+    // `.wrap` e a classe da seção têm a MESMA especificidade, (0,1,0): quem
+    // vier depois na folha leva o atalho `padding` inteiro, os quatro lados.
+    // Foi o que aconteceu nos dois sentidos. `.topo`, `.abertura-home`,
+    // `.abertura-projeto`, `.sobre` e `.rodape-projeto` vêm ANTES do
+    // `.wrap` que a media query de 560px redeclara, e no telefone perdiam o
+    // padding vertical inteiro. `.regua`, `.prosa`, `.galeria` e `.tecnico`
+    // vêm DEPOIS, e perdiam a goteira lateral em toda largura — no telefone,
+    // com o `.wrap` do tamanho da tela, isso é texto encostado na borda.
+    //
+    // O acordo que desfaz a disputa: `.wrap` só mexe no eixo inline, a seção
+    // só no eixo block. Nenhum atalho dos dois lados.
+    const comAtalho = secoesDeWrap.filter((c) => {
+      const regras = [...folha.matchAll(new RegExp(`\\.${c}\\s*\\{([^}]*)\\}`, 'g'))]
+      return regras.some((r) => /(?:^|;)\s*padding\s*:/.test(r[1]))
+    })
+    expect(comAtalho).toEqual([])
+  })
+
+  it('sem cursor, o topo ganha alvo de dedo sem mudar de tamanho', () => {
+    // Medido no telefone a 390px: a régua de idioma é um alvo de 18×14, e os
+    // links do topo têm 22px de altura — abaixo dos 24×24 da WCAG 2.5.8.
+    // Cresce por pseudo-elemento, e não por padding: `.topo` é um flex com
+    // `space-between`, e engordar a caixa empurraria o vizinho.
+    const bloco = folha.match(/@media \(hover: none\) \{([\s\S]*?)\n\}/)?.[1] ?? ''
+    expect(bloco).toMatch(/\.topo a::after[\s\S]*inset:/)
+  })
+
+  it('.wrap só declara a goteira, e no eixo inline', () => {
+    const regras = [...folha.matchAll(/\.wrap\s*\{([^}]*)\}/g)].map((m) => m[1])
+    expect(regras.length).toBeGreaterThan(1)
+    for (const r of regras) {
+      expect(r).toMatch(/padding-inline:/)
+      expect(r).not.toMatch(/(?:^|;)\s*padding\s*:/)
+    }
   })
 
   it('prende .col-texto e .col-print na mesma linha na faixa espelhada', () => {
@@ -101,5 +158,14 @@ describe('a regra da folha', () => {
 
   it('movimento reduzido não vê véu nenhum', () => {
     expect(folha).toMatch(/prefers-reduced-motion[\s\S]*?\.entrada\s*\{[^}]*display:\s*none/)
+  })
+
+  it('a prancha aberta toma a linha inteira das duas placas do destaque', () => {
+    // As placas são um grid de duas colunas. Aberta, a prancha vai a 1320px e
+    // transborda a coluna; sem tomar a linha, a irmã fica parada na coluna da
+    // direita e é desenhada por cima dela. O seletor com `:has` é o Autotune,
+    // onde o filho do grid é a `.placa` e a prancha está dentro dela.
+    const regra = folha.match(/\.placas > \.prancha\.aberta,\n\.placas > :has\(\.prancha\.aberta\) \{([^}]*)\}/)?.[1] ?? ''
+    expect(regra).toMatch(/grid-column:\s*1 \/ -1/)
   })
 })
