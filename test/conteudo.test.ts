@@ -120,10 +120,22 @@ describe('Office Timesheet', () => {
     expect(officeTimesheet.selo?.pt).toContain('IA')
   })
 
-  // PENDENTE: os três valores só o dono tem. Enquanto não vierem, vazio — e a
-  // régua da faixa some sozinha, que é o comportamento certo.
-  it('declara numerosHome, ainda que vazio', () => {
-    expect(officeTimesheet.numerosHome).toEqual([])
+  it('mostra operação na home, e não a engenharia da página', () => {
+    // A régua da home saiu do dono em 05/09/2026. O que ela NÃO pode virar é a
+    // cópia da régua da página: lá são casos de teste, endpoints e tabelas, e
+    // na vitrine isso não diz nada de quem usa o sistema.
+    const home = officeTimesheet.numerosHome ?? []
+    expect(home).toHaveLength(4)
+    expect(home.map((n) => n.valor.pt)).toEqual(['10', '14', '~1.700', '7'])
+    const daPagina = new Set(officeTimesheet.numeros.map((n) => n.valor.pt))
+    expect(home.filter((n) => daPagina.has(n.valor.pt))).toEqual([])
+  })
+
+  it('marca com ~ a hora que é conta, e não leitura do banco', () => {
+    // 10 pessoas × 8h × 21 dias úteis. Enquanto for derivada, o til fica.
+    const horas = officeTimesheet.numerosHome?.find((n) => n.rotulo.pt.startsWith('horas'))
+    expect(horas?.valor.pt).toMatch(/^~/)
+    expect(horas?.valor.en).toMatch(/^~/)
   })
 })
 

@@ -141,12 +141,32 @@ export const officeTimesheet: Projeto = {
     { valor: { pt: '34', en: '34' }, rotulo: { pt: 'funções que o assistente pode chamar', en: 'functions the assistant can call' } },
   ],
 
-  // PENDENTE, BLOQUEADO NO DONO. As três métricas escolhidas são: horas
-  // apontadas no sistema, projetos acompanhados, e pessoas apontando hora todo
-  // dia. Os valores são do escritório real e ninguém os tem aqui — os do seed
-  // são inventados e não servem. Vazio, a régua da faixa some sozinha, que é o
-  // comportamento certo. Não preencher com estimativa.
-  numerosHome: [],
+  // A régua da home é operação; a régua da página, engenharia. Efetivo e
+  // projetos vieram do dono em 05/09/2026 e são do escritório real.
+  //
+  // As horas são DERIVADAS, e é por isso que levam `~`: 10 pessoas × 8h × 21
+  // dias úteis = 1.680, arredondado para 1.700. Não é leitura do banco. Se um
+  // dia sair o total apontado de verdade, ele entra aqui e o `~` sai junto.
+  numerosHome: [
+    {
+      valor: { pt: '10', en: '10' },
+      rotulo: { pt: 'pessoas apontando hora todo dia', en: 'people logging hours every day' },
+    },
+    {
+      valor: { pt: '14', en: '14' },
+      rotulo: { pt: 'projetos tocados ao mesmo tempo', en: 'projects running at the same time' },
+    },
+    {
+      valor: { pt: '~1.700', en: '~1,700' },
+      rotulo: { pt: 'horas por mês no lugar da planilha', en: 'hours a month in place of the spreadsheet' },
+    },
+    // O número que a página inteira já promete, em texto, três vezes: "sem
+    // ninguém abrir sete telas".
+    {
+      valor: { pt: '7', en: '7' },
+      rotulo: { pt: 'telas que ninguém abre para responder', en: 'screens nobody opens to answer' },
+    },
+  ],
 
   galeria: [
     {
