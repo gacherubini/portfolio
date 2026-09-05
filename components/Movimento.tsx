@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 const DURACAO = 460
 const CURVA = 'cubic-bezier(.22,.72,.24,1)'
@@ -17,6 +18,17 @@ const CURVA = 'cubic-bezier(.22,.72,.24,1)'
  * nenhuma medição dentro do laço de quadro.
  */
 export function Movimento() {
+  // O componente vive no layout, que a home e as páginas de projeto
+  // COMPARTILHAM: navegar entre elas por `<Link>` troca o conteúdo sem
+  // desmontar o layout. Com `[]`, o efeito rodaria uma vez por sessão e a
+  // segunda página herdaria `html[data-anima]` posto — todo `.revela` dela em
+  // `opacity: 0`, sem observador que os traga de volta — e uma lista de
+  // pranchas que é o retrato da PRIMEIRA página, então clicar num print da
+  // nova sairia do site para o PNG cru. A rota na lista de dependências faz o
+  // efeito se desmontar e remontar sobre o DOM novo; a limpeza abaixo já
+  // devolve tudo ao estado do servidor.
+  const rota = usePathname()
+
   useEffect(() => {
     const raiz = document.documentElement
     const menos = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -202,7 +214,10 @@ export function Movimento() {
       if (!alvo) continue
       avaliar(p)
       const aoClicar = (e: MouseEvent) => {
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+        // `altKey` junto dos outros: no Chrome e no Firefox alt-clique é
+        // "baixar o link", e sequestrá-lo para abrir a prancha some com o
+        // arquivo que a pessoa pediu.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
         if (p.classList.contains('prancha--fixa')) return
         e.preventDefault()
         abrir(p)
@@ -370,7 +385,7 @@ export function Movimento() {
       delete raiz.dataset.mov
       delete raiz.dataset.anima
     }
-  }, [])
+  }, [rota])
 
   return null
 }

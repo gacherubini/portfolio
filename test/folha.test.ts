@@ -64,6 +64,34 @@ describe('a regra da folha', () => {
     }
   })
 
+  it('a pílula de situação só larga a margem automática quando vem um selo antes', () => {
+    // `.situacao { margin: 0 0 0 auto }` é o que encosta a pílula na borda
+    // direita da ficha. Quando existe selo, quem faz esse empurrão é ele, e a
+    // situação precisa zerar a margem para as duas ficarem coladas.
+    const base = folha.match(/\n\.situacao \{([^}]*)\}/)?.[1] ?? ''
+    expect(base).toMatch(/margin:\s*0 0 0 auto/)
+    expect(folha).toMatch(/\.ficha-faixa \.selo ~ \.situacao \{[^}]*margin-left:\s*0/)
+    expect(folha).toMatch(/\.ficha-faixa \.selo \{[^}]*margin-left:\s*auto/)
+
+    // O outro sentido: BDDente e Autotune não declaram selo. Um zero sem o
+    // combinador — `.ficha-faixa .situacao`, (0,2,0) — venceria a margem
+    // automática de (0,1,0) também neles, e lá a pílula escorregava para o
+    // meio da ficha, colada no `.paraquem`.
+    expect(folha).not.toMatch(/\.ficha-faixa \.situacao \{/)
+  })
+
+  it('o véu da entrada tem cor de fundo mesmo sem color-mix', () => {
+    // Sem fallback, num navegador que não conhece `color-mix` a declaração
+    // inteira é inválida: `.entrada` continua `position: fixed; inset: 0` e
+    // vira uma camada transparente e clicável por cima da página até a
+    // animação a retirar.
+    const regra = folha.match(/\n\.entrada \{([^}]*)\}/)?.[1] ?? ''
+    const fundos = [...regra.matchAll(/background:\s*([^;]+);/g)].map((m) => m[1].trim())
+    expect(fundos.length).toBe(2)
+    expect(fundos[0]).not.toContain('color-mix')
+    expect(fundos[1]).toContain('color-mix')
+  })
+
   it('a régua da entrada corre em linear, para a cor acompanhar a largura', () => {
     // As trocas de cor são temporais (25/50/75%). Com aceleração, largura e cor
     // deixariam de andar juntas e as duas últimas cores quase não apareceriam.

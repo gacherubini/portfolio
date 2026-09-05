@@ -51,11 +51,33 @@ describe('hierarquia de títulos', () => {
 })
 
 describe('portão da prancha (Task 11)', () => {
-  it('a prancha aberta não some para o leitor de tela', () => {
-    // A abertura muda tamanho, não presença: nada de `aria-hidden` na prancha.
+  // O nome antigo prometia "a prancha ABERTA": `.aberta` é posta no cliente, e
+  // uma `<Galeria>` renderizada não tem prancha aberta nenhuma. O que este
+  // teste de fato guarda é o que sai do servidor.
+  it('nenhuma prancha nasce escondida para o leitor de tela', () => {
     const { container } = render(<Galeria projeto={officeTimesheet} lang="pt" />)
     for (const p of container.querySelectorAll('.prancha')) {
       expect(p.getAttribute('aria-hidden')).toBeNull()
+    }
+  })
+
+  it('a legenda da prancha está ligada à imagem, e não só ao lado dela', () => {
+    // `<figure>`/`<figcaption>` é a única construção nativa que associa
+    // programaticamente uma legenda à sua imagem. Dois `<div>` irmãos — que é
+    // o que a reescrita em pranchas tinha deixado — não dão nada ao leitor de
+    // tela: ele lê um parágrafo solto perto de uma imagem.
+    const { container } = render(<Galeria projeto={officeTimesheet} lang="pt" />)
+    const pranchas = [...container.querySelectorAll('.prancha')]
+    expect(pranchas.length).toBeGreaterThan(0)
+
+    for (const p of pranchas) {
+      expect(p.tagName).toBe('FIGURE')
+      const legenda = p.querySelector('.prancha-nota')!
+      expect(legenda).not.toBeNull()
+      expect(legenda.tagName).toBe('FIGCAPTION')
+      // Dentro da MESMA figure que a imagem, e não numa vizinha.
+      expect(legenda.closest('figure')).toBe(p)
+      expect(p.querySelector('img')?.closest('figure')).toBe(p)
     }
   })
 

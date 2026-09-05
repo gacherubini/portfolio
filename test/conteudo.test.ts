@@ -37,7 +37,15 @@ describe('Revy', () => {
   })
 
   it('o número em inglês não usa separador de milhar do português', () => {
-    for (const n of revy.numeros) expect(n.valor.en).toBeTruthy()
+    for (const n of revy.numeros) {
+      expect(n.valor.en).toBeTruthy()
+      // `44.812` lê como "quarenta e quatro vírgula oito" para quem lê inglês:
+      // ponto separando três dígitos é milhar em pt-BR e decimal em en.
+      expect(n.valor.en).not.toMatch(/\d\.\d{3}\b/)
+      // E vírgula decimal é a mesma troca ao contrário: `61,72` vira "sessenta
+      // e um mil e setecentos" para o mesmo leitor.
+      expect(n.valor.en).not.toMatch(/\d,\d{1,2}\b/)
+    }
   })
 
   it('leva o selo de IA', () => {

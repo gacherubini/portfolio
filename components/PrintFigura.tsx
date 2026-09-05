@@ -43,11 +43,16 @@ export function PrintFigura({
   const temNota = variante !== 'nua' && Boolean(print.legenda)
 
   return (
-    <div className={`prancha prancha--${variante}${className ? ` ${className}` : ''}`}>
+    // `<figure>` + `<figcaption>` é a única construção nativa que liga a
+    // legenda à imagem para a tecnologia assistiva; dois `<div>` irmãos não
+    // ligam nada. O `figcaption` é o PRIMEIRO filho, que é legal e é a ordem
+    // que a variante `margem` precisa no DOM — na `abaixo` quem o joga para
+    // baixo é o `column-reverse` da folha, não a ordem.
+    <figure className={`prancha prancha--${variante}${className ? ` ${className}` : ''}`}>
       {temNota ? (
-        <div className="prancha-nota">
+        <figcaption className="prancha-nota">
           <p>{t(print.legenda!, lang, `${campo}.legenda`)}</p>
-        </div>
+        </figcaption>
       ) : null}
 
       <a
@@ -66,6 +71,6 @@ export function PrintFigura({
           loading={prioridade ? undefined : 'lazy'}
         />
       </a>
-    </div>
+    </figure>
   )
 }
