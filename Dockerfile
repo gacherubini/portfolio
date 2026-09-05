@@ -1,16 +1,28 @@
-# Imagem do portfólio para a Fly.io. Três estágios para a camada final ficar
-# só com o servidor: a máquina é a menor que a Fly vende (256MB), então tudo
-# que não roda em produção fica para trás.
+# Imagem do portfólio para a Fly.io. Estágios separados para a camada final
+# ficar só com o servidor: a máquina é a menor que a Fly vende (256MB), então
+# tudo que não roda em produção fica para trás.
 
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
+# As capturas viram AVIF e WebP AQUI, e não em produção. É um estágio próprio
+# de propósito: ele só depende dos prints e do script, então o Docker reaproveita
+# a camada em todo deploy que não mexe em imagem — que é a maioria deles.
+FROM node:24-alpine AS prints
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY lib/prints.ts ./lib/prints.ts
+COPY scripts/otimizar-prints.mjs ./scripts/otimizar-prints.mjs
+COPY public/prints ./public/prints
+RUN node scripts/otimizar-prints.mjs
+
 FROM node:24-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+COPY --from=prints /app/public/prints-otimizados ./public/prints-otimizados
 ENV NEXT_TELEMETRY_DISABLED=1
 # Sem os testes aqui: o gate do vitest roda antes, na máquina de quem faz o
 # deploy. Dentro da imagem ele só somaria minutos de build.

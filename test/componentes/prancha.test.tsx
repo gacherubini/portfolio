@@ -46,3 +46,38 @@ describe('PrintFigura como prancha', () => {
     expect(container.querySelector('.prancha-nota')).toBeNull()
   })
 })
+
+// Os 502 em produção vieram daqui: o `next/image` pedia variantes de até
+// 3840px de um PNG de 3200×2000, e o sharp estourava os 256MB da máquina
+// encodando AVIF nesse tamanho — o kernel matava o servidor e a VM reiniciava.
+// A prancha maior do site tem 1320px de CSS. Nada acima de 2×1320 serve para
+// alguma coisa, e nada disso precisa ser feito em runtime: os prints são
+// estáticos e conhecidos no build.
+describe('PrintFigura não otimiza imagem em runtime', () => {
+  it('serve AVIF e WebP prontos, não o otimizador do Next', () => {
+    const { container } = render(<PrintFigura print={PRINT} {...padrao} />)
+
+    const avif = container.querySelector('picture source[type="image/avif"]')
+    const webp = container.querySelector('picture source[type="image/webp"]')
+
+    expect(avif?.getAttribute('srcset')).toContain('/prints-otimizados/office-timesheet/')
+    expect(avif?.getAttribute('srcset')).toContain('.avif')
+    expect(webp?.getAttribute('srcset')).toContain('.webp')
+    expect(container.innerHTML).not.toContain('/_next/image')
+  })
+
+  it('não pede largura acima do dobro da prancha de 1320px', () => {
+    const { container } = render(<PrintFigura print={PRINT} {...padrao} />)
+    const srcset = container.querySelector('picture source')!.getAttribute('srcset')!
+    const larguras = [...srcset.matchAll(/(\d+)w/g)].map((m) => Number(m[1]))
+
+    expect(larguras.length).toBeGreaterThan(1)
+    expect(Math.max(...larguras)).toBeLessThanOrEqual(2640)
+  })
+
+  it('carrega o sizes e o lazy que o chamador pediu', () => {
+    const { container } = render(<PrintFigura print={PRINT} {...padrao} sizes="50vw" />)
+    expect(container.querySelector('picture source')).toHaveAttribute('sizes', '50vw')
+    expect(container.querySelector('img')).toHaveAttribute('loading', 'lazy')
+  })
+})

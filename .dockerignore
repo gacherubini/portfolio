@@ -1,11 +1,15 @@
 node_modules
 .next
+# derivado: o estagio `prints` do Dockerfile reconstroi
+public/prints-otimizados
 .git
 .superpowers
 docs
 mockups
 test
+# os seeds nao vao para a imagem, mas o otimizador de prints roda dentro dela
 scripts
+!scripts/otimizar-prints.mjs
 *.md
 !public/**/*.md
 vitest.config.ts

@@ -9,11 +9,10 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [{ source: '/', destination: '/pt', permanent: false }]
   },
-  images: {
-    // AVIF primeiro: as capturas de 3200×2000 são o conteúdo mais pesado do
-    // site, e a diferença aparece na primeira faixa.
-    formats: ['image/avif', 'image/webp'],
-  },
+  // Não há mais bloco `images`: nenhum componente usa `next/image`. As
+  // capturas são assadas em AVIF e WebP no build por
+  // `scripts/otimizar-prints.mjs`, e o `PrintFigura` serve os arquivos prontos
+  // num `<picture>`. Otimizar em runtime derrubava a máquina de 256MB.
 }
 
 export default nextConfig

@@ -6,6 +6,9 @@
 *.tsbuildinfo
 next-env.d.ts
 
+# Derivado: `npm run prints` reconstroi a partir de public/prints.
+/public/prints-otimizados
+
 # Vercel
 /.vercel
 

@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "vitest run && next build",
+    "build": "npm run prints && vitest run && next build",
+    "prints": "node scripts/otimizar-prints.mjs",
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest"
