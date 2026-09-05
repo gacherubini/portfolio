@@ -122,3 +122,71 @@ nav a:hover { color: var(--tinta); }
     scroll-behavior: auto !important;
   }
 }
+
+/* --- o Sobre, último bloco da home -------------------------------------- */
+.sobre { padding: 84px 0 92px; }
+/* A ficha anda junto do texto: encostada na direita ela deixava um vão de
+   300px no meio do bloco. */
+.sobre .grade {
+  display: grid; grid-template-columns: minmax(0, 1fr) 285px;
+  gap: 72px; align-items: start; max-width: 935px;
+}
+.sobre h2 { margin: 0 0 26px; font-size: 13px; font-weight: 600; color: var(--calmo); }
+.sobre .lede {
+  margin: 0 0 26px; font-size: 28px; line-height: 1.22; font-weight: 700;
+  letter-spacing: -.025em; max-width: 20ch;
+}
+.sobre p.corpo { margin: 0 0 18px; font-size: 16.5px; line-height: 1.6; max-width: 52ch; color: #2A2E32; }
+
+.rail { border-top: 2px solid var(--tinta); padding-top: 18px; }
+.rail dl { margin: 0; }
+.rail dt { font-size: 12.5px; color: var(--calmo); margin-top: 16px; }
+.rail div:first-child dt { margin-top: 0; }
+.rail dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
+
+/* --- o fechamento, na cor da casa --------------------------------------- */
+.fechamento { background: var(--dev); color: #fff; padding: 60px 0 56px; margin-top: 8px; }
+.fechamento .linha { display: grid; grid-template-columns: 1fr auto; gap: 56px; align-items: end; }
+.canais { display: flex; flex-direction: column; gap: 16px; }
+.canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.canal a {
+  font-size: 27px; font-weight: 600; letter-spacing: -.022em; color: #fff;
+  text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.3);
+  padding-bottom: 3px; line-height: 1.25;
+}
+.canal a:hover { border-bottom-color: #fff; }
+.canal .via { font-size: 13px; opacity: .85; }
+
+.perfis { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.perfis a {
+  font-size: 15px; font-weight: 500; color: #fff; opacity: .88;
+  text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 1px;
+}
+.perfis a:hover { opacity: 1; border-bottom-color: rgba(255,255,255,.6); }
+/* O currículo é a única coisa aqui que o visitante leva embora. */
+.perfis a.curriculo {
+  opacity: 1; font-weight: 600; border: 1px solid rgba(255,255,255,.55);
+  border-radius: 5px; padding: 9px 16px; margin-bottom: 6px;
+}
+.perfis a.curriculo:hover { background: #fff; color: var(--dev); border-color: #fff; }
+.perfis a.curriculo span { font-weight: 400; opacity: .85; font-size: 13px; }
+
+.assinatura {
+  margin-top: 44px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.22);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  font-size: 13px; opacity: .88;
+}
+/* Opacidade compõe. O `.85` do `.marca-dev` dentro do `.88` daqui dá `.748`,
+   que sobre o azul da marca é 4,42:1 — abaixo do mínimo, e invisível para
+   `verificarCasca`, que mede cada valor declarado isolado. Dentro de um bloco
+   que já esmaece, o filho vai em opacidade cheia. */
+.assinatura .marca--branca .marca-dev { opacity: 1; }
+.fechamento a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+@media (max-width: 820px) {
+  .sobre .grade { grid-template-columns: 1fr; gap: 40px; }
+  .sobre .lede { font-size: 23px; }
+  .fechamento .linha { grid-template-columns: 1fr; gap: 34px; align-items: start; }
+  .perfis { flex-direction: row; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
+  .canal a { font-size: 21px; }
+}

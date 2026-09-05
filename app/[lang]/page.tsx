@@ -5,6 +5,9 @@ import { ui } from '@/content/ui'
 import { CabecalhoCasca } from '@/components/CabecalhoCasca'
 import { projetos } from '@/content/indice'
 import { FaixaProjeto } from '@/components/FaixaProjeto'
+import { Sobre } from '@/components/Sobre'
+import { Fechamento } from '@/components/Fechamento'
+import { curriculoDisponivel } from '@/lib/curriculo'
 
 // Sem `generateStaticParams` aqui: quem gera o segmento `[lang]` é o layout
 // raiz, e cada segmento é gerado uma vez só. Repetir a mesma chave nos dois
@@ -12,6 +15,7 @@ import { FaixaProjeto } from '@/components/FaixaProjeto'
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
   if (!ehIdioma(lang)) notFound()
+  const temCurriculo = curriculoDisponivel()
 
   return (
     <>
@@ -35,6 +39,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           ))}
         </div>
       </main>
+      <Sobre lang={lang} />
+      <Fechamento lang={lang} temCurriculo={temCurriculo} />
     </>
   )
 }
