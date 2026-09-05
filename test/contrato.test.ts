@@ -85,6 +85,32 @@ describe('as três bordas que os comps aprovados provaram', () => {
   })
 })
 
+describe('limites máximos aceitos pelo contrato', () => {
+  it('aceita ficha com cinco linhas', () => {
+    const ficha = Array.from({ length: 5 }, (_, i) => ({
+      rotulo: txt(`Rótulo ${i}`),
+      valor: txt(`Valor ${i}`),
+    }))
+    expect(validarProjeto({ ...BASE, ficha })).toEqual([])
+  })
+
+  it('aceita quatro números', () => {
+    const numeros = [1, 2, 3, 4].map((n) => ({ valor: String(n), rotulo: txt(String(n)) }))
+    expect(validarProjeto({ ...BASE, numeros })).toEqual([])
+  })
+
+  it('aceita destaque com dois prints', () => {
+    const print = { arquivo: '01-x.png', alt: txt('alt'), largura: 100, altura: 100 }
+    const destaque = { titulo: txt('t'), texto: [txt('p')], prints: [print, print] }
+    expect(validarProjeto({ ...BASE, destaque })).toEqual([])
+  })
+
+  it('aceita quatro notas técnicas', () => {
+    const nota = { titulo: txt('t'), texto: [txt('p')] }
+    expect(validarProjeto({ ...BASE, tecnico: { ...BASE.tecnico, notas: [nota, nota, nota, nota] } })).toEqual([])
+  })
+})
+
 describe('validarProjeto — o que ele recusa', () => {
   it('recusa dois números (a régua fica com buraco)', () => {
     const falhas = validarProjeto({ ...BASE, numeros: BASE.numeros.slice(0, 2) })
@@ -139,6 +165,24 @@ describe('validarProjeto — o que ele recusa', () => {
       ],
     }
     expect(validarProjeto(p).join(' ')).toMatch(/alt/)
+  })
+
+  it.each([
+    ['largura zero', 0, 10],
+    ['altura zero', 10, 0],
+    ['largura negativa', -1, 10],
+    ['altura negativa', 10, -1],
+  ])('recusa print com %s', (_caso, largura, altura) => {
+    const p: Projeto = {
+      ...BASE,
+      galeria: [
+        {
+          titulo: txt('As outras telas'),
+          prints: [{ arquivo: '01-x.png', alt: txt('alt'), largura, altura }],
+        },
+      ],
+    }
+    expect(validarProjeto(p).join(' ')).toMatch(/largura\/altura/)
   })
 
   it('recusa link primário sem href', () => {
