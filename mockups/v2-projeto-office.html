@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTÓTIPO v2 — Office Timesheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app/globals.css">
+<link rel="stylesheet" href="/mockups/v2-proto.css">
+<style>:root { --fonte-archivo: 'Archivo' }</style>
+</head>
+<body>
+
+<p class="proto-aviso">Protótipo descartável · mockups/v2-projeto-office.html · não é o site</p>
+
+<div class="pagina-projeto" style="
+  --fundo:#ECECEC; --texto:#1D2724; --borda:#C9CFCC; --destaque:#CB6D31;
+  --ctaFundo:#2E3D38; --ctaTexto:#FFFFFF; --calmo:#55605C; --fundo2:#FFFFFF;">
+
+  <header class="projeto-topo">
+    <div class="wrap topo">
+      <a class="marca-link" href="/mockups/v2-home.html"><p class="marca marca--mono">gacherubini<span class="marca-dev">.dev</span></p></a>
+      <a class="voltar" href="/mockups/v2-home.html">← Todos os projetos</a>
+      <p class="idioma"><span aria-current="true">PT</span> / <a href="#">EN</a></p>
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap abertura-projeto">
+      <div class="revela">
+        <h1>Office Timesheet</h1>
+        <p class="chamada">O escritório de arquitetura descobre onde o tempo da equipe foi parar, e quanto cada projeto custou, sem depender de planilha.</p>
+      </div>
+      <aside class="ficha revela">
+        <dl>
+          <div><dt>Para quem</dt><dd>Escritório de arquitetura</dd></div>
+          <div><dt>Situação</dt><dd>Sistema fechado, interno do escritório</dd></div>
+          <div><dt>Tamanho</dt><dd>26 páginas, 4 papéis de acesso</dd></div>
+        </dl>
+        <div class="semlink">
+          <b>Sem link para entrar</b>
+          <p>É um sistema interno: não tem área pública nem conta de visitante. O que dá para mostrar aqui são os prints.</p>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ==================================================================
+         O print de abertura já nasce em largura de prancha. Clique e ele
+         toma a tela inteira.
+         ================================================================== -->
+    <section class="wrap abre revela">
+      <div class="prancha prancha--sozinha">
+        <a class="prancha-alvo" href="/public/prints/office-timesheet/03-tarefas-kanban.png">
+          <img src="/public/prints/office-timesheet/03-tarefas-kanban.png"
+               alt="Quadro de tarefas com cinco colunas: A fazer, Fazendo, Falta info, Em revisão e Concluído. Cada cartão traz o projeto, a etapa, o responsável, as horas já contadas, o prazo e um botão Contar horas.">
+        </a>
+        <div class="prancha-nota">
+          <p>O quadro de tarefas, com todas as tarefas de todos os projetos. O marcador laranja de cada cartão é de onde saiu a cor desta página.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="destaque revela" data-brilho>
+      <div class="wrap">
+        <div class="cabeca">
+          <h2>O assistente que vive dentro do sistema</h2>
+          <p>Um chat dentro do próprio sistema, construído sobre um modelo de linguagem, a DeepSeek. Em vez de abrir sete telas para montar a resposta, a pessoa pergunta em português.</p>
+          <p>Ele não adivinha: responde <b>chamando funções do sistema</b>, o <i>function calling</i>. Cada pergunta vira uma ou mais chamadas, ele decide quais precisa, junta o que voltou e escreve a resposta. É o mesmo dado que a pessoa veria navegando, só que sem navegar.</p>
+        </div>
+
+        <div class="amarras">
+          <div class="amarra">
+            <h3>Ele propõe, não executa</h3>
+            <p>Nada é escrito no sistema pelo assistente. Ele monta a proposta, e a pessoa aprova ou descarta.</p>
+          </div>
+          <div class="amarra">
+            <h3>Não é um canal privilegiado</h3>
+            <p>Cada pessoa alcança pelo assistente exatamente o que alcançaria navegando o site. A mesma régua de permissão vale nos dois caminhos.</p>
+          </div>
+          <div class="amarra">
+            <h3>Cada resposta declara suas fontes</h3>
+            <p>No rodapé da resposta vai a lista de quais leituras a produziram. Dá para conferir em vez de acreditar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <section class="regua regua--4 revela">
+        <div class="num"><b>1.452</b><span>casos de teste, contra Postgres real no CI</span></div>
+        <div class="num"><b>148</b><span>endpoints HTTP</span></div>
+        <div class="num"><b>40</b><span>tabelas no banco</span></div>
+        <div class="num"><b>34</b><span>funções que o assistente pode chamar</span></div>
+      </section>
+
+      <section class="prosa revela">
+        <div>
+          <h2>O problema</h2>
+          <p>Num escritório de arquitetura, a hora trabalhada é o que se vende. Só que ela fica espalhada: cada pessoa em vários projetos no mesmo dia, cada projeto em várias etapas, e o registro disso vivendo numa planilha.</p>
+          <p>No fim do mês, ninguém consegue responder com segurança as duas perguntas que importam: onde o tempo da equipe foi parar, e quanto cada projeto custou de verdade.</p>
+        </div>
+        <div>
+          <h2>O que o sistema faz</h2>
+          <p>Marcar hora por projeto sem planilha: abre o projeto, clica em apontar horas, o cronômetro roda, pausa no almoço, retoma, encerra.</p>
+          <p>Tocar os projetos: cada um tem as quatro etapas, Levantamento, Estudo Preliminar, Anteprojeto e Projeto Executivo, e um quadro de tarefas com responsável, prazo e cronômetro por tarefa.</p>
+          <p>E fechar o mês: o admin vê quanto a equipe trabalhou e quanto cada projeto custou, e resolve numa fila só as três coisas que precisam de gente: correção de ponto, reembolso de despesa e pedido de férias.</p>
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           A GALERIA, REFEITA
+           Antes: três selos de 357px por fileira, ilegíveis.
+           Agora: pranchas de 820px com a legenda na margem, o lado alternando
+           como as faixas da home. Um clique e a prancha toma a tela inteira.
+           ================================================================== -->
+      <section class="galeria">
+        <div>
+          <h2>O dia de quem aponta</h2>
+          <div class="pranchas">
+
+            <div class="prancha revela">
+              <div class="prancha-nota">
+                <p>Os projetos da pessoa, e o cronômetro rodando num deles.</p>
+              </div>
+              <a class="prancha-alvo" href="/public/prints/office-timesheet/02-registro-horas-projetos.png">
+                <img src="/public/prints/office-timesheet/02-registro-horas-projetos.png"
+                     alt="Lista de projetos em cartões, cada um com o cliente, a contagem de tarefas por coluna e o botão Apontar horas; num deles o cronômetro está rodando.">
+              </a>
+            </div>
+
+            <div class="prancha revela">
+              <div class="prancha-nota">
+                <p>Um projeto por dentro: etapas, briefing e o quadro só dele.</p>
+              </div>
+              <a class="prancha-alvo" href="/public/prints/office-timesheet/04-projeto-etapas-e-quadro.png">
+                <img src="/public/prints/office-timesheet/04-projeto-etapas-e-quadro.png"
+                     alt="Página de um projeto: as quatro etapas em régua no topo, o briefing, o quadro de tarefas do projeto e, na direita, contratante e horas do mês.">
+              </a>
+            </div>
+
+            <div class="prancha revela">
+              <div class="prancha-nota">
+                <p>A agenda junta férias, feriados, prazos e o Google Calendar.</p>
+              </div>
+              <a class="prancha-alvo" href="/public/prints/office-timesheet/07-agenda-equipe.png">
+                <img src="/public/prints/office-timesheet/07-agenda-equipe.png"
+                     alt="Agenda em vista de mês com férias da equipe, feriados, prazos de tarefa e quem está no escritório.">
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <div>
+          <h2>O fechamento do mês</h2>
+          <div class="pranchas">
+
+            <div class="prancha revela">
+              <div class="prancha-nota">
+                <p>A visão do admin, com quem está trabalhando agora.</p>
+              </div>
+              <a class="prancha-alvo" href="/public/prints/office-timesheet/08-dashboard-admin.png">
+                <img src="/public/prints/office-timesheet/08-dashboard-admin.png"
+                     alt="Visão geral da operação: horas da equipe no período, quem está com cronômetro rodando agora, e a coluna Precisa de você.">
+              </a>
+            </div>
+
+            <div class="prancha revela">
+              <div class="prancha-nota">
+                <p>A fila única: ponto, despesa e férias no mesmo lugar.</p>
+              </div>
+              <a class="prancha-alvo" href="/public/prints/office-timesheet/11-aprovacoes.png">
+                <img src="/public/prints/office-timesheet/11-aprovacoes.png"
+                     alt="Tela de aprovações em três colunas: correções de apontamento, despesas e pedidos de férias, com aprovar e rejeitar em cada item.">
+              </a>
+            </div>
+
+            <div class="prancha revela">
+              <div class="prancha-nota">
+                <p>Quanto custou o período, por pessoa e por projeto.</p>
+              </div>
+              <a class="prancha-alvo" href="/public/prints/office-timesheet/13-relatorio-financeiro.png">
+                <img src="/public/prints/office-timesheet/13-relatorio-financeiro.png"
+                     alt="Relatório financeiro por período: total a pagar, custo de horas, despesas aprovadas e bônus, com as tabelas por colaborador e por projeto.">
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section class="tecnico revela">
+        <h2 class="aviso">Esta parte é pra quem é da área. Se não for o seu caso, pode pular, acabou aqui.</h2>
+        <div class="chips">
+          <span class="chip">Node 20</span><span class="chip">Express 5</span><span class="chip">PostgreSQL 16</span>
+          <span class="chip">React 19</span><span class="chip">Vite 6</span><span class="chip">Tailwind</span>
+          <span class="chip">DeepSeek</span><span class="chip">Fly.io</span><span class="chip">GitHub Actions</span>
+        </div>
+        <div class="notas notas--3">
+          <div class="nota">
+            <h3>Os quinze tools de escrita começam com <code>propor</code></h3>
+            <p>Nenhum se chama <code>criar</code> ou <code>aprovar</code>: <code>proporCriarTask</code>, <code>proporAprovarDespesa</code>, <code>proporPedirFerias</code>, e assim os quinze. A regra não está num comentário nem numa checagem solta: está no nome de cada função que o modelo pode chamar. Escrever direto é uma coisa que não existe para ele.</p>
+          </div>
+          <div class="nota">
+            <h3>A regra vive no banco, não só no código</h3>
+            <p>Índice único parcial garantindo um apontamento aberto por pessoa, <code>EXCLUDE</code> barrando férias sobrepostas, um pedido pendente por apontamento e <code>ON DELETE RESTRICT</code> entre apontamento e projeto. Onde não dá para burlar.</p>
+          </div>
+          <div class="nota">
+            <h3>O valor/hora congela no apontamento</h3>
+            <p>O custo de uma hora é gravado no momento em que ela é apontada. Aumento de salário depois não reescreve o custo do que já passou, e o relatório de um mês fechado continua dando o mesmo número no ano que vem.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="wrap rodape-projeto">
+    <span>Gabriel Cherubini · Porto Alegre · GMT−3</span>
+    <span>gacherubini.dev</span>
+  </footer>
+</div>
+
+<div class="proto-barra">
+  <span class="rot">abrir</span>
+  <button data-abrir-btn="suave">suave</button>
+  <button data-abrir-btn="medio">médio</button>
+  <button data-abrir-btn="total">total</button>
+  <span class="sep"></span>
+  <span class="rot">mouse</span>
+  <button data-mov-btn="off">off</button>
+  <button data-mov-btn="discreta">discreta</button>
+  <button data-mov-btn="media">média</button>
+  <span class="sep"></span>
+  <a href="/mockups/v2-home.html">← a home</a>
+</div>
+
+<script src="/mockups/v2-proto.js"></script>
+</body>
+</html>

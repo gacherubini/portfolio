@@ -1,0 +1,379 @@
+/* =========================================================================
+   PROTÓTIPO — não é código do site. Descartável.
+   Só o CSS NOVO da proposta v2. A aparência de tudo o mais vem de
+   ../app/globals.css, que estas páginas carregam antes desta folha.
+   ========================================================================= */
+
+/* --- a barra do protótipo (não faz parte do design) ---------------------- */
+.proto-barra {
+  position: fixed; z-index: 200; left: 50%; bottom: 18px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px; padding: 7px 8px;
+  background: #101114; color: #fff; border-radius: 999px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35); font-size: 12.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.proto-barra button, .proto-barra a {
+  background: #24262c; color: #fff; border: 0; border-radius: 999px;
+  padding: 6px 12px; font: inherit; cursor: pointer; text-decoration: none;
+  white-space: nowrap; flex: none; line-height: 1.4;
+}
+.proto-barra { max-width: calc(100vw - 24px); flex-wrap: nowrap; }
+.proto-barra button:hover, .proto-barra a:hover { background: #383b44; }
+.proto-barra button[aria-pressed="true"] { background: #fff; color: #101114; font-weight: 700; }
+.proto-barra .sep { width: 1px; height: 20px; background: #34363d; margin: 0 4px; }
+.proto-barra .rot { opacity: .6; padding-left: 6px; }
+
+.proto-aviso {
+  position: fixed; z-index: 200; top: 0; left: 0; right: 0; text-align: center;
+  background: #F3B843; color: #1a1200; font-size: 11.5px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; padding: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+body { padding-top: 22px; }
+
+/* =========================================================================
+   1 · TELA DE ENTRADA
+   ========================================================================= */
+
+.entrada {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; place-items: center; justify-items: center;
+  /* O véu a 85% deixa ver o site atrás, que é o que se quer. Mas o centro,
+     onde mora a marca, cai bem na emenda entre a abertura clara e a faixa
+     preta da Revy: uma tela um pouco mais alta e a marca escura some no
+     preto. O clarão no meio garante que o load sempre nasce sobre o neutro,
+     seja qual for a altura da janela. */
+  background:
+    radial-gradient(circle 440px at 50% 50%,
+      color-mix(in srgb, var(--casca) 75%, transparent) 0%, transparent 72%),
+    color-mix(in srgb, var(--casca) 85%, transparent);
+  backdrop-filter: blur(14px) saturate(.5);
+  -webkit-backdrop-filter: blur(14px) saturate(.5);
+}
+/* Depois que a animação termina o véu não existe para o mouse nem para o
+   leitor de tela. Ele é `aria-hidden` no HTML e nunca prende o foco. */
+.entrada[hidden] { display: none; }
+
+.entrada-centro { display: grid; justify-items: center; }
+
+.entrada .marca {
+  font-size: 26px; letter-spacing: -.02em;
+  clip-path: inset(0 100% 0 0);
+  animation: ent-marca .62s cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes ent-marca { to { clip-path: inset(0 0 0 0); } }
+
+.entrada-regua {
+  width: 244px; height: 3px; margin-top: 20px; border-radius: 3px;
+  background: var(--regua); overflow: hidden;
+}
+.entrada-regua i {
+  display: block; height: 100%; width: 0; border-radius: 3px;
+  animation: ent-corre 1.05s linear forwards,
+             ent-cor   1.05s linear forwards;
+}
+@keyframes ent-corre { from { width: 0 } to { width: 100% } }
+/* As quatro cores dos quatro sistemas, trocando em degrau — sem transição
+   entre elas, senão vira arco-íris e some a ideia. */
+@keyframes ent-cor {
+  0%,     24.99% { background: #7FBFA3 }  /* Revy */
+  25%,    49.99% { background: #5A21B4 }  /* BDDente */
+  50%,    74.99% { background: #CB6D31 }  /* Office Timesheet */
+  75%,      100% { background: #F3B843 }  /* Autotune */
+}
+
+/* O véu levanta no fim. 1,05s de régua + 0,4s de saída = 1,45s no total. */
+.entrada { animation: ent-veu .42s cubic-bezier(.55,0,.35,1) 1.06s forwards; }
+@keyframes ent-veu {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+/* --- variante B: quatro blocos ------------------------------------------ */
+.entrada--blocos .entrada-blocos {
+  display: flex; gap: 12px; margin-bottom: 26px;
+}
+.entrada--blocos .entrada-blocos b {
+  width: 54px; height: 54px; border-radius: 8px; background: var(--regua);
+  animation: ent-bloco .34s cubic-bezier(.2,.7,.3,1) forwards;
+}
+.entrada--blocos .entrada-blocos b:nth-child(1) { --c: #7FBFA3; animation-delay: .05s }
+.entrada--blocos .entrada-blocos b:nth-child(2) { --c: #5A21B4; animation-delay: .28s }
+.entrada--blocos .entrada-blocos b:nth-child(3) { --c: #CB6D31; animation-delay: .51s }
+.entrada--blocos .entrada-blocos b:nth-child(4) { --c: #F3B843; animation-delay: .74s }
+@keyframes ent-bloco {
+  from { transform: scale(.72); opacity: .35 }
+  to   { transform: scale(1);   opacity: 1; background: var(--c) }
+}
+.entrada--blocos .entrada-regua { display: none }
+
+/* --- variante C: só o pulso --------------------------------------------- */
+.entrada--pulso .marca, .entrada--pulso .entrada-regua { display: none }
+.entrada--pulso .entrada-anel {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid var(--regua); border-top-color: var(--tinta);
+  animation: ent-gira .7s linear infinite;
+}
+@keyframes ent-gira { to { transform: rotate(360deg) } }
+.entrada-anel { display: none }
+.entrada--pulso .entrada-anel { display: block }
+.entrada--camaleao .entrada-blocos, .entrada--pulso .entrada-blocos { display: none }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Movimento reduzido não vê véu nenhum: a home aparece direto. */
+  .entrada { display: none !important; }
+}
+
+/* =========================================================================
+   2 · SELO DE IA NA FAIXA
+   ========================================================================= */
+
+/* Mesma régua de contraste da pílula de situação: o texto herda `--texto`, e
+   quem carrega a cor do projeto é o ponto, não a letra. Pintar a letra de
+   `--destaque` reprovaria — no Office Timesheet ele dá 3,08:1. */
+.selo {
+  margin: 0; font-size: 12px; font-weight: 600; opacity: .85;
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px solid var(--borda); border-radius: 999px; padding: 3px 11px;
+}
+.selo::before {
+  content: ""; flex: none; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--destaque);
+}
+/* A pílula de situação deixa de empurrar sozinha: agora são duas. */
+.ficha-faixa .situacao { margin-left: 0 }
+.ficha-faixa .selo { margin-left: auto }
+.ficha-faixa { flex-wrap: wrap }
+
+/* =========================================================================
+   3 · MOVIMENTO
+   Tudo abaixo só existe depois que o JS marca <html data-mov>. Sem JS, o site
+   é o de hoje, inteiro e visível — nada nasce escondido.
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html { --mov-off: 1 }
+}
+
+/* 4a · o brilho que segue o cursor, na cor daquele projeto ---------------- */
+[data-brilho] { position: relative; isolation: isolate; }
+[data-brilho] > * { position: relative; z-index: 1; }
+[data-brilho]::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0; transition: opacity .45s ease;
+  background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--destaque) 13%, transparent), transparent 68%);
+}
+html[data-mov="discreta"] [data-brilho]:hover::before,
+html[data-mov="media"]    [data-brilho]:hover::before { opacity: 1; }
+
+/* 4b · botões magnéticos -------------------------------------------------- */
+html[data-mov] .cta {
+  transform: translate(var(--dx, 0px), var(--dy, 0px));
+  transition: transform .28s cubic-bezier(.2,.7,.3,1), background-color .2s;
+  will-change: transform;
+}
+
+/* 4c · o print inclina ---------------------------------------------------- */
+html[data-mov] .col-print .prancha-alvo {
+  transform: perspective(1100px)
+             rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+             translateY(var(--py, 0px));
+  transition: transform .4s cubic-bezier(.2,.7,.3,1);
+  transform-style: preserve-3d; will-change: transform;
+}
+html[data-mov] .col-print .prancha-alvo img { transition: box-shadow .4s ease; }
+html[data-mov] .col-print:hover .prancha-alvo img {
+  box-shadow: 0 22px 50px -18px rgba(0,0,0,.55);
+}
+
+/* 4d · entrada na rolagem ------------------------------------------------- */
+html[data-mov] .revela {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .62s cubic-bezier(.2,.7,.3,1), transform .62s cubic-bezier(.2,.7,.3,1);
+}
+html[data-mov] .revela.dentro { opacity: 1; transform: none; }
+/* Escalonado dentro de uma mesma tira/grade. */
+html[data-mov] .revela:nth-child(2) { transition-delay: .07s }
+html[data-mov] .revela:nth-child(3) { transition-delay: .14s }
+
+/* --- só na intensidade "média" ------------------------------------------ */
+/* rótulo no cursor sobre print clicável */
+.cursor-rotulo {
+  position: fixed; z-index: 150; top: 0; left: 0; pointer-events: none;
+  background: #101114; color: #fff; font-size: 11.5px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 7px 12px; border-radius: 999px; opacity: 0;
+  transform: translate(-50%, -50%) scale(.8);
+  transition: opacity .18s, transform .18s;
+}
+html[data-mov="media"] .cursor-rotulo.visivel { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+html[data-mov="media"] .prancha-alvo { cursor: none }
+
+@media (hover: none) {
+  /* Toque não tem cursor: nada de brilho, ímã, inclinação ou rótulo. */
+  html[data-mov] .cta { transform: none }
+  html[data-mov] .col-print .prancha-alvo { transform: none }
+  [data-brilho]::before { display: none }
+  .cursor-rotulo { display: none }
+  html[data-mov="media"] .prancha-alvo { cursor: zoom-in }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-mov] .revela { opacity: 1 !important; transform: none !important }
+  html[data-mov] .cta, html[data-mov] .col-print .prancha-alvo { transform: none !important }
+  [data-brilho]::before { display: none }
+  .cursor-rotulo { display: none }
+}
+
+/* =========================================================================
+   4 · AS PRANCHAS
+   O erro das três primeiras tentativas foi tratar a miniatura como algo a
+   ser aumentado. A miniatura é o problema: 357px para uma tela de app de
+   1600px de CSS não é uma imagem pequena, é uma imagem errada.
+
+   Então a galeria deixa de ser uma grade de selos e vira uma sequência de
+   pranchas, com a legenda na margem — que é como uma monografia impressa
+   apresenta uma prancha. O lado alterna, exatamente como as faixas da home
+   já alternam: o site já fala essa língua, não estou inventando outra.
+   ========================================================================= */
+
+.pranchas { display: grid; gap: 72px; }
+
+.prancha {
+  display: grid;
+  grid-template-columns: 196px minmax(0, 1fr);
+  gap: 40px; align-items: start;
+  scroll-margin-top: 28px;
+}
+.prancha:nth-child(even) { grid-template-columns: minmax(0, 1fr) 196px; }
+.prancha:nth-child(even) .prancha-nota { grid-column: 2; grid-row: 1; }
+.prancha:nth-child(even) .prancha-alvo { grid-column: 1; grid-row: 1; }
+
+/* A legenda em corpo de leitura, não em corpo de rodapé. Ela é o que diz o
+   que a tela significa; a imagem sozinha não diz. */
+.prancha-nota {
+  border-top: 1px solid var(--borda); padding-top: 15px;
+  transition: opacity .18s ease;
+}
+.prancha--virando .prancha-nota { opacity: 0; }
+.prancha-nota p { margin: 0 0 14px; font-size: 14.5px; line-height: 1.52; }
+.prancha-alvo { display: block; cursor: zoom-in; text-decoration: none; }
+.prancha--virando .prancha-alvo { will-change: transform; }
+.prancha-alvo img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--borda); border-radius: 8px; background: var(--fundo2);
+}
+
+/* --- a abertura ---------------------------------------------------------
+   Um clique, e a prancha toma a largura inteira da tela. Ela não flutua por
+   cima da página: a página abre espaço. É reversível, é estável (dá para
+   soltar o mouse e ler), e a 100vw um print retina fica em ~95% do tamanho
+   real, que é o único tamanho em que ele é legível de verdade. */
+.prancha.aberta,
+.prancha.aberta:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+/* Aberta, a legenda vai para baixo da imagem: a prancha é o assunto, e o
+   topo da tela é dela. */
+.prancha.aberta .prancha-alvo { grid-column: 1; grid-row: 1; }
+.prancha.aberta .prancha-nota { grid-column: 1; grid-row: 2; }
+
+/* Quanto a prancha cresce ao abrir. 880px é o tamanho fechado; a 1320 o print
+   fica em ~82% do tamanho real, que já lê. Ir a 100vw dobra o salto e a
+   prancha deixa de ser prancha: vira tomada de tela. */
+:root { --aberta: min(1320px, calc(100vw - 64px)); }
+html[data-abrir="suave"] { --aberta: min(1180px, calc(100vw - 64px)); }
+html[data-abrir="medio"] { --aberta: min(1320px, calc(100vw - 64px)); }
+html[data-abrir="total"] { --aberta: 100vw; }
+
+/* Nunca esticar um print além do tamanho em que ele foi capturado: `--nat`
+   é a largura natural do arquivo, medida pelo JS. É a mesma regra que a folha
+   do site já aplica às placas do Autotune ("esticar borra"), agora valendo
+   para a abertura também. */
+.prancha.aberta .prancha-alvo {
+  --larga: min(var(--aberta), var(--nat, 100000px));
+  width: var(--larga);
+  margin-left: calc(50% - var(--larga) / 2);
+  cursor: zoom-out;
+}
+.prancha.aberta .prancha-alvo img { max-width: 100%; }
+/* Só na força total a prancha perde a moldura: aí ela encosta na borda da
+   tela e a borda arredondada ficaria pendurada no vazio. */
+html[data-abrir="total"] .prancha.aberta .prancha-alvo img {
+  border-radius: 0; border-left: 0; border-right: 0;
+}
+.prancha.aberta .prancha-nota {
+  border-top: 0; padding-top: 0; max-width: 64ch; margin: 0 auto; text-align: center;
+}
+
+/* O convite fica no canto da imagem, e só quando o mouse chega perto. Nada
+   de ícone permanente pousado em cima de toda tela do sistema. */
+.prancha-alvo { position: relative; }
+.prancha-alvo::after {
+  content: attr(data-convite);
+  position: absolute; right: 14px; bottom: 14px;
+  background: var(--fundo); color: var(--texto);
+  border: 1px solid var(--borda); border-radius: 999px;
+  padding: 6px 14px; font-size: 12.5px; font-weight: 600;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .22s ease, transform .28s cubic-bezier(.2,.7,.3,1);
+  pointer-events: none;
+}
+.prancha-alvo:hover::after,
+.prancha-alvo:focus-visible::after { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .prancha, .prancha:nth-child(even) { grid-template-columns: 1fr; gap: 18px; }
+  .prancha:nth-child(even) .prancha-nota,
+  .prancha:nth-child(even) .prancha-alvo { grid-column: 1; grid-row: auto; }
+  .pranchas { gap: 48px; }
+  /* Numa tela estreita a prancha já ocupa quase tudo: abrir não acrescenta. */
+  .prancha.aberta .prancha-alvo { width: 100%; margin-left: 0; }
+  .prancha-alvo::after { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prancha, .prancha-alvo img, .prancha-alvo::after { transition-duration: .01ms; }
+}
+
+/* A prancha sozinha (o print de abertura) não tem margem: a legenda vai
+   embaixo, centrada, porque não há vizinha com quem alternar. */
+.prancha--sozinha, .prancha--sozinha:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.prancha--sozinha .prancha-alvo, .prancha--sozinha .prancha-nota { grid-column: 1; grid-row: auto; }
+.prancha--sozinha .prancha-nota { border-top: 0; padding-top: 0; max-width: 62ch; }
+
+/* Na faixa da home a prancha não tem grade própria: ela é a coluna do print. */
+.faixa .prancha { display: block; }
+/* Dentro da faixa, o `50%` do centramento resolve contra a coluna do print,
+   não contra a página — e a coluna não está no meio da tela. Aqui a conta é
+   feita a partir da viewport, com `--esq` (a distância do print até a borda
+   esquerda) medida pelo JS no momento de abrir. */
+/* Uma coluna `1fr` tem piso automático de `min-content`. Com o print aberto a
+   1320px, a coluna dele estourava e arrastava a faixa inteira 102px para o
+   lado — e o centramento, calculado antes disso, errava por exatamente isso.
+   `minmax(0, …)` remove o piso: a coluna fica no tamanho de sempre e a imagem
+   transborda por cima, que é o que se quer. */
+.faixa:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+.faixa.espelho:has(.prancha.aberta) .grade { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+
+.faixa .prancha.aberta .prancha-alvo {
+  margin-left: calc(50vw - var(--larga) / 2 - var(--esq, 0px));
+}
+
+/* Aberta, a prancha não responde mais ao mouse: ela já é o assunto da tela,
+   e um `transform` de inclinação brigaria com o da abertura. */
+html[data-mov] .col-print .prancha.aberta .prancha-alvo,
+html[data-mov] .prancha.aberta .prancha-alvo { transform: none; }
+
+/* E, durante a abertura, a transição da inclinação precisa sair do caminho:
+   na cascata, uma transição de CSS vence uma animação de script. Sem esta
+   regra a transição de `transform` da inclinação sequestra o movimento de
+   abrir, e a imagem chega ao destino pelo caminho errado. */
+html[data-mov] .prancha--virando .prancha-alvo,
+html[data-mov] .col-print.prancha--virando .prancha-alvo { transition: none; }
+
+/* Um print que já está no tamanho em que foi capturado não tem nada a revelar:
+   abrir só o borraria. Nesses, a prancha não é clicável e não anuncia que é —
+   convite morto é pior que convite ausente. É o caso do Autotune, que são
+   capturas nativas de ~640px de uma janela de plugin, não retina de um app.
+*/
+.prancha--fixa .prancha-alvo { cursor: default; }
+.prancha--fixa .prancha-alvo::after { content: none; }

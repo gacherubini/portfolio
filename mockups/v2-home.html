@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTÓTIPO v2 — a home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- A folha REAL do site. O `@import "tailwindcss"` do topo dela falha aqui
+     (404) e é ignorado; todo o resto aplica igual à produção. -->
+<link rel="stylesheet" href="/app/globals.css">
+<link rel="stylesheet" href="/mockups/v2-proto.css">
+<style>:root { --fonte-archivo: 'Archivo' }</style>
+</head>
+<body>
+
+<p class="proto-aviso">Protótipo descartável · mockups/v2-home.html · não é o site</p>
+
+<!-- ======================================================================
+     1 · TELA DE ENTRADA
+     Vem no HTML do servidor, não do React: se fosse componente client, o
+     visitante veria a home por um quadro antes do véu cobrir. É CSS puro,
+     `aria-hidden`, e nunca prende o foco.
+     ====================================================================== -->
+<div class="entrada entrada--camaleao" aria-hidden="true">
+  <div class="entrada-centro">
+    <div class="entrada-blocos"><b></b><b></b><b></b><b></b></div>
+    <p class="marca marca--casca">gacherubini<span class="marca-dev">.dev</span></p>
+    <div class="entrada-regua"><i></i></div>
+    <div class="entrada-anel"></div>
+  </div>
+</div>
+
+<header class="casca-topo">
+  <div class="wrap topo">
+    <p class="marca marca--casca">gacherubini<span class="marca-dev">.dev</span></p>
+    <nav><a href="#projetos">Projetos</a><a href="#sobre">Sobre</a></nav>
+    <p class="idioma"><span aria-current="true">PT</span> / <a href="#">EN</a></p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap abertura-home revela">
+    <h1>Os sistemas que eu construí.</h1>
+    <p>Cada um com print, explicação em português comum e, quando o sistema é público, link para entrar e clicar.</p>
+  </div>
+
+  <div id="projetos">
+
+    <!-- ================= REVY — números novos + selo de IA ================= -->
+    <section class="faixa" data-brilho aria-labelledby="faixa-revy" style="
+      --fundo:#111111; --texto:#EAF0EA; --borda:#2A322C; --destaque:#7FBFA3;
+      --ctaFundo:#7FBFA3; --ctaTexto:#111111; --calmo:#9AA39D; --fundo2:#171917;">
+      <div class="wrap grade">
+        <div class="col-texto revela">
+          <div class="ficha-faixa">
+            <h2 class="nome" id="faixa-revy">Revy</h2>
+            <p class="paraquem">Revenda de veículos</p>
+            <p class="selo">IA · agente no WhatsApp</p>
+            <p class="situacao">no ar</p>
+          </div>
+          <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa a moto do estoque, responde preço e condição, e passa para uma pessoa quando o assunto sai do roteiro.</p>
+          <!-- NOVO: a régua da Revy existia vazia. -->
+          <div class="numeros">
+            <div class="num"><b>120</b><span>pessoas atendidas por dia no WhatsApp</span></div>
+            <div class="num"><b>~80%</b><span>das conversas o agente resolve sozinho</span></div>
+            <div class="num"><b>75</b><span>motos no estoque da loja</span></div>
+          </div>
+          <div class="botoes">
+            <a class="cta" href="https://revyapp.com.br">Entrar no sistema</a>
+            <a class="cta fantasma" href="#">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print revela prancha">
+          <a class="prancha-alvo" href="/public/prints/revy/02-agente-whatsapp.png">
+            <img src="/public/prints/revy/02-agente-whatsapp.png" alt="Aba Agente: 96 atendimentos no mês, 72 resolvidos só com o agente, 24 transferidos, e o gráfico por dia.">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BDDENTE — sem mudança ================= -->
+    <section class="faixa espelho" data-brilho aria-labelledby="faixa-bddente" style="
+      --fundo:#5A21B4; --texto:#F4EEFC; --borda:#7E4EC0; --destaque:#D9C4F5;
+      --ctaFundo:#FFFFFF; --ctaTexto:#4A1A8C; --calmo:#CBBCE8; --fundo2:#451890;">
+      <div class="wrap grade">
+        <div class="col-texto revela">
+          <div class="ficha-faixa">
+            <h2 class="nome" id="faixa-bddente">BDDente</h2>
+            <p class="paraquem">Consultório odontológico</p>
+            <p class="situacao">no ar</p>
+          </div>
+          <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a 2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup foram escopo do primeiro dia, não fase dois.</p>
+          <div class="numeros">
+            <div class="num"><b>~30</b><span>anos de histórico migrados</span></div>
+            <div class="num"><b>5.559</b><span>pacientes no cadastro histórico</span></div>
+            <div class="num"><b>44.812</b><span>lançamentos clínicos migrados</span></div>
+            <div class="num"><b>914</b><span>testes passando</span></div>
+          </div>
+          <div class="botoes">
+            <p class="fechado">Sistema fechado — prontuário de clínica real.</p>
+            <a class="cta fantasma" href="#">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print revela prancha">
+          <a class="prancha-alvo" href="/public/prints/bddente/01-agenda-semana.png">
+            <img src="/public/prints/bddente/01-agenda-semana.png" alt="Agenda da semana com a tarja de lembretes desligados e os três estados de consentimento nos cartões.">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========= OFFICE TIMESHEET — números humanos + selo de IA =========
+         ANTES: 1.452 casos de teste · 148 endpoints HTTP · 40 tabelas no
+         banco · 34 tools no assistente, dos quais 17 de leitura e 15 de
+         escrita — o resto é SQL avulso e meta.  (o quarto quebrava a linha)
+         AGORA: os quatro continuam existindo, mas só na página do projeto. -->
+    <section class="faixa" data-brilho aria-labelledby="faixa-ot" style="
+      --fundo:#ECECEC; --texto:#1D2724; --borda:#C9CFCC; --destaque:#CB6D31;
+      --ctaFundo:#2E3D38; --ctaTexto:#FFFFFF; --calmo:#55605C; --fundo2:#FFFFFF;">
+      <div class="wrap grade">
+        <div class="col-texto revela">
+          <div class="ficha-faixa">
+            <h2 class="nome" id="faixa-ot">Office Timesheet</h2>
+            <p class="paraquem">Escritório de arquitetura</p>
+            <p class="selo">IA · assistente embutido</p>
+            <p class="situacao">fechado</p>
+          </div>
+          <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada projeto custou. Tem um assistente que responde as perguntas chatas de segunda-feira sem ninguém abrir sete telas.</p>
+          <!-- VALORES DE EXEMPLO. As três métricas são as que você escolheu;
+               os números ainda não são reais e precisam vir de você. -->
+          <div class="numeros">
+            <div class="num"><b>12.400</b><span>horas apontadas no sistema</span></div>
+            <div class="num"><b>38</b><span>projetos acompanhados</span></div>
+            <div class="num"><b>9</b><span>pessoas apontando hora todo dia</span></div>
+          </div>
+          <div class="botoes">
+            <p class="fechado">Sistema fechado — interno do escritório.</p>
+            <a class="cta fantasma" href="/mockups/v2-projeto-office.html">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print revela prancha">
+          <a class="prancha-alvo" href="/public/prints/office-timesheet/03-tarefas-kanban.png">
+            <img src="/public/prints/office-timesheet/03-tarefas-kanban.png" alt="Quadro de tarefas com cinco colunas — A fazer, Fazendo, Falta info, Em revisão e Concluído.">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= AUTOTUNE — sem mudança ================= -->
+    <section class="faixa espelho" data-brilho aria-labelledby="faixa-autotune" style="
+      --fundo:#10312F; --texto:#E4F2F0; --borda:#2A5A56; --destaque:#F3B843;
+      --ctaFundo:#F3B843; --ctaTexto:#10312F; --calmo:#9FBCB8; --fundo2:#0D2827; --fundo3:#0A211F;">
+      <div class="wrap grade">
+        <div class="col-texto revela">
+          <div class="ficha-faixa">
+            <h2 class="nome" id="faixa-autotune">Autotune</h2>
+            <p class="paraquem">Trabalho de conclusão, PUCRS</p>
+            <p class="situacao">publicado</p>
+          </div>
+          <p class="resumo">O que o Auto-Tune faz, feito do zero em C++. Dois motores de correção com o mesmo deslocamento: um preserva a voz da pessoa, o outro preserva a latência.</p>
+          <div class="numeros">
+            <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+            <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+            <div class="num"><b>340×</b><span>de diferença entre os dois motores</span></div>
+          </div>
+          <div class="botoes">
+            <a class="cta" href="https://github.com/gacherubini/TCC_autotune_cpp">Ver o protótipo em C++</a>
+            <a class="cta fantasma" href="#">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print pequeno revela prancha">
+          <a class="prancha-alvo" href="/public/prints/autotune/01-plugin-cantando-v3.png">
+            <img src="/public/prints/autotune/01-plugin-cantando-v3.png" alt="O plugin com o motor de ponteiro móvel, corrigindo em 0,18 ms.">
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ======================================================================
+     6 · SOBRE — 5+ anos no lugar da data, e o parágrafo de IA
+     ====================================================================== -->
+<section class="sobre wrap" id="sobre">
+  <h2>Quem fez</h2>
+  <div class="grade">
+    <div class="revela">
+      <p class="lede">Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.</p>
+      <!-- MUDOU: "desde 2023" saiu; "5+ anos" entrou. Data envelhece sozinha. -->
+      <p class="corpo">Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend da Binance, em Java.</p>
+      <p class="corpo">Os quatro sistemas aqui de cima são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.</p>
+      <!-- NOVO: o parágrafo de IA. -->
+      <p class="corpo">IA é onde minha atenção está hoje, e não como quem usa chat. Construo por dentro: agentes que chamam funções do próprio produto, skills, loops de agente que tocam a tarefa inteira e param exatamente onde precisam de uma pessoa. O assistente do Office Timesheet e o agente de WhatsApp da Revy saíram daí. Este site também.</p>
+    </div>
+    <aside class="rail revela">
+      <dl>
+        <div><dt>Onde</dt><dd>Porto Alegre, Brasil · GMT−3</dd></div>
+        <div><dt>Trabalho</dt><dd>Backend na Ambush · Austin, Texas · remoto</dd></div>
+        <div><dt>Stack</dt><dd>Java · Spring Boot · Go · PostgreSQL</dd></div>
+        <!-- NOVO: a linha de IA na ficha. -->
+        <div><dt>IA</dt><dd>agent loops · skills · function calling</dd></div>
+        <div><dt>Inglês</dt><dd>Fluente</dd></div>
+      </dl>
+    </aside>
+  </div>
+</section>
+
+<section class="fechamento">
+  <div class="wrap">
+    <div class="linha">
+      <div class="canais">
+        <p class="canal"><a href="mailto:bielcheeeeee@gmail.com">bielcheeeeee@gmail.com</a></p>
+        <p class="canal"><a href="https://wa.me/5551980336365">(51) 98033-6365</a><span class="via">chama no WhatsApp</span></p>
+      </div>
+      <div class="perfis">
+        <a href="https://github.com/gacherubini">GitHub</a>
+        <a href="https://www.linkedin.com/in/gabrielabreuu">LinkedIn</a>
+      </div>
+    </div>
+    <div class="assinatura">
+      <p class="marca marca--branca">gacherubini<span class="marca-dev">.dev</span></p>
+      <span>Gabriel Cherubini · Porto Alegre · GMT−3</span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     3 · O VISOR
+     ====================================================================== -->
+
+
+<div class="cursor-rotulo">abrir</div>
+
+<div class="proto-barra">
+  <button data-rever>▸ rever a entrada</button>
+  <span class="sep"></span>
+  <span class="rot">entrada</span>
+  <button data-entrada="camaleao">camaleão</button>
+  <button data-entrada="blocos">blocos</button>
+  <button data-entrada="pulso">pulso</button>
+  <span class="sep"></span>
+  <span class="rot">abrir</span>
+  <button data-abrir-btn="suave">suave</button>
+  <button data-abrir-btn="medio">médio</button>
+  <button data-abrir-btn="total">total</button>
+  <span class="sep"></span>
+  <span class="rot">mouse</span>
+  <button data-mov-btn="off">off</button>
+  <button data-mov-btn="discreta">discreta</button>
+  <button data-mov-btn="media">média</button>
+  <span class="sep"></span>
+  <a href="/mockups/v2-projeto-office.html">página do projeto →</a>
+</div>
+
+<script src="/mockups/v2-proto.js"></script>
+</body>
+</html>
