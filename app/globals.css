@@ -428,3 +428,21 @@ nav a:hover { color: var(--tinta); }
 @media (max-width: 900px) {
   .notas, .notas--2, .notas--3, .notas--4 { grid-template-columns: 1fr; gap: 28px; }
 }
+
+/* --- o selo de IA na faixa ---------------------------------------------- */
+/* O texto herda `--texto`; quem carrega a cor do projeto é o ponto. Pintar a
+   letra de `--destaque` reprovaria no portão de contraste: no Office Timesheet
+   ele dá 3,08:1, e 12px em peso 600 não é "texto grande". */
+.selo {
+  margin: 0; font-size: 12px; font-weight: 600; opacity: .85;
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px solid var(--borda); border-radius: 999px; padding: 3px 11px;
+}
+.selo::before {
+  content: ""; flex: none; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--destaque);
+}
+/* Agora são duas pílulas: quem empurra para a direita é a primeira delas. */
+.ficha-faixa { flex-wrap: wrap; }
+.ficha-faixa .situacao { margin-left: 0; }
+.ficha-faixa .selo { margin-left: auto; }

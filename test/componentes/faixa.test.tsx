@@ -8,6 +8,8 @@ import { autotune } from '@/content/projetos/autotune'
 
 afterEach(() => cleanup())
 
+const txt = (s: string) => ({ pt: s, en: s })
+
 describe('estiloDoTema', () => {
   it('vira custom properties, uma por campo do tema', () => {
     const estilo = estiloDoTema(revy.tema) as Record<string, string>
@@ -81,5 +83,41 @@ describe('FaixaProjeto', () => {
   it('o print tem o alt do conteúdo, não "print do sistema"', () => {
     render(<FaixaProjeto projeto={bddente} lang="pt" espelho />)
     expect(screen.getByAltText(/Agenda da semana/)).toBeInTheDocument()
+  })
+
+  it('na home usa numerosHome quando o projeto declara', () => {
+    const projeto = {
+      ...revy,
+      numeros: [{ valor: txt('999'), rotulo: txt('só da página') }],
+      numerosHome: [
+        { valor: txt('1'), rotulo: txt('um') },
+        { valor: txt('2'), rotulo: txt('dois') },
+        { valor: txt('3'), rotulo: txt('três') },
+      ],
+    }
+    render(<FaixaProjeto projeto={projeto} lang="pt" espelho={false} />)
+    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.queryByText('999')).not.toBeInTheDocument()
+  })
+
+  it('sem numerosHome, cai em numeros', () => {
+    render(<FaixaProjeto projeto={bddente} lang="pt" espelho />)
+    expect(screen.getByText('5.559')).toBeInTheDocument()
+  })
+
+  // O Office Timesheet fica assim enquanto os valores reais não chegam.
+  it('com numerosHome vazio, a régua some da faixa', () => {
+    const { container } = render(
+      <FaixaProjeto projeto={{ ...revy, numerosHome: [] }} lang="pt" espelho={false} />,
+    )
+    expect(container.querySelector('.numeros')).toBeNull()
+  })
+
+  it('desenha o selo quando existe, e nada quando não existe', () => {
+    const { container: com } = render(<FaixaProjeto projeto={revy} lang="pt" espelho={false} />)
+    expect(com.querySelector('.selo')?.textContent).toContain('IA')
+    cleanup()
+    const { container: sem } = render(<FaixaProjeto projeto={bddente} lang="pt" espelho />)
+    expect(sem.querySelector('.selo')).toBeNull()
   })
 })

@@ -32,6 +32,9 @@ export function FaixaProjeto({
   prioridade?: boolean
 }) {
   const print = printDaFaixa(projeto)
+  // A régua da vitrine pode ser diferente da régua da página: o Office
+  // Timesheet mostra operação aqui e engenharia lá dentro.
+  const numeros = projeto.numerosHome ?? projeto.numeros
   const primario = projeto.links.find((l) => l.primario) ?? projeto.links[0]
   const campo = `${projeto.slug}.faixa`
 
@@ -51,13 +54,16 @@ export function FaixaProjeto({
             <p className="situacao">
               {t(ui.situacao[projeto.situacao], lang, `ui.situacao.${projeto.situacao}`)}
             </p>
+            {projeto.selo ? (
+              <p className="selo">{t(projeto.selo, lang, `${campo}.selo`)}</p>
+            ) : null}
           </div>
 
           <p className="resumo">{t(projeto.resumoHome, lang, `${campo}.resumoHome`)}</p>
 
-          {projeto.numeros.length > 0 ? (
+          {numeros.length > 0 ? (
             <div className="numeros">
-              {projeto.numeros.map((n, i) => (
+              {numeros.map((n, i) => (
                 <div className="num" key={i}>
                   <b>{t(n.valor, lang, `${campo}.numeros.${i}.valor`)}</b>
                   <span>{t(n.rotulo, lang, `${campo}.numeros.${i}.rotulo`)}</span>
