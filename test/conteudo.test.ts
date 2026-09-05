@@ -25,14 +25,23 @@ describe('revy', () => {
     expect(revy.galeria[0].prints).toHaveLength(3)
   })
 
-  // Slot: os números do seed são inventados. Quando o dono confirmar os reais,
-  // este teste vira `expect(revy.numeros).toHaveLength(3)`.
-  it('está sem números de vitrine, à espera da confirmação do dono', () => {
-    expect(revy.numeros).toEqual([])
-  })
-
   it('não declara "Desde" — o contrato deixa a linha de fora quando não se sabe', () => {
     expect(revy.ficha.some((l) => /a confirmar/i.test(l.valor.pt))).toBe(false)
+  })
+})
+
+describe('Revy', () => {
+  it('tem os três números de vitrine confirmados pelo dono', () => {
+    expect(revy.numeros).toHaveLength(3)
+    expect(revy.numeros.map((n) => n.valor.pt)).toEqual(['120', '~80%', '75'])
+  })
+
+  it('o número em inglês não usa separador de milhar do português', () => {
+    for (const n of revy.numeros) expect(n.valor.en).toBeTruthy()
+  })
+
+  it('leva o selo de IA', () => {
+    expect(revy.selo?.pt).toContain('IA')
   })
 })
 

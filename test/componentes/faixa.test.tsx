@@ -49,10 +49,11 @@ describe('FaixaProjeto', () => {
     )
   })
 
-  // A borda da Revy: números ainda não confirmados.
+  // A régua com zero números some da tela — não é sobre a Revy, é sobre o
+  // componente com um projeto sem números confirmados.
   it('sem números, não desenha a linha de números', () => {
-    const { container } = render(<FaixaProjeto projeto={revy} lang="pt" espelho={false} />)
-    expect(revy.numeros).toEqual([])
+    const semNumeros = { ...revy, numeros: [] }
+    const { container } = render(<FaixaProjeto projeto={semNumeros} lang="pt" espelho={false} />)
     expect(container.querySelector('.numeros')).toBeNull()
   })
 

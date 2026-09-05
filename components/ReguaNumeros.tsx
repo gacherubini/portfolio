@@ -2,8 +2,7 @@ import type { Idioma, Projeto } from '@/content/tipos'
 import { t } from '@/lib/idioma'
 
 /**
- * Três ou quatro números. Zero significa "ainda não confirmado" e some da tela
- * — é o caso da Revy, cujos números de vitrine ainda vêm do seed fictício.
+ * Três ou quatro números. Zero significa "ainda não confirmado" e some da tela.
  */
 export function ReguaNumeros({ projeto, lang }: { projeto: Projeto; lang: Idioma }) {
   if (projeto.numeros.length === 0) return null

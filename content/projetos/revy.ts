@@ -5,6 +5,7 @@ export const revy: Projeto = {
   nome: 'Revy',
   paraQuem: { pt: 'Revenda de veículos', en: 'Vehicle dealership' },
   situacao: 'no-ar',
+  selo: { pt: 'IA · agente no WhatsApp', en: 'AI · WhatsApp agent' },
 
   // Cores amostradas do menu lateral e da barra do agente em
   // 02-agente-whatsapp.png, em 04/09/2026.
@@ -106,12 +107,25 @@ export const revy: Projeto = {
     ],
   },
 
-  // SLOT. Os do comp ("96", "75%", "7") saem do seed-revy-demo.py e são
-  // inventados; o levantamento proíbe que virem número de vitrine. Quando o
-  // dono confirmar os reais, entram 3 ou 4 aqui e a régua reaparece sozinha.
-  // Candidatos que já são fato e não dependem de confirmação: "7" produtos que
-  // só conversam por HTTP, "4" bancos no motor de simulação.
-  numeros: [],
+  // Confirmados pelo dono em 05/09/2026, da loja real que usa o sistema.
+  // Substituem o slot que existia desde 04/09; os do seed continuam proibidos.
+  numeros: [
+    {
+      valor: { pt: '120', en: '120' },
+      rotulo: { pt: 'pessoas atendidas por dia no WhatsApp', en: 'people served per day on WhatsApp' },
+    },
+    {
+      valor: { pt: '~80%', en: '~80%' },
+      rotulo: {
+        pt: 'das conversas o agente resolve sozinho',
+        en: 'of conversations the agent handles on its own',
+      },
+    },
+    {
+      valor: { pt: '75', en: '75' },
+      rotulo: { pt: 'motos no estoque da loja', en: "bikes in the store's inventory" },
+    },
+  ],
 
   galeria: [
     {

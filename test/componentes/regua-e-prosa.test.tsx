@@ -27,9 +27,10 @@ describe('ReguaNumeros', () => {
     expect(container.querySelectorAll('.num')).toHaveLength(3)
   })
 
-  // Slot da Revy: os do seed são inventados e não podem virar vitrine.
+  // Zero números confirmados: a régua some da tela.
   it('sem números confirmados, a régua não existe', () => {
-    const { container } = render(<ReguaNumeros projeto={revy} lang="pt" />)
+    const semNumeros = { ...revy, numeros: [] }
+    const { container } = render(<ReguaNumeros projeto={semNumeros} lang="pt" />)
     expect(container.firstChild).toBeNull()
   })
 
