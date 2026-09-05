@@ -375,3 +375,13 @@ nav a:hover { color: var(--tinta); }
   .prosa { grid-template-columns: 1fr; gap: 28px; }
   .regua, .regua--3, .regua--4 { grid-template-columns: 1fr; gap: 26px; }
 }
+
+/* --- galeria ------------------------------------------------------------ */
+.galeria { padding: 8px 0 64px; }
+.galeria h2 { margin: 0 0 22px; font-size: 13px; font-weight: 600; color: var(--calmo); }
+.galeria > div + div { margin-top: 44px; }
+.tiras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+@media (max-width: 900px) {
+  .tiras { grid-template-columns: 1fr; }
+}
