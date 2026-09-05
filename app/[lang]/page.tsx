@@ -4,6 +4,9 @@ import { t } from '@/lib/idioma'
 import { ui } from '@/content/ui'
 import { CabecalhoCasca } from '@/components/CabecalhoCasca'
 
+// Sem `generateStaticParams` aqui: quem gera o segmento `[lang]` é o layout
+// raiz, e cada segmento é gerado uma vez só. Repetir a mesma chave nos dois
+// níveis é ruído no melhor caso e conflito no pior.
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
   if (!ehIdioma(lang)) notFound()

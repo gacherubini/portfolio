@@ -13,9 +13,13 @@ describe('a regra da folha', () => {
   })
 
   it('não esmaece nada pintado com --calmo', () => {
+    // `calmo` reprova a 0,72 nas quatro paletas (ver test/contraste.test.ts).
+    // Quem recebe opacity é `--texto`; quem usa `--calmo` fica em opacidade
+    // cheia. Regra grosseira, mas pega o caso real: uma declaração de opacity
+    // no mesmo bloco em que `--calmo` pinta a cor.
     const blocos = folha.split('}')
     const errados = blocos.filter(
-      (b) => /color:\s*var\(--calmo\)/.test(b) && /opacity:\s*(?!1\b)[\d.]+/.test(b),
+      (b) => /color:\s*var\(--calmo\)/.test(b) && /opacity:\s*(?!1)[\d.]+/.test(b),
     )
     expect(errados).toEqual([])
   })

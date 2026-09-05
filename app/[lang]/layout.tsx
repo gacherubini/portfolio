@@ -4,6 +4,8 @@ import { Archivo } from 'next/font/google'
 import { ehIdioma } from '@/content/tipos'
 import './../globals.css'
 
+// Archivo sozinha, e nada além dela. Monoespaçada, onde aparece, é a pilha do
+// sistema — nenhuma segunda fonte é baixada.
 const archivo = Archivo({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
