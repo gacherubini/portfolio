@@ -368,11 +368,6 @@ nav a:hover { color: var(--tinta); }
 .galeria { padding: 8px 0 64px; }
 .galeria h2 { margin: 0 0 22px; font-size: 13px; font-weight: 600; color: var(--calmo); }
 .galeria > div + div { margin-top: 44px; }
-.tiras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-
-@media (max-width: 900px) {
-  .tiras { grid-template-columns: 1fr; }
-}
 
 /* --- bloco técnico ------------------------------------------------------ */
 .tecnico { border-top: 1px solid var(--borda); padding: 56px 0 72px; }
@@ -465,3 +460,23 @@ nav a:hover { color: var(--tinta); }
 
 /* Sem moldura própria na faixa da home: lá quem emoldura é a faixa. */
 .faixa .prancha-alvo img { border-radius: 8px; }
+
+/* --- a galeria em pranchas ---------------------------------------------- */
+.pranchas { display: grid; gap: 72px; }
+
+.prancha--margem {
+  display: grid; grid-template-columns: 196px minmax(0, 1fr);
+  gap: 40px; align-items: start; scroll-margin-top: 28px;
+}
+/* O lado alterna, como `.faixa.espelho` na home. */
+.prancha--margem:nth-child(even) { grid-template-columns: minmax(0, 1fr) 196px; }
+.prancha--margem:nth-child(even) .prancha-nota { grid-column: 2; grid-row: 1; }
+.prancha--margem:nth-child(even) .prancha-alvo { grid-column: 1; grid-row: 1; }
+
+@media (max-width: 900px) {
+  .prancha--margem,
+  .prancha--margem:nth-child(even) { grid-template-columns: 1fr; gap: 18px; }
+  .prancha--margem:nth-child(even) .prancha-nota,
+  .prancha--margem:nth-child(even) .prancha-alvo { grid-column: 1; grid-row: auto; }
+  .pranchas { gap: 48px; }
+}
