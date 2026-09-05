@@ -1,0 +1,36 @@
+# Portfólio gacherubini.dev na Fly.io.
+#
+# A configuração é deliberadamente a mais barata que a Fly vende: uma única
+# máquina shared-cpu-1x de 256MB em IAD, que dorme sozinha quando ninguém
+# está no site. Máquina parada não é cobrada, então o custo de um portfólio
+# com visita esparsa fica perto de zero; o preço é ~1-2s de partida a frio
+# na primeira visita depois do sono.
+
+app = 'gacherubini-dev'
+primary_region = 'iad'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  # Zero: ninguém no site, nenhuma máquina de pé, nenhuma cobrança.
+  min_machines_running = 0
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'requests'
+    soft_limit = 200
+    hard_limit = 250
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'
+  cpus = 1
+
+# O `next start` em 256MB passa perto do teto quando otimiza as capturas de
+# 3200×2000. A swap é a rede de segurança que evita o OOM virar 502.
+swap_size_mb = 512

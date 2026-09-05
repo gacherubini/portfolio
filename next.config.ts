@@ -1,6 +1,11 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  // O deploy na Fly roda o servidor Node dentro de um contêiner: o standalone
+  // empacota só o que o `next start` precisa, e a imagem cai de ~400MB de
+  // node_modules para dezenas. A Vercel ignora este campo.
+  output: 'standalone',
+
   async redirects() {
     return [{ source: '/', destination: '/pt', permanent: false }]
   },

@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.superpowers
+docs
+mockups
+test
+scripts
+*.md
+!public/**/*.md
+vitest.config.ts
+vitest.setup.ts
+vercel.json
+.vercel
+*.tsbuildinfo
+.DS_Store
