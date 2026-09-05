@@ -2,6 +2,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { Sobre } from '@/components/Sobre'
 import { Fechamento } from '@/components/Fechamento'
+import { curriculoDisponivel } from '@/lib/curriculo'
 
 afterEach(() => cleanup())
 
@@ -57,5 +58,11 @@ describe('Fechamento', () => {
   it('a marca vai em branco sobre o azul da casa', () => {
     const { container } = render(<Fechamento lang="pt" temCurriculo />)
     expect(container.querySelector('.marca')).toHaveClass('marca--branca')
+  })
+})
+
+describe('Slot do currículo', () => {
+  it('retorna falso quando o PDF não existe em public', () => {
+    expect(curriculoDisponivel()).toBe(false)
   })
 })
