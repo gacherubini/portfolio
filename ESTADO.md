@@ -11,22 +11,61 @@ Repositório: **https://github.com/gacherubini/portfolio** — e ele é **públi
 Portfólio pessoal de **Gabriel Cherubini**, domínio **gacherubini.dev**.
 Next.js 15 + TypeScript + Tailwind 4, deploy na Vercel. Bilíngue PT/EN.
 
-**As Tasks 1–17 do plano estão implementadas na `main`.** O site está completo:
-home em PT/EN com as quatro faixas, as oito páginas de projeto com os sete
-blocos, Sobre e fechamento, tradução inglesa inteira, metadata, sitemap, robots,
-ícone, 404 e o portão de acessibilidade. **Falta só a Task 18, o deploy** — e ela
-foi deixada de propósito para o dono executar.
+**As Tasks 1–17 do plano original estão na `main`**, e a branch `v2` acrescenta
+as 11 tasks do plano de segunda rodada
+(`docs/superpowers/plans/2026-09-05-portfolio-v2.md`), agora todas concluídas.
+A v2 não troca a base: acrescenta números reais de vitrine, o selo de IA,
+reescreve o Sobre e o bloco do Office Timesheet, e troca a galeria por pranchas
+com abertura em tela cheia. O resumo, tarefa a tarefa:
+
+- **Contrato** (`content/tipos.ts`): ganhou `numerosHome?` (régua da faixa da
+  home, quando difere da régua da página) e `selo?` (pílula de IA ao lado de
+  "no ar"/"fechado"); perdeu `destaque.lista`.
+- **Revy**: os três números de vitrine confirmados pelo dono em 05/09/2026 — 120
+  pessoas atendidas por dia no WhatsApp, ~80% das conversas resolvidas sozinho
+  pelo agente, 75 motos no estoque — e o selo `IA · agente no WhatsApp`. **Fecha
+  a pendência 7** (abaixo).
+- **Office Timesheet**: o bloco do assistente parou de listar as 17 funções e
+  passou a descrever *function calling*; o rótulo que antes contava "17 de
+  leitura e 15 de escrita" separadas virou um só número, `34` — "funções que o
+  assistente pode chamar"; ganhou o selo
+  `IA · assistente embutido`; e `numerosHome: []`, **vazio de propósito** — os
+  três números de operação (horas apontadas, projetos acompanhados, pessoas
+  apontando todo dia) são do escritório real e só o dono os tem. Enquanto
+  vazio, a régua some da faixa da home. **É a pendência nova**, ver abaixo.
+- **Sobre**: saiu o parágrafo de idade e faculdade; "desde 2023" virou "mais de
+  5 anos"; entrou um parágrafo sobre IA (agentes que chamam funções do próprio
+  produto, skills, loops de agente) e uma linha na ficha, `IA` →
+  `agent loops · skills · function calling`; travessão saiu dos textos em
+  primeira pessoa.
+- **Pranchas**: todo print do site virou prancha — imagem em tamanho de
+  leitura, legenda na margem em corpo de leitura. A galeria deixou de ser grade
+  de selos de 357px e virou sequência de pranchas de 880px com o lado
+  alternando.
+- **Abertura**: clicar numa prancha a leva a 1320px, centrada, por FLIP — só
+  quando há resolução a revelar (`arquivo >= exibido × 1,5`); sem isso a
+  prancha nem é link. Em tela estreita a abertura é desligada.
+- **Movimento** (`components/Movimento.tsx`): brilho seguindo o cursor, botões
+  magnéticos, prancha que inclina, entrada na rolagem — o primeiro `'use
+  client'` do site, montado uma vez em `app/[lang]/layout.tsx` e valendo para
+  toda página.
+- **Entrada**: um véu cobre a home enquanto a marca se revela e uma régua
+  atravessa as quatro cores dos quatro sistemas. CSS puro mais um script inline
+  curto; toca uma vez por sessão.
+- **Fechamento (Task 11, esta)**: o portão de acessibilidade da prancha —
+  nenhuma tem `aria-hidden`, todo print continua com `alt` — e a atualização
+  deste arquivo.
 
 Último estado completo:
 
 | Item | Estado |
 |---|---|
-| Commit HEAD | `ecda25b` — correções da revisão final ampla |
-| Tasks concluídas | 1–17 |
-| Testes | 163/163 em 18 arquivos |
-| Build | aprovada; único aviso é o do currículo ausente, que é esperado |
-| Working tree | limpa |
-| Próxima task | 18 — deploy na Vercel, **não executada** |
+| Commit HEAD | `161905e` — movimento: brilho, ímãs, inclinação e entrada na rolagem |
+| Tasks concluídas | 1–17 (`main`) + 1–11 da v2 (`v2`) |
+| Testes | 207/207 em 21 arquivos |
+| Build | aprovada; único aviso é o do currículo ausente, que é esperado; nenhum aviso de tradução |
+| Working tree | limpa antes desta task |
+| Próxima task | nenhuma — a v2 está completa; falta o merge em `main` e a Task 18 (deploy), que continua do dono |
 
 Cada task foi implementada por um subagente e revisada por outro antes de
 fechar. No fim, uma revisão ampla da branch inteira (26 commits) rodou em Opus e
@@ -93,11 +132,13 @@ com todas as decisões tomadas, está em
 | `docs/levantamentos/autotune.md` | idem, Autotune |
 | `content/sobre.ts` | conteúdo PT e EN do Sobre |
 | `content/projetos/*.ts` | conteúdo PT/EN de Revy, BDDente, Office Timesheet e Autotune |
-| `app/`, `components/`, `lib/`, `test/` | implementação das Tasks 1–17 e sua suíte de 163 testes |
-| `docs/superpowers/plans/2026-09-04-portfolio-implementacao.md` | plano executável de 18 tasks |
+| `app/`, `components/`, `lib/`, `test/` | implementação das Tasks 1–17 (`main`) e das Tasks 1–11 da v2 (`v2`), suíte de 207 testes em 21 arquivos |
+| `docs/superpowers/plans/2026-09-04-portfolio-implementacao.md` | plano executável de 18 tasks da v1 |
+| `docs/superpowers/plans/2026-09-05-portfolio-v2.md` | plano executável de 11 tasks da v2, **esta task fecha ele** |
+| `docs/superpowers/specs/2026-09-05-portfolio-v2-design.md` | a spec de design da v2 |
 | `scripts/seed-*.{py,js}` | os três seeds de dados fictícios |
 | `public/prints/<slug>/` | 32 prints |
-| `mockups/` | os comps das decisões de 04/09 — **ver abaixo** |
+| `mockups/` | os comps das decisões de 04/09 e o protótipo da v2 — **ver abaixo** |
 
 ### Os mockups aprovados
 
@@ -107,13 +148,15 @@ Rode `python -m http.server 4321` na raiz e abra `/mockups/`.
 
 | Arquivo | O que é |
 |---|---|
-| `a3-autotune-ambar.html` | **a home aprovada** — quatro faixas, paletas corrigidas, Autotune em âmbar |
-| `s3-sobre-na-home.html` | **o Sobre aprovado** — bloco no fim + fechamento azul com contato e currículo |
-| `p1-projeto-revy.html` | **a página de projeto** — os sete blocos da seção 8, o caso completo |
+| `a3-autotune-ambar.html` | **a home aprovada da v1** — quatro faixas, paletas corrigidas, Autotune em âmbar |
+| `s3-sobre-na-home.html` | **o Sobre aprovado da v1** — bloco no fim + fechamento azul com contato e currículo |
+| `p1-projeto-revy.html` | **a página de projeto da v1** — os sete blocos da seção 8, o caso completo |
 | `p2-projeto-bddente.html` | idem, o caso **sem link** |
 | `p3-projeto-office-timesheet.html` | idem, o caso **sem link e sem destaque**, e a única página clara |
 | `p4-projeto-autotune.html` | idem, o caso **sem galeria** |
-| `camaleao.css` | a casca compartilhada; a folha real do site nasce daqui |
+| `camaleao.css` | a casca compartilhada da v1; a folha real do site nasce daqui |
+| `v2-home.html`, `v2-projeto-office.html` | **o protótipo da v2** — pranchas, abertura por FLIP, tela de entrada, `numerosHome` e selo, montado sobre o `app/globals.css` real |
+| `v2-proto.css`, `v2-proto.js` | camada só do protótipo da v2, por cima da folha real; não é código do site |
 | `index.html`, `autotune.html`, `sobre.html` | comparadores das três rodadas de decisão |
 | os outros | as alternativas descartadas, guardadas para não refazer a discussão |
 
@@ -153,7 +196,7 @@ Os quatro levantamentos seguem o mesmo formato: uma feature abre a página.
 |---|---|---|
 | Revy | agente de atendimento no WhatsApp | sim |
 | BDDente | consentimento de WhatsApp em três estados | sim, e a tela documenta sozinha |
-| Office Timesheet | assistente DeepSeek, cujos 15 tools de escrita começam com `propor` | **não** |
+| Office Timesheet | assistente sobre DeepSeek, descrito por *function calling* — não é mais "a lista dos 17 tools" | **não** |
 | Autotune | os dois motores: 61,72 ms vs 0,18 ms | sim, o par completo |
 
 ## Pendências
@@ -188,13 +231,24 @@ Em ordem de quem decide e de quanto custa.
    que proibia cor atribuída — não existe mais.
 6. **Os gráficos `03`/`04` do Autotune entram?** São matplotlib no default e não
    separam nada. Recomendação de quem escreveu o plano: deixar de fora.
-7. **Números de vitrine da Revy.** `numeros: []` hoje; os do seed são inventados
-   e não servem. Enquanto vazio, a régua some e a build avisa.
+7. ~~**Números de vitrine da Revy.**~~ **Fechada na v2, em 05/09/2026.** O
+   dono confirmou os três números — 120 pessoas atendidas por dia no WhatsApp,
+   ~80% das conversas resolvidas sozinho pelo agente, 75 motos no estoque — e
+   `content/projetos/revy.ts` os carrega em `numeros`. A régua aparece na home
+   e na página.
 8. **Botão secundário da Revy** aponta para o catálogo público?
 9. **As quatro etapas de arquitetura em inglês** saíram como
    `Survey / Preliminary Study / Schematic Design / Executive Design`, sem mapear
    para as fases da AIA americana — mapear alegaria uma equivalência que não
    existe, e os prints mostram os nomes em português. Confirmar se está bom.
+10. **Os três números de operação do Office Timesheet (nova na v2).** Horas
+    apontadas no sistema, projetos acompanhados, e pessoas apontando hora todo
+    dia. `content/projetos/office-timesheet.ts` já declara `numerosHome: []`
+    de propósito — enquanto vazio, a régua da faixa da home some sozinha, que é
+    o comportamento certo, e a página do projeto continua com os quatro
+    números de tech lead que já existiam. Os valores são do escritório real do
+    dono e ninguém mais os tem; os do seed são inventados e não servem.
+    **Não inventar.**
 
 ### 2. Task 18 — o deploy, não executado
 
@@ -220,8 +274,8 @@ do currículo ausente; **não** apareceu aviso de tradução.
 - **Print do `/assistente` do Office Timesheet.** A `AGENT_API_KEY` do `.env`
   local responde `403 Forbidden`. Precisa de uma chave válida da DeepSeek ou da
   NVIDIA. Enquanto isso, `destaque.prints: []` e o bloco é carregado pelo texto
-  e pela lista dos 17 tools — que é exatamente o comp P3 aprovado, não um
-  buraco.
+  do *function calling* (v2) — o slot existe e o bloco funciona sem ele; não é
+  um buraco.
 
 ### 4. Cosmético, se algum dia incomodar
 
@@ -240,6 +294,22 @@ do currículo ausente; **não** apareceu aviso de tradução.
   Todos foram conferidos um a um, então é peso, não risco.
 - Todos os links externos abrem na mesma aba. Um recrutador que clica em "Entrar
   no sistema" sai do portfólio.
+
+### 5. Precisa do olho humano num navegador de verdade
+
+Nenhum agente tem como fechar isto sozinho: a Task 11 verificou tudo por
+teste, pela build e pelo protótipo estático, mas nunca havia um servidor
+próprio de pé (`npm start` de outra pessoa ocupava a porta 3000) para olhar a
+página servida de verdade.
+
+1. **A animação da tela de entrada.** O véu, a revelação da marca e a régua
+   de quatro cores (`components/Entrada.tsx` + a folha) passam nos testes e no
+   protótipo (`mockups/v2-home.html`), mas ninguém viu o timing rodar num
+   navegador real, com a rede e o CSS de produção.
+2. **A suavidade da abertura de prancha.** O FLIP (`components/Movimento.tsx`)
+   tem a lógica do 1,5×, o desligamento em tela estreita e o foco visível
+   cobertos por teste — mas a sensação do movimento em si, se ele fica solto
+   ou trava, só um navegador real mostra.
 
 ## Ambientes locais
 

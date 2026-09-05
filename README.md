@@ -7,12 +7,15 @@ entrar e clicar.
 **Estado: pronto, não publicado.** As Tasks 1–17 do plano de implementação estão
 na `main` — conteúdo dos quatro projetos, home em PT e EN com as quatro faixas,
 as oito páginas de projeto com os sete blocos, Sobre e fechamento, tradução
-inglesa inteira, metadata, sitemap, robots, ícone e página 404. Falta só o
-deploy, a Task 18, deixada para o dono executar.
+inglesa inteira, metadata, sitemap, robots, ícone e página 404. A branch `v2`
+acrescenta as 11 tasks de uma segunda rodada — números reais de vitrine da
+Revy, o selo de IA, o Sobre reescrito, e a galeria de prints virando pranchas
+com abertura em tela cheia — e está completa. Falta só o merge em `main` e o
+deploy, a Task 18, deixados para o dono executar.
 
-Verificação do último estado completo: `npm test` com 163 testes em 18 arquivos,
-`npm run build` verde e `git diff --check` limpo. O PDF do currículo continua
-deliberadamente ausente; a build avisa e o botão não aparece.
+Verificação do último estado completo: `npm test` com 207 testes em 21
+arquivos, `npm run build` verde e `git diff --check` limpo. O PDF do currículo
+continua deliberadamente ausente; a build avisa e o botão não aparece.
 
 Duas coisas para saber antes de publicar, detalhadas em
 [`ESTADO.md`](ESTADO.md): `sitemap.ts` e `robots.ts` já apontam para

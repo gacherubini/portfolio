@@ -1,6 +1,7 @@
 import { render, cleanup } from '@testing-library/react'
 import { describe, expect, it, afterEach } from 'vitest'
 import { projetos } from '@/content/indice'
+import { officeTimesheet } from '@/content/projetos/office-timesheet'
 import { Galeria } from '@/components/Galeria'
 import { Destaque } from '@/components/Destaque'
 import { FaixaProjeto } from '@/components/FaixaProjeto'
@@ -46,5 +47,22 @@ describe('hierarquia de títulos', () => {
     )
     expect(container.querySelector('h1')).toBeNull()
     expect(container.querySelector('h2')).toBeInTheDocument()
+  })
+})
+
+describe('portão da prancha (Task 11)', () => {
+  it('a prancha aberta não some para o leitor de tela', () => {
+    // A abertura muda tamanho, não presença: nada de `aria-hidden` na prancha.
+    const { container } = render(<Galeria projeto={officeTimesheet} lang="pt" />)
+    for (const p of container.querySelectorAll('.prancha')) {
+      expect(p.getAttribute('aria-hidden')).toBeNull()
+    }
+  })
+
+  it('todo print continua com alt não vazio', () => {
+    const { container } = render(<Galeria projeto={officeTimesheet} lang="pt" />)
+    for (const img of container.querySelectorAll('img')) {
+      expect(img.getAttribute('alt')?.trim()).toBeTruthy()
+    }
   })
 })
