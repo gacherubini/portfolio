@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ehIdioma } from '@/content/tipos'
 import { projetos, projetoPorSlug } from '@/content/indice'
@@ -12,6 +13,30 @@ import { ReguaNumeros } from '@/components/ReguaNumeros'
 import { Prosa } from '@/components/Prosa'
 import { Galeria } from '@/components/Galeria'
 import { BlocoTecnico } from '@/components/BlocoTecnico'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string; slug: string }>
+}): Promise<Metadata> {
+  const { lang, slug } = await params
+  const projeto = projetoPorSlug(slug)
+  if (!projeto || !ehIdioma(lang)) return {}
+
+  return {
+    title: `${projeto.nome} — Gabriel Cherubini`,
+    description: t(projeto.resumoHome, lang, `${slug}.resumoHome`),
+    alternates: {
+      canonical: `/${lang}/${slug}`,
+      languages: { 'pt-BR': `/pt/${slug}`, en: `/en/${slug}` },
+    },
+    openGraph: {
+      title: `${projeto.nome} — Gabriel Cherubini`,
+      description: t(projeto.resumoHome, lang, `${slug}.resumoHome`),
+      type: 'article',
+    },
+  }
+}
 
 // Só o segmento desta rota: o layout raiz já gera `[lang]`, e o Next chama
 // esta função uma vez por `lang` que ele gerou. Devolver `{ lang, slug }`

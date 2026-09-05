@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import { Archivo } from 'next/font/google'
 import { ehIdioma } from '@/content/tipos'
 import './../globals.css'
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://gacherubini.dev'),
+  authors: [{ name: 'Gabriel Cherubini', url: 'https://github.com/gacherubini' }],
+}
 
 // Archivo sozinha, e nada além dela. Monoespaçada, onde aparece, é a pilha do
 // sistema — nenhuma segunda fonte é baixada.

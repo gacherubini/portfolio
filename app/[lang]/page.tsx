@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ehIdioma } from '@/content/tipos'
 import { t } from '@/lib/idioma'
@@ -8,6 +9,28 @@ import { FaixaProjeto } from '@/components/FaixaProjeto'
 import { Sobre } from '@/components/Sobre'
 import { Fechamento } from '@/components/Fechamento'
 import { curriculoDisponivel } from '@/lib/curriculo'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>
+}): Promise<Metadata> {
+  const { lang } = await params
+  const pt = lang !== 'en'
+
+  return {
+    title: pt
+      ? 'Gabriel Cherubini — os sistemas que eu construí'
+      : 'Gabriel Cherubini — the systems I built',
+    description: pt
+      ? 'Portfólio de Gabriel Cherubini: Revy, BDDente, Office Timesheet e Autotune, cada um com prints e explicação em português comum.'
+      : 'Gabriel Cherubini’s portfolio: Revy, BDDente, Office Timesheet and Autotune, each with screenshots and a plain-language explanation.',
+    alternates: {
+      canonical: `/${pt ? 'pt' : 'en'}`,
+      languages: { 'pt-BR': '/pt', en: '/en' },
+    },
+  }
+}
 
 // Sem `generateStaticParams` aqui: quem gera o segmento `[lang]` é o layout
 // raiz, e cada segmento é gerado uma vez só. Repetir a mesma chave nos dois
