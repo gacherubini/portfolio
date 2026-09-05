@@ -1,1 +1,76 @@
 @import "tailwindcss";
+
+/*
+  A casca. Fora das faixas o site é claro e quieto; os neutros têm viés
+  levemente quente para não brigar com nenhuma paleta de projeto.
+
+  REGRA DA FOLHA: nenhuma regra de texto usa `opacity` fora dos valores em
+  OPACIDADES_DE_TEXTO (lib/contraste.ts): 0.72, 0.85, 0.88, 0.9, 0.92.
+  Abaixo de 0.72 o roxo do BDDente reprova no contraste (4,22:1 a 0,65).
+  Dentro do fechamento azul o piso é mais alto — 0.85, por OPACIDADES_NO_AZUL:
+  branco a 0.72 sobre #2A4FD7 dá só 4,21:1.
+*/
+:root {
+  --casca: #FAFAF7;
+  --tinta: #15171A;
+  --regua: #E4E4DE;
+  --calmo: #585D62;
+  --marca: #0F1317;
+  --dev: #2A4FD7;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--casca);
+  color: var(--tinta);
+  font-family: var(--fonte-archivo), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+.casca-topo { border-bottom: 1px solid var(--regua); }
+.topo { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+
+.marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
+.marca--casca { color: var(--marca); }
+.marca--casca .marca-dev { color: var(--dev); }
+.marca--mono { color: inherit; }
+.marca--mono .marca-dev { opacity: .72; }
+.marca--branca { color: #fff; }
+.marca--branca .marca-dev { opacity: .85; }
+
+nav { display: flex; gap: 26px; font-size: 14px; color: var(--calmo); }
+nav a { text-decoration: none; }
+nav a:hover { color: var(--tinta); }
+
+.idioma { margin: 0; font-size: 13px; color: var(--calmo); }
+.idioma [aria-current] { color: var(--tinta); font-weight: 600; }
+.idioma a { text-decoration: none; }
+.idioma a:hover { color: var(--tinta); }
+
+.abertura-home { padding: 64px 0 56px; }
+.abertura-home h1 {
+  font-size: 44px; line-height: 1.1; font-weight: 700;
+  letter-spacing: -.025em; margin: 0 0 16px; max-width: 16ch;
+}
+.abertura-home p { margin: 0; color: var(--calmo); font-size: 16.5px; max-width: 52ch; }
+
+@media (max-width: 820px) {
+  .abertura-home h1 { font-size: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
