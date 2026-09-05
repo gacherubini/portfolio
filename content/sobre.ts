@@ -23,18 +23,18 @@ export const sobre: {
       en: "I'm a backend developer. Java and Spring Boot day to day, Go before that.",
     },
     {
-      pt: 'Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas, desde 2023. Comecei numa plataforma interna de RH escrita em Go. Hoje estou no backend da Binance: carteira, saldo, depósito e saque, dados de mercado e os fluxos de compliance.',
-      en: "I live in Porto Alegre, Brazil, and I've worked remotely for Ambush, in Austin, Texas, since 2023. I started on an internal HR platform written in Go. Today I'm on Binance's backend: wallets, balances, deposits and withdrawals, market data, and the compliance flows.",
+      // "desde 2023" saiu de propósito, a pedido do dono em 05/09: o tempo de
+      // ofício não envelhece, a data de entrada envelhece sozinha todo ano.
+      pt: 'Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend da Binance, em Java.',
+      en: "I've been programming for more than 5 years. I live in Porto Alegre, Brazil, and work remotely for Ambush, in Austin, Texas. I started in Go and today I work on Binance's backend, in Java.",
     },
     {
-      pt: 'Tenho 23 anos e estou terminando a faculdade de Ciência da Computação na PUC-RS.',
-      en: "I'm 23, and I'm finishing my Computer Science degree at PUC-RS.",
-    },
-    {
-      // "aqui do lado" virou "aqui de cima" em 04/09: o Sobre deixou de ser
-      // página e virou o último bloco da home, depois das quatro faixas.
       pt: 'Os quatro sistemas aqui de cima são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.',
       en: 'The four systems above were built outside work hours. I built each one end to end, alone, and put it in front of real users.',
+    },
+    {
+      pt: 'IA é onde minha atenção está hoje, e não como quem usa chat. Construo por dentro: agentes que chamam funções do próprio produto, skills, loops de agente que tocam a tarefa inteira e param exatamente onde precisam de uma pessoa. O assistente do Office Timesheet e o agente de WhatsApp da Revy saíram daí. Este site também.',
+      en: "AI is where my attention is right now, and not as someone who uses a chat window. I build the inside of it: agents that call functions in the product itself, skills, agent loops that carry a task all the way and stop exactly where a person is needed. The Office Timesheet assistant and Revy's WhatsApp agent came out of that. So did this site.",
     },
   ],
 
@@ -50,6 +50,14 @@ export const sobre: {
     {
       rotulo: { pt: 'Stack', en: 'Stack' },
       valor: { pt: 'Java · Spring Boot · Go · PostgreSQL', en: 'Java · Spring Boot · Go · PostgreSQL' },
+    },
+    {
+      rotulo: { pt: 'IA', en: 'AI' },
+      // "modelos" saiu: a coluna da ficha tem 285px e a linha quebrava em duas.
+      valor: {
+        pt: 'agent loops · skills · function calling',
+        en: 'agent loops · skills · function calling',
+      },
     },
     {
       rotulo: { pt: 'Inglês', en: 'English' },

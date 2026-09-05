@@ -4,6 +4,7 @@ import { bddente } from '@/content/projetos/bddente'
 import { officeTimesheet } from '@/content/projetos/office-timesheet'
 import { revy } from '@/content/projetos/revy'
 import { autotune } from '@/content/projetos/autotune'
+import { sobre } from '@/content/sobre'
 
 describe('revy', () => {
   it('passa no contrato', () => {
@@ -129,5 +130,39 @@ describe('autotune', () => {
 
   it('usa uma paleta atribuída, não amostrada de print nenhum', () => {
     expect(autotune.tema.destaque).toBe('#F3B843')
+  })
+})
+
+describe('Sobre', () => {
+  it('não fala mais de idade nem de faculdade', () => {
+    const tudo = sobre.paragrafos.map((p) => `${p.pt} ${p.en}`).join(' ')
+    expect(tudo).not.toMatch(/23 anos|faculdade|PUC-RS|degree/i)
+  })
+
+  // "5+ anos" não envelhece; "desde 2023" envelhece sozinho todo ano.
+  it('diz o tempo de ofício em vez da data de entrada', () => {
+    const tudo = sobre.paragrafos.map((p) => p.pt).join(' ')
+    expect(tudo).toContain('mais de 5 anos')
+    expect(tudo).not.toContain('2023')
+  })
+
+  it('diz o que ele faz com IA, e a ficha repete em uma linha', () => {
+    const tudo = sobre.paragrafos.map((p) => p.pt).join(' ')
+    expect(tudo).toMatch(/agent|loops de agente/i)
+    expect(sobre.ficha.some((l) => l.rotulo.pt === 'IA')).toBe(true)
+  })
+
+  // Pedido do dono: travessão sai dos textos em primeira pessoa. Os textos dos
+  // projetos mantêm os deles.
+  it('nenhum travessão nos textos em primeira pessoa', () => {
+    const alvo = [
+      ...sobre.paragrafos.flatMap((p) => [p.pt, p.en ?? '']),
+      ...sobre.ficha.flatMap((l) => [l.valor.pt, l.valor.en ?? '']),
+      sobre.contato.telefone.via.pt,
+      sobre.contato.telefone.via.en ?? '',
+      sobre.contato.curriculo.rotulo.pt,
+      sobre.contato.curriculo.rotulo.en ?? '',
+    ]
+    expect(alvo.filter((s) => s.includes('—'))).toEqual([])
   })
 })
