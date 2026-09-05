@@ -63,4 +63,15 @@ describe('a regra da folha', () => {
       expect(folha).toMatch(regex)
     }
   })
+
+  it('a régua da entrada corre em linear, para a cor acompanhar a largura', () => {
+    // As trocas de cor são temporais (25/50/75%). Com aceleração, largura e cor
+    // deixariam de andar juntas e as duas últimas cores quase não apareceriam.
+    const regra = folha.match(/\.entrada-regua i \{([^}]*)\}/)?.[1] ?? ''
+    expect(regra).toMatch(/ent-corre[^,]*linear/)
+  })
+
+  it('movimento reduzido não vê véu nenhum', () => {
+    expect(folha).toMatch(/prefers-reduced-motion[\s\S]*?\.entrada\s*\{[^}]*display:\s*none/)
+  })
 })
