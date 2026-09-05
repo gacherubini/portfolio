@@ -36,7 +36,17 @@ export default async function LayoutRaiz({
   if (!ehIdioma(lang)) notFound()
 
   return (
-    <html lang={lang === 'en' ? 'en' : 'pt-BR'} className={archivo.variable}>
+    // `suppressHydrationWarning`: o script logo abaixo põe `data-entrada` neste
+    // <html> ANTES do React hidratar, e o HTML do servidor não tem o atributo —
+    // não pode ter, ele sai do sessionStorage e estas páginas são estáticas. Da
+    // segunda carga da sessão em diante o React encontraria a diferença e
+    // derrubaria um erro de hidratação no console. A marca vale um nível só:
+    // cala os atributos deste <html>, e nenhum mismatch dos filhos.
+    <html
+      lang={lang === 'en' ? 'en' : 'pt-BR'}
+      className={archivo.variable}
+      suppressHydrationWarning
+    >
       <head>
         {/* Toca uma vez por sessão. Inline e antes do corpo porque precisa
             valer no primeiro quadro: em `useEffect` o véu piscaria em toda
