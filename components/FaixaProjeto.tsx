@@ -51,12 +51,12 @@ export function FaixaProjeto({
               {projeto.nome}
             </h2>
             <p className="paraquem">{t(projeto.paraQuem, lang, `${campo}.paraQuem`)}</p>
-            <p className="situacao">
-              {t(ui.situacao[projeto.situacao], lang, `ui.situacao.${projeto.situacao}`)}
-            </p>
             {projeto.selo ? (
               <p className="selo">{t(projeto.selo, lang, `${campo}.selo`)}</p>
             ) : null}
+            <p className="situacao">
+              {t(ui.situacao[projeto.situacao], lang, `ui.situacao.${projeto.situacao}`)}
+            </p>
           </div>
 
           <p className="resumo">{t(projeto.resumoHome, lang, `${campo}.resumoHome`)}</p>
@@ -93,9 +93,9 @@ export function FaixaProjeto({
               slug={projeto.slug}
               lang={lang}
               campo={`${campo}.print`}
-              sizes="(max-width: 820px) 100vw, 620px"
+              sizes="(max-width: 820px) 100vw, 1320px"
               prioridade={prioridade}
-              mostrarLegenda={false}
+              variante="nua"
             />
           ) : null}
         </div>

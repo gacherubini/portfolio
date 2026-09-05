@@ -11,20 +11,20 @@ afterEach(cleanup)
 describe('Destaque', () => {
   it('com dois prints, desenha as duas placas', () => {
     const { container } = render(<Destaque projeto={revy} lang="pt" />)
-    expect(container.querySelectorAll('figure')).toHaveLength(2)
+    expect(container.querySelectorAll('.prancha')).toHaveLength(2)
     expect(screen.getByRole('heading', { name: /agente de atendimento/i })).toBeInTheDocument()
   })
 
   it('com um print, ele ocupa a largura toda', () => {
     const { container } = render(<Destaque projeto={bddente} lang="pt" />)
-    expect(container.querySelectorAll('figure')).toHaveLength(1)
-    expect(container.querySelector('figure')).toHaveClass('placa-larga')
+    expect(container.querySelectorAll('.prancha')).toHaveLength(1)
+    expect(container.querySelector('.prancha')).toHaveClass('placa-larga')
   })
 
   // A borda que o print bloqueado do assistente criou.
   it('com zero print, o texto carrega o bloco e nada quebra', () => {
     const { container } = render(<Destaque projeto={officeTimesheet} lang="pt" />)
-    expect(container.querySelectorAll('figure')).toHaveLength(0)
+    expect(container.querySelectorAll('.prancha')).toHaveLength(0)
     expect(container.querySelector('.placas')).toBeNull()
     expect(screen.getByRole('heading', { name: /vive dentro do sistema/ })).toBeInTheDocument()
   })

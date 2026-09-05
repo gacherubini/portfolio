@@ -11,7 +11,7 @@ describe('Galeria', () => {
   it('com uma fileira, desenha três tiras sob um título', () => {
     const { container } = render(<Galeria projeto={revy} lang="pt" />)
     expect(container.querySelectorAll('.tiras')).toHaveLength(1)
-    expect(container.querySelectorAll('figure')).toHaveLength(3)
+    expect(container.querySelectorAll('.prancha')).toHaveLength(3)
     expect(screen.getByRole('heading', { name: 'As outras telas' })).toBeInTheDocument()
   })
 

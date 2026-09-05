@@ -69,7 +69,7 @@ export default async function PaginaProjeto({
               slug={projeto.slug}
               lang={lang}
               campo={`${projeto.slug}.printAbertura`}
-              sizes="(max-width: 900px) 100vw, 1116px"
+              sizes="(max-width: 900px) 100vw, 1320px"
               prioridade
             />
           </section>

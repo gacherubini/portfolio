@@ -446,3 +446,22 @@ nav a:hover { color: var(--tinta); }
 .ficha-faixa { flex-wrap: wrap; }
 .ficha-faixa .situacao { margin-left: 0; }
 .ficha-faixa .selo { margin-left: auto; }
+
+/* --- pranchas ------------------------------------------------------------
+   Um print de 3200×2000 de um app de 1600px de CSS num quadro de 357px não é
+   uma imagem pequena: é uma imagem errada. A prancha é o conserto — imagem em
+   tamanho de leitura, legenda na margem em corpo de leitura. */
+.prancha-alvo { display: block; position: relative; text-decoration: none; }
+.prancha-alvo img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--borda); border-radius: 8px; background: var(--fundo2);
+}
+.prancha-nota { border-top: 1px solid var(--borda); padding-top: 15px; }
+.prancha-nota p { margin: 0; font-size: 14.5px; line-height: 1.52; color: var(--calmo); }
+
+/* Legenda embaixo: o print de abertura e as placas. */
+.prancha--abaixo .prancha-nota { border-top: 0; padding-top: 11px; max-width: 64ch; }
+.prancha--abaixo { display: flex; flex-direction: column-reverse; }
+
+/* Sem moldura própria na faixa da home: lá quem emoldura é a faixa. */
+.faixa .prancha-alvo img { border-radius: 8px; }
