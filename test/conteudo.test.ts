@@ -3,6 +3,7 @@ import { validarProjeto } from '@/content/tipos'
 import { bddente } from '@/content/projetos/bddente'
 import { officeTimesheet } from '@/content/projetos/office-timesheet'
 import { revy } from '@/content/projetos/revy'
+import { autotune } from '@/content/projetos/autotune'
 
 describe('revy', () => {
   it('passa no contrato', () => {
@@ -92,5 +93,39 @@ describe('office-timesheet', () => {
   it('é a única paleta clara, e o laranja passa raspando', () => {
     expect(officeTimesheet.tema.fundo).toBe('#ECECEC')
     expect(officeTimesheet.tema.destaque).toBe('#CB6D31')
+  })
+})
+
+describe('autotune', () => {
+  it('passa no contrato', () => {
+    expect(validarProjeto(autotune)).toEqual([])
+  })
+
+  // Só existem quatro prints e dois são matplotlib no default: o peso vai
+  // para o destaque e para o bloco técnico.
+  it('não tem galeria', () => {
+    expect(autotune.galeria).toEqual([])
+  })
+
+  it('tem o par de motores no destaque, cada placa com etiqueta e latência', () => {
+    expect(autotune.destaque?.prints).toHaveLength(2)
+    expect(autotune.destaque?.prints.map((p) => p.valor)).toEqual(['61,72 ms', '0,18 ms'])
+  })
+
+  it('fecha o destaque com a leitura da comparação', () => {
+    expect(autotune.destaque?.fecho?.pt).toContain('340')
+  })
+
+  it('tem o terminal como texto, não como print', () => {
+    expect(autotune.tecnico.terminal?.comando).toContain('autotune.exe')
+    expect(autotune.tecnico.terminal?.saida).toContain('Correcao planejada')
+  })
+
+  it('tem quatro notas técnicas', () => {
+    expect(autotune.tecnico.notas).toHaveLength(4)
+  })
+
+  it('usa uma paleta atribuída, não amostrada de print nenhum', () => {
+    expect(autotune.tema.destaque).toBe('#F3B843')
   })
 })
