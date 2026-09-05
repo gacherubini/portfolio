@@ -606,3 +606,45 @@ html[data-entrada="visto"] .entrada { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .prancha-nota, .prancha-alvo::after { transition-duration: .01ms; }
 }
+
+/* --- movimento ----------------------------------------------------------- */
+[data-brilho] { position: relative; isolation: isolate; }
+[data-brilho] > * { position: relative; z-index: 1; }
+[data-brilho]::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0; transition: opacity .45s ease;
+  background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--destaque) 13%, transparent), transparent 68%);
+}
+html[data-mov] [data-brilho]:hover::before { opacity: 1; }
+
+html[data-mov] .cta {
+  transform: translate(var(--dx, 0px), var(--dy, 0px));
+  transition: transform .28s cubic-bezier(.2,.7,.3,1);
+}
+html[data-mov] .col-print .prancha-alvo {
+  transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .4s cubic-bezier(.2,.7,.3,1);
+}
+/* Na cascata, uma transição de CSS vence uma animação de script: sem isto a
+   transição da inclinação sequestra o FLIP da abertura. */
+html[data-mov] .prancha--virando .prancha-alvo { transition: none; }
+html[data-mov] .prancha.aberta .prancha-alvo { transform: none; }
+
+html[data-anima] .revela {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .62s cubic-bezier(.2,.7,.3,1), transform .62s cubic-bezier(.2,.7,.3,1);
+}
+html[data-anima] .revela.dentro { opacity: 1; transform: none; }
+
+@media (hover: none) {
+  html[data-mov] .cta,
+  html[data-mov] .col-print .prancha-alvo { transform: none; }
+  [data-brilho]::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-anima] .revela { opacity: 1; transform: none; }
+  html[data-mov] .cta,
+  html[data-mov] .col-print .prancha-alvo { transform: none; }
+  [data-brilho]::before { display: none; }
+}

@@ -17,7 +17,7 @@ export function Destaque({ projeto, lang }: { projeto: Projeto; lang: Idioma }) 
   const quantos = destaque.prints.length
 
   return (
-    <section className="destaque">
+    <section className="destaque" data-brilho>
       <div className="wrap">
         <div className="cabeca">
           <h2>{t(destaque.titulo, lang, `${campo}.titulo`)}</h2>

@@ -13,7 +13,7 @@ export function BlocoTecnico({ projeto, lang }: { projeto: Projeto; lang: Idioma
   const campo = `${projeto.slug}.tecnico`
 
   return (
-    <section className="wrap tecnico">
+    <section className="wrap tecnico revela">
       {/* Único bloco da página sem `h2` antes desta linha: quem navega por
           heading não tinha marco nenhum na seção que o próprio texto convida
           a pular. `.aviso` continua definindo a aparência — só o elemento

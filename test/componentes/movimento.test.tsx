@@ -135,4 +135,37 @@ describe('a regra que decide se a prancha abre', () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
     expect(alvo.closest('.prancha')?.classList.contains('aberta')).toBe(false)
   })
+
+  // `avaliar` pula a prancha aberta. Sem reavaliar no fechamento, a ex-aberta
+  // fica com o `prancha--fixa`, o href e o convite calculados para a largura
+  // de antes do resize — e passa a convidar a abrir uma prancha sem resolução
+  // a revelar até o resize seguinte.
+  it('reavalia a prancha assim que ela fecha', () => {
+    const alvo = montarPrancha(1568, 880)
+    render(<Movimento />)
+    alvo.click()
+
+    // A janela cresceu com a prancha aberta: fechada, ela agora é exibida a
+    // 1200 e os 1568 do arquivo já não dão 1,5×.
+    alvo.getBoundingClientRect = () =>
+      ({ width: 1200, height: 744, left: 0, top: 0, right: 1200, bottom: 0 }) as DOMRect
+    dispatchEvent(new Event('resize'))
+    alvo.click()
+
+    expect(alvo.closest('.prancha')?.classList.contains('prancha--fixa')).toBe(true)
+    expect(alvo.hasAttribute('href')).toBe(false)
+  })
+})
+
+describe('o movimento com o mouse', () => {
+  it('sob movimento reduzido, revela tudo de uma vez em vez de animar', () => {
+    // O setup já dá um matchMedia que sempre diz `false`; aqui ele passa a dizer
+    // `true` só para a consulta de movimento reduzido.
+    vi.spyOn(window, 'matchMedia').mockImplementation(
+      (q: string) => ({ matches: q.includes('prefers-reduced-motion') }) as MediaQueryList,
+    )
+    document.body.innerHTML = '<section class="faixa"><div class="revela">x</div></section>'
+    render(<Movimento />)
+    expect(document.querySelector('.revela')?.classList.contains('dentro')).toBe(true)
+  })
 })

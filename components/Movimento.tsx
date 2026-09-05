@@ -8,8 +8,13 @@ const CURVA = 'cubic-bezier(.22,.72,.24,1)'
 /**
  * O único componente client do site, montado uma vez no layout.
  *
- * Nesta task ele faz uma coisa só: abrir e fechar prancha. A Task 9 acrescenta
- * o movimento com o mouse no mesmo arquivo.
+ * Duas coisas, no mesmo efeito: abrir e fechar prancha, e o movimento com o
+ * mouse — brilho seguindo o cursor, botões magnéticos, prancha que inclina e
+ * entrada na rolagem. A primeira é o que o site precisa; a segunda é enfeite, e
+ * some inteira sob `prefers-reduced-motion` ou onde não há cursor.
+ *
+ * Um só listener de `pointermove`, limitado a `requestAnimationFrame`, e
+ * nenhuma medição dentro do laço de quadro.
  */
 export function Movimento() {
   useEffect(() => {
@@ -153,7 +158,14 @@ export function Movimento() {
       if (!aberta) return
       const p = aberta
       aberta = null
-      virar(p, () => desmarcar(p))
+      // A reavaliação vai DENTRO da mudança, e não depois de `virar`: `avaliar`
+      // pula a prancha aberta, então um resize durante a abertura deixou
+      // `prancha--fixa`, href e convite com a resposta da largura antiga — e ela
+      // poderia ficar convidando a abrir uma prancha sem resolução a revelar até
+      // o resize seguinte. Aqui a prancha já está fechada e o FLIP ainda não
+      // aplicou transform nenhum: é o único ponto em que ela mede a largura de
+      // leitura de verdade.
+      virar(p, () => { desmarcar(p); avaliar(p) })
     }
 
     function abrir(p: HTMLElement) {
@@ -161,7 +173,12 @@ export function Movimento() {
       if (aberta) {
         // Sem animar: duas pranchas se mexendo ao mesmo tempo é movimento
         // demais, e a rolagem iria para o lugar errado.
-        desmarcar(aberta)
+        const anterior = aberta
+        // Zerar antes de reavaliar: `avaliar` sai cedo quando a prancha é a
+        // aberta, e esta acabou de deixar de ser. Mesma razão do `fechar`.
+        aberta = null
+        desmarcar(anterior)
+        avaliar(anterior)
       }
       aberta = p
       virar(p, () => {
@@ -203,12 +220,126 @@ export function Movimento() {
     document.addEventListener('keydown', aoTeclar)
     addEventListener('resize', aoRedimensionar)
 
+    // --- entrada na rolagem ---
+    // Os elementos nascem VISÍVEIS no HTML. Só ficam escondidos depois que o
+    // JS confirma que sabe animá-los: quem está sem JS vê o site inteiro.
+    const reveladores = [...document.querySelectorAll<HTMLElement>('.revela')]
+    let observador: IntersectionObserver | null = null
+    if (menos) {
+      reveladores.forEach((n) => n.classList.add('dentro'))
+    } else {
+      raiz.dataset.anima = 'sim'
+      observador = new IntersectionObserver(
+        (entradas) => {
+          for (const e of entradas) {
+            if (!e.isIntersecting) continue
+            e.target.classList.add('dentro')
+            observador!.unobserve(e.target)
+          }
+        },
+        { rootMargin: '0px 0px -12% 0px', threshold: 0.06 },
+      )
+      reveladores.forEach((n) => observador!.observe(n))
+    }
+
+    // --- o cursor ---
+    // As caixas ficam em cache. Medir `.cta` a cada quadro força recálculo de
+    // layout a cada movimento do cursor, e engasga a página inteira — não só a
+    // imagem. Medido: 346 movimentos em 1,4s, pior quadro 9,2ms.
+    let px = 0, py = 0, pendente = false, sujo = true, quadro = 0
+    let botoes: HTMLElement[] = []
+    let caixas = new WeakMap<Element, DOMRect>()
+    let inclinado: HTMLElement | null = null
+
+    function medir() {
+      botoes = [...document.querySelectorAll<HTMLElement>('.cta')]
+      caixas = new WeakMap()
+      for (const el of [...botoes, ...document.querySelectorAll('[data-brilho], .col-print')]) {
+        caixas.set(el, el.getBoundingClientRect())
+      }
+      sujo = false
+    }
+    const caixa = (el: Element) => {
+      const r = caixas.get(el)
+      if (r) return r
+      const novo = el.getBoundingClientRect()
+      caixas.set(el, novo)
+      return novo
+    }
+
+    function pintar() {
+      pendente = false
+      if (sujo) medir()
+      const sob = document.elementFromPoint(px, py)
+
+      const brilho = sob?.closest<HTMLElement>('[data-brilho]')
+      if (brilho) {
+        const r = caixa(brilho)
+        brilho.style.setProperty('--mx', `${((px - r.left) / r.width) * 100}%`)
+        brilho.style.setProperty('--my', `${((py - r.top) / r.height) * 100}%`)
+      }
+
+      for (const b of botoes) {
+        const r = caixa(b)
+        const cx = r.left + r.width / 2
+        const cy = r.top + r.height / 2
+        if (Math.hypot(px - cx, py - cy) < 110) {
+          b.style.setProperty('--dx', `${Math.max(-5, Math.min(5, (px - cx) * 0.16))}px`)
+          b.style.setProperty('--dy', `${Math.max(-5, Math.min(5, (py - cy) * 0.16))}px`)
+        } else {
+          b.style.removeProperty('--dx')
+          b.style.removeProperty('--dy')
+        }
+      }
+
+      // Prancha aberta não inclina: ela já é o assunto da tela, e um segundo
+      // `transform` brigaria com o da abertura. Quem carrega `aberta` é a
+      // `.prancha` dentro da coluna, não a coluna — o CSS já tira a inclinação
+      // pela cascata, e esta guarda impede que o laço fique escrevendo `--rx`
+      // e `--ry` numa prancha que não vai usá-los.
+      let col = sob?.closest<HTMLElement>('.col-print') ?? null
+      if (col?.querySelector('.prancha.aberta')) col = null
+      if (inclinado && inclinado !== col) {
+        const f = inclinado.querySelector<HTMLElement>('.prancha-alvo')
+        f?.style.removeProperty('--rx')
+        f?.style.removeProperty('--ry')
+      }
+      inclinado = col
+      if (col) {
+        const f = col.querySelector<HTMLElement>('.prancha-alvo')
+        const r = caixa(col)
+        f?.style.setProperty('--ry', `${(((px - r.left) / r.width - 0.5) * 5).toFixed(2)}deg`)
+        f?.style.setProperty('--rx', `${(((py - r.top) / r.height - 0.5) * -5).toFixed(2)}deg`)
+      }
+    }
+
+    const aoMover = (e: PointerEvent) => {
+      px = e.clientX; py = e.clientY
+      if (!pendente) { pendente = true; quadro = requestAnimationFrame(pintar) }
+    }
+    const sujar = () => { sujo = true }
+    if (!menos) {
+      addEventListener('pointermove', aoMover, { passive: true })
+      addEventListener('scroll', sujar, { passive: true })
+      // Redimensionar move toda caixa medida. Sem invalidar aqui, o cache só
+      // se renovaria na próxima rolagem, e até lá o ímã puxaria os botões para
+      // onde eles estavam antes.
+      addEventListener('resize', sujar)
+    }
+
     raiz.dataset.mov = 'sim'
     return () => {
       cliques.forEach((f) => f())
       document.removeEventListener('keydown', aoTeclar)
       removeEventListener('resize', aoRedimensionar)
+      observador?.disconnect()
+      removeEventListener('pointermove', aoMover)
+      removeEventListener('scroll', sujar)
+      removeEventListener('resize', sujar)
+      // Um quadro pode estar marcado desde o último movimento do cursor.
+      cancelAnimationFrame(quadro)
       delete raiz.dataset.mov
+      delete raiz.dataset.anima
     }
   }, [])
 

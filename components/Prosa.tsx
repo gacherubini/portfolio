@@ -20,7 +20,7 @@ export function Prosa({ projeto, lang }: { projeto: Projeto; lang: Idioma }) {
   )
 
   return (
-    <section className="wrap prosa">
+    <section className="wrap prosa revela">
       {coluna(t(ui.prosa.problema, lang, 'ui.prosa.problema'), projeto.problema, `${projeto.slug}.problema`)}
       {coluna(t(ui.prosa.oQueFaz, lang, 'ui.prosa.oQueFaz'), projeto.oQueFaz, `${projeto.slug}.oQueFaz`)}
     </section>

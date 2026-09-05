@@ -15,7 +15,7 @@ export function Sobre({ lang }: { lang: Idioma }) {
     <section className="sobre wrap" id="sobre">
       <h2>{t(ui.sobreTitulo, lang, 'ui.sobreTitulo')}</h2>
       <div className="grade">
-        <div>
+        <div className="revela">
           <p className="lede">{t(lede, lang, 'sobre.paragrafos.0')}</p>
           {resto.map((p, i) => (
             <p className="corpo" key={i}>
@@ -23,7 +23,7 @@ export function Sobre({ lang }: { lang: Idioma }) {
             </p>
           ))}
         </div>
-        <aside className="rail">
+        <aside className="rail revela">
           <dl>
             {sobre.ficha.map((linha, i) => (
               <div key={i}>

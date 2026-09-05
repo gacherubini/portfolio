@@ -8,7 +8,7 @@ export function ReguaNumeros({ projeto, lang }: { projeto: Projeto; lang: Idioma
   if (projeto.numeros.length === 0) return null
 
   return (
-    <section className={`wrap regua regua--${projeto.numeros.length}`}>
+    <section className={`wrap regua revela regua--${projeto.numeros.length}`}>
       {projeto.numeros.map((n, i) => (
         <div className="num" key={i}>
           <b>{t(n.valor, lang, `${projeto.slug}.numeros.${i}.valor`)}</b>

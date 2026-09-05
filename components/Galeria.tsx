@@ -30,6 +30,7 @@ export function Galeria({ projeto, lang }: { projeto: Projeto; lang: Idioma }) {
                 lang={lang}
                 campo={`${projeto.slug}.galeria.${f}.prints.${i}`}
                 variante="margem"
+                className="revela"
                 // Fechada a prancha tem 880px; aberta vai a 1320. `sizes`
                 // precisa cobrir os dois, senão o next/image serve a variante
                 // pequena e a abertura mostra uma imagem borrada.

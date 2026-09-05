@@ -43,9 +43,10 @@ export function FaixaProjeto({
       className={`faixa${espelho ? ' espelho' : ''}`}
       style={estiloDoTema(projeto.tema)}
       aria-labelledby={`faixa-${projeto.slug}`}
+      data-brilho
     >
       <div className="wrap grade">
-        <div className="col-texto">
+        <div className="col-texto revela">
           <div className="ficha-faixa">
             <h2 className="nome" id={`faixa-${projeto.slug}`}>
               {projeto.nome}
@@ -86,7 +87,7 @@ export function FaixaProjeto({
           </div>
         </div>
 
-        <div className={`col-print${print && print.largura < 900 ? ' pequeno' : ''}`}>
+        <div className={`col-print revela${print && print.largura < 900 ? ' pequeno' : ''}`}>
           {print ? (
             <PrintFigura
               print={print}

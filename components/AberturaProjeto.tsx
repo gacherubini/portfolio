@@ -11,12 +11,12 @@ export function AberturaProjeto({ projeto, lang }: { projeto: Projeto; lang: Idi
 
   return (
     <section className="wrap abertura-projeto">
-      <div>
+      <div className="revela">
         <h1>{projeto.nome}</h1>
         <p className="chamada">{t(projeto.chamada, lang, `${campo}.chamada`)}</p>
       </div>
 
-      <aside className="ficha">
+      <aside className="ficha revela">
         <dl>
           {projeto.ficha.map((linha, i) => (
             <div key={i}>
