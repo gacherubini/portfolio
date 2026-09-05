@@ -26,16 +26,23 @@ describe('Destaque', () => {
     const { container } = render(<Destaque projeto={officeTimesheet} lang="pt" />)
     expect(container.querySelectorAll('figure')).toHaveLength(0)
     expect(container.querySelector('.placas')).toBeNull()
-    expect(screen.getByRole('heading', { name: /17 perguntas/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /vive dentro do sistema/ })).toBeInTheDocument()
   })
 
-  it('desenha os 17 tools como lista, em monoespaçada', () => {
+  it('não lista mais os nomes das funções do assistente', () => {
     const { container } = render(<Destaque projeto={officeTimesheet} lang="pt" />)
-    expect(container.querySelectorAll('.tools li')).toHaveLength(17)
-    expect(screen.getByText('quemNaoApontou')).toBeInTheDocument()
+    expect(container.querySelector('.tools')).toBeNull()
+    expect(screen.queryByText('quemNaoApontou')).not.toBeInTheDocument()
+    expect(screen.queryByText('proporCriarTask')).not.toBeInTheDocument()
   })
 
-  it('desenha as três amarras', () => {
+  it('diz que ele chama funções do sistema, sem nomeá-las', () => {
+    render(<Destaque projeto={officeTimesheet} lang="pt" />)
+    expect(screen.getByText(/function calling/)).toBeInTheDocument()
+  })
+
+  // As três garantias são o que o bloco tem de melhor e continuam.
+  it('mantém as três amarras', () => {
     const { container } = render(<Destaque projeto={officeTimesheet} lang="pt" />)
     expect(container.querySelectorAll('.amarra')).toHaveLength(3)
   })

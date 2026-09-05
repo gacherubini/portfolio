@@ -6,8 +6,8 @@ import { TextoComMarcas } from '@/components/TextoComMarcas'
 /**
  * "O principal" de cada projeto: o primeiro conteúdo depois da chamada, de
  * propósito. Só existe quando o projeto tem uma coisa que se entende por
- * imagem — ou, no caso do Office Timesheet, quando tem uma que se entende por
- * lista enquanto a imagem não existe.
+ * imagem — ou, no caso do Office Timesheet, quando o texto sozinho já explica
+ * o que o assistente faz, enquanto a imagem não existe.
  */
 export function Destaque({ projeto, lang }: { projeto: Projeto; lang: Idioma }) {
   const destaque = projeto.destaque
@@ -65,17 +65,6 @@ export function Destaque({ projeto, lang }: { projeto: Projeto; lang: Idioma }) 
               )
             })}
           </div>
-        ) : null}
-
-        {destaque.lista ? (
-          <>
-            <p className="rotulo">{t(destaque.lista.rotulo, lang, `${campo}.lista.rotulo`)}</p>
-            <ul className="tools">
-              {destaque.lista.itens.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </>
         ) : null}
 
         {destaque.amarras ? (

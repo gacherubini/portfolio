@@ -5,6 +5,7 @@ export const officeTimesheet: Projeto = {
   nome: 'Office Timesheet',
   paraQuem: { pt: 'Escritório de arquitetura', en: 'Architecture studio' },
   situacao: 'fechado',
+  selo: { pt: 'IA · assistente embutido', en: 'AI · built-in assistant' },
 
   // Amostrada de 03-tarefas-kanban.png: fundo cinza claro, topo verde-escuro,
   // laranja queimado nos marcadores. Este sistema não é azul — o #2563EB que a
@@ -80,43 +81,24 @@ export const officeTimesheet: Projeto = {
   },
 
   destaque: {
-    titulo: { pt: 'O assistente, e as 17 perguntas que ele sabe responder', en: 'The assistant, and the 17 questions it knows how to answer' },
+    titulo: {
+      pt: 'O assistente que vive dentro do sistema',
+      en: 'The assistant that lives inside the system',
+    },
     texto: [
       {
-        pt: 'Um assistente construído com DeepSeek, dentro do sistema. Em vez de abrir sete telas para montar a resposta, a pessoa pergunta.',
-        en: 'An assistant built with DeepSeek, inside the system. Instead of opening seven screens to piece together the answer, the person just asks.',
+        pt: 'Um chat dentro do próprio sistema, construído sobre um modelo de linguagem, a DeepSeek. Em vez de abrir sete telas para montar a resposta, a pessoa pergunta em português.',
+        en: 'A chat inside the system itself, built on a language model, DeepSeek. Instead of opening seven screens to piece the answer together, the person just asks in plain language.',
       },
       {
-        pt: 'A lista dos tools de leitura explica melhor do que qualquer descrição para que ele serve: são as perguntas chatas de segunda-feira, cada uma virada função.',
-        en: "The list of read tools explains what it's for better than any description could: they're Monday's tedious questions, each one turned into a function.",
+        pt: 'Ele não adivinha: responde **chamando funções do sistema**, o function calling. Cada pergunta vira uma ou mais chamadas, ele decide quais precisa, junta o que voltou e escreve a resposta. É o mesmo dado que a pessoa veria navegando, só que sem navegar.',
+        en: 'It does not guess: it answers by **calling functions in the system**, function calling. Each question turns into one or more calls, it decides which ones it needs, puts together what came back and writes the answer. It is the same data the person would see browsing, minus the browsing.',
       },
     ],
     // SLOT: a AGENT_API_KEY do .env local responde 403, então não há captura da
-    // tela /assistente. Com a chave válida, um Print entra aqui e o componente
-    // passa a mostrar imagem sem mais nenhuma mudança.
+    // tela /assistente. Com a chave válida, um Print entra aqui e preenche o
+    // vazio que a saída da lista deixou à direita do bloco.
     prints: [],
-    lista: {
-      rotulo: { pt: 'O que ele lê', en: 'What it reads' },
-      itens: [
-        'quemNaoApontou',
-        'tasksTravadas',
-        'cargaEquipe',
-        'feriasEConflitos',
-        'custoPorProjeto',
-        'aprovacoesPendentes',
-        'apontamentosAbertos',
-        'andamentoDeProjeto',
-        'despesasDoPeriodo',
-        'agendaDoPeriodo',
-        'simulacaoPerformance',
-        'gerarRelatorio',
-        'statusProjeto',
-        'listarEquipe',
-        'bonusDoPeriodo',
-        'meusBonus',
-        'aniversariantes',
-      ],
-    },
     amarras: [
       {
         titulo: { pt: 'Ele propõe, não executa', en: "It proposes, it doesn't execute" },
@@ -152,11 +134,19 @@ export const officeTimesheet: Projeto = {
     { valor: { pt: '1.452', en: '1,452' }, rotulo: { pt: 'casos de teste, contra Postgres real no CI', en: 'test cases, against real Postgres in CI' } },
     { valor: { pt: '148', en: '148' }, rotulo: { pt: 'endpoints HTTP', en: 'HTTP endpoints' } },
     { valor: { pt: '40', en: '40' }, rotulo: { pt: 'tabelas no banco', en: 'tables in the database' } },
-    // O comp P3 escreve "34 · 17 de leitura, 15 de escrita", e 17+15 dá 32.
-    // O levantamento explica o resto: 34 = 17 leitura + 15 escrita + SQL
-    // ad-hoc + meta. Conta errada na tela é pior que rótulo comprido.
-    { valor: { pt: '34', en: '34' }, rotulo: { pt: 'tools no assistente, dos quais 17 de leitura e 15 de escrita — o resto é SQL avulso e meta', en: 'tools in the assistant, of which 17 read-only and 15 write — the rest is ad-hoc SQL and meta' } },
+    // Era "tools no assistente, dos quais 17 de leitura e 15 de escrita — o
+    // resto é SQL avulso e meta". O rótulo comprido quebrava a régua em duas
+    // linhas na faixa da home; agora esta régua só existe na página, e o
+    // rótulo curto serve melhor nas duas.
+    { valor: { pt: '34', en: '34' }, rotulo: { pt: 'funções que o assistente pode chamar', en: 'functions the assistant can call' } },
   ],
+
+  // PENDENTE, BLOQUEADO NO DONO. As três métricas escolhidas são: horas
+  // apontadas no sistema, projetos acompanhados, e pessoas apontando hora todo
+  // dia. Os valores são do escritório real e ninguém os tem aqui — os do seed
+  // são inventados e não servem. Vazio, a régua da faixa some sozinha, que é o
+  // comportamento certo. Não preencher com estimativa.
+  numerosHome: [],
 
   galeria: [
     {

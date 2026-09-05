@@ -74,10 +74,6 @@ describe('office-timesheet', () => {
     expect(officeTimesheet.destaque?.prints).toEqual([])
   })
 
-  it('conta o assistente pela lista dos 17 tools de leitura', () => {
-    expect(officeTimesheet.destaque?.lista?.itens).toHaveLength(17)
-  })
-
   it('tem as três amarras do assistente', () => {
     expect(officeTimesheet.destaque?.amarras).toHaveLength(3)
   })
@@ -94,6 +90,23 @@ describe('office-timesheet', () => {
   it('é a única paleta clara, e o laranja passa raspando', () => {
     expect(officeTimesheet.tema.fundo).toBe('#ECECEC')
     expect(officeTimesheet.tema.destaque).toBe('#CB6D31')
+  })
+})
+
+describe('Office Timesheet', () => {
+  it('a régua da página encurta o rótulo do 34, que quebrava em duas linhas', () => {
+    const trinta = officeTimesheet.numeros.find((n) => n.valor.pt === '34')
+    expect(trinta?.rotulo.pt).toBe('funções que o assistente pode chamar')
+  })
+
+  it('leva o selo de IA', () => {
+    expect(officeTimesheet.selo?.pt).toContain('IA')
+  })
+
+  // PENDENTE: os três valores só o dono tem. Enquanto não vierem, vazio — e a
+  // régua da faixa some sozinha, que é o comportamento certo.
+  it('declara numerosHome, ainda que vazio', () => {
+    expect(officeTimesheet.numerosHome).toEqual([])
   })
 })
 
