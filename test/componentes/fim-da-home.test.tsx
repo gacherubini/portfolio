@@ -1,8 +1,15 @@
 import { cleanup, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { join } from 'node:path'
 import { Sobre } from '@/components/Sobre'
 import { Fechamento } from '@/components/Fechamento'
 import { curriculoDisponivel } from '@/lib/curriculo'
+
+const fsMock = vi.hoisted(() => ({
+  existsSync: vi.fn(() => false),
+}))
+
+vi.mock('node:fs', () => ({ ...fsMock, default: fsMock }))
 
 afterEach(() => cleanup())
 
@@ -62,7 +69,12 @@ describe('Fechamento', () => {
 })
 
 describe('Slot do currículo', () => {
-  it('retorna falso quando o PDF não existe em public', () => {
+  it('retorna falso quando o filesystem informa que o PDF não existe', () => {
+    fsMock.existsSync.mockReturnValue(false)
+
     expect(curriculoDisponivel()).toBe(false)
+    expect(fsMock.existsSync).toHaveBeenCalledWith(
+      join(process.cwd(), 'public', 'curriculo-gabriel-cherubini.pdf'),
+    )
   })
 })
