@@ -4,14 +4,22 @@ Portfólio pessoal de Gabriel Cherubini. Os sistemas que eu construí, cada um c
 prints, explicação em português comum e — quando o sistema é público — link para
 entrar e clicar.
 
-**Estado: em construção.** As Tasks 1–11 do plano de implementação já estão na
-`main`: conteúdo dos quatro projetos, casca da home, quatro faixas, Sobre,
-fechamento, rotas PT/EN e a página de projeto com topo, ficha e estado sem link.
-O próximo ponto de retomada é a Task 12, o destaque.
+**Estado: pronto, não publicado.** As Tasks 1–17 do plano de implementação estão
+na `main` — conteúdo dos quatro projetos, home em PT e EN com as quatro faixas,
+as oito páginas de projeto com os sete blocos, Sobre e fechamento, tradução
+inglesa inteira, metadata, sitemap, robots, ícone e página 404. Falta só o
+deploy, a Task 18, deixada para o dono executar.
 
-Verificação do último estado completo: `npm test` com 128 testes, `npm run build`
-com 13 páginas estáticas e `git diff --check` limpo. O PDF do currículo continua
+Verificação do último estado completo: `npm test` com 163 testes em 18 arquivos,
+`npm run build` verde e `git diff --check` limpo. O PDF do currículo continua
 deliberadamente ausente; a build avisa e o botão não aparece.
+
+Duas coisas para saber antes de publicar, detalhadas em
+[`ESTADO.md`](ESTADO.md): `sitemap.ts` e `robots.ts` já apontam para
+`gacherubini.dev`, um domínio que ainda não foi comprado; e o 404 renderiza
+bilíngue em qualquer navegador com JavaScript, mas sai com corpo vazio no HTML
+cru para três das quatro formas de URL inválida — fechar isso exige uma decisão
+que troca o `lang` correto de `/en` pelo corpo do 404.
 
 ## Stack
 

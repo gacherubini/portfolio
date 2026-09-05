@@ -11,24 +11,46 @@ Repositório: **https://github.com/gacherubini/portfolio** — e ele é **públi
 Portfólio pessoal de **Gabriel Cherubini**, domínio **gacherubini.dev**.
 Next.js 15 + TypeScript + Tailwind 4, deploy na Vercel. Bilíngue PT/EN.
 
-**As Tasks 1–11 do plano já foram implementadas na `main`.** O repo tem o app
-Next.js funcional, conteúdo dos quatro projetos, home em PT/EN, páginas de
-projeto em PT/EN e a suíte de verificação. A retomada deve começar na Task 12.
+**As Tasks 1–17 do plano estão implementadas na `main`.** O site está completo:
+home em PT/EN com as quatro faixas, as oito páginas de projeto com os sete
+blocos, Sobre e fechamento, tradução inglesa inteira, metadata, sitemap, robots,
+ícone, 404 e o portão de acessibilidade. **Falta só a Task 18, o deploy** — e ela
+foi deixada de propósito para o dono executar.
 
 Último estado completo:
 
 | Item | Estado |
 |---|---|
-| Commit HEAD | `54e76fa` — documentação do estado; última implementação em `53deb4d` |
-| Tasks concluídas | 1–11 |
-| Testes | 128/128 em 12 arquivos |
-| Build | aprovado; 13 páginas estáticas, incluindo `/pt`, `/en` e 8 páginas de projeto |
+| Commit HEAD | `ecda25b` — correções da revisão final ampla |
+| Tasks concluídas | 1–17 |
+| Testes | 163/163 em 18 arquivos |
+| Build | aprovada; único aviso é o do currículo ausente, que é esperado |
 | Working tree | limpa |
-| Próxima task | 12 — destaque |
+| Próxima task | 18 — deploy na Vercel, **não executada** |
 
-As revisões internas e do Claude foram feitas ao final de cada task. A Task 10
-também recebeu correções de padding e do teste do slot do currículo antes do
-`APPROVED`; a Task 11 foi aprovada sem findings P0–P2.
+Cada task foi implementada por um subagente e revisada por outro antes de
+fechar. No fim, uma revisão ampla da branch inteira (26 commits) rodou em Opus e
+encontrou três defeitos que as revisões por task não tinham como ver; todos
+foram corrigidos e verificados em build de produção servida. O relato completo,
+com todas as decisões tomadas, está em
+`.superpowers/sdd/2026-09-04-portfolio-implementacao/progress.md`.
+
+### O que a revisão final encontrou, e que vale lembrar
+
+1. **O 404 estava em branco para todo mundo.** `app/[lang]/not-found.tsx` nunca
+   entrava no manifesto de rotas da produção. Corrigido com um `app/not-found.tsx`
+   na raiz, bilíngue. Resíduo aberto: ver a pendência 1.
+2. **O texto do BDDente nomeava a dentista real.** O nome saiu de `content/`,
+   `docs/levantamentos/`, `mockups/` e do plano. **O histórico do git ainda o
+   carrega** — ver a pendência 2.
+3. **O botão primário das faixas da Revy e do Autotune tinha anel de foco
+   invisível** (`currentColor` dentro de `.cta` é `--ctaTexto`, que é igual ao
+   fundo da faixa: 1,00:1). Corrigido com `.faixa a:focus-visible` em
+   `var(--destaque)`, com regressão em `test/folha.test.ts`.
+4. **Os números saíam em formato pt-BR no inglês.** `44.812` lê como quarenta e
+   quatro vírgula oito para um leitor de inglês. `numeros[].valor` e
+   `Print.valor` viraram `Texto`; `/en` agora serve `44,812` e `61.72 ms`, e o
+   português segue igual.
 
 ## Decisões fechadas (não reabrir)
 
@@ -71,7 +93,7 @@ também recebeu correções de padding e do teste do slot do currículo antes do
 | `docs/levantamentos/autotune.md` | idem, Autotune |
 | `content/sobre.ts` | conteúdo PT e EN do Sobre |
 | `content/projetos/*.ts` | conteúdo PT/EN de Revy, BDDente, Office Timesheet e Autotune |
-| `app/`, `components/`, `lib/`, `test/` | implementação das Tasks 1–11 e sua suíte |
+| `app/`, `components/`, `lib/`, `test/` | implementação das Tasks 1–17 e sua suíte de 163 testes |
 | `docs/superpowers/plans/2026-09-04-portfolio-implementacao.md` | plano executável de 18 tasks |
 | `scripts/seed-*.{py,js}` | os três seeds de dados fictícios |
 | `public/prints/<slug>/` | 32 prints |
@@ -136,23 +158,88 @@ Os quatro levantamentos seguem o mesmo formato: uma feature abre a página.
 
 ## Pendências
 
-1. **Executar as Tasks 12–18** conforme o plano. A próxima é a Task 12, o
-   destaque — o arquivo `test/componentes/destaque.test.tsx` parcial deixado por
-   uma execução interrompida foi movido para um artefato ignorado; a task deve
-   ser recomeçada limpa.
-2. **O PDF do currículo não existe.** O fechamento da home oferece o slot apenas
-   quando o arquivo existir; a build avisa enquanto ele não está em `public/`.
-   Antes do deploy, jogar o PDF em `public/` e confirmar a versão em inglês.
-3. **Print do `/assistente` do Office Timesheet.** Bloqueado: a `AGENT_API_KEY`
-   do `.env` local do office-timesheet responde `403 Forbidden`. Precisa de uma
-   chave válida da DeepSeek ou da NVIDIA.
-4. **Confirmar com o dono:**
-   - O app de finanças volta? O motivo da remoção não existe mais.
-   - Os gráficos `03`/`04` do Autotune entram? São matplotlib no default e não
-     separam nada. Recomendação: deixar de fora.
-   - Números de vitrine da Revy (os do seed são inventados e não servem).
-   - Botão secundário da Revy aponta para o catálogo público?
-   - `gacherubini.dev` já está comprado? Onde está o DNS?
+Em ordem de quem decide e de quanto custa.
+
+### 1. Decisões que só o dono pode tomar
+
+1. **O 404 sem JavaScript.** Hoje `/pt/nao-existe`, `/en/nao-existe` e `/es`
+   devolvem 404 com o `<title>` certo mas **corpo vazio no HTML cru**. Num
+   navegador real com JS a página bilíngue renderiza inteira — o que quebra é
+   leitor sem JS, crawler que não executa JS e bot de preview de link
+   (Slack, Twitter). `/a/b/c` já sai completo. Fechar o resíduo exige criar um
+   `app/layout.tsx` na raiz, e o preço é `/en` passar a servir `lang="pt-BR"`.
+   **A troca é: o `lang` correto de `/en`, que vale para o site inteiro, contra
+   o corpo do 404 no HTML cru, que vale para uma página que nem deveria ser
+   indexada.** Deixado sem decidir de propósito.
+2. **O nome da dentista no histórico do git.** O nome saiu de todos os arquivos
+   rastreados, mas continua nos commits antigos, e o repo é público. Tirar de
+   verdade exige reescrever o histórico e um force-push. Não foi feito — é
+   decisão do dono, e tem custo (quebra clones e forks existentes).
+3. **O domínio.** `sitemap.ts`, `robots.ts` e o `metadataBase` do layout apontam
+   para `https://gacherubini.dev`, que ainda não foi comprado. Se o primeiro
+   deploy sair numa URL `*.vercel.app`, toda página vai com `canonical` e
+   `hreflang` apontando para um domínio que não resolve, e o `robots.txt`
+   anuncia um sitemap que ninguém busca. **Comprar o domínio antes do primeiro
+   deploy público resolve sem tocar em código.**
+4. **O PDF do currículo.** Não existe. O fechamento esconde o botão e a build
+   avisa; nunca vira link morto. Jogar o PDF em
+   `public/curriculo-gabriel-cherubini.pdf` e conferir a versão em inglês.
+5. **O app de finanças ("Gastos do mês") volta?** O motivo da remoção — a regra
+   que proibia cor atribuída — não existe mais.
+6. **Os gráficos `03`/`04` do Autotune entram?** São matplotlib no default e não
+   separam nada. Recomendação de quem escreveu o plano: deixar de fora.
+7. **Números de vitrine da Revy.** `numeros: []` hoje; os do seed são inventados
+   e não servem. Enquanto vazio, a régua some e a build avisa.
+8. **Botão secundário da Revy** aponta para o catálogo público?
+9. **As quatro etapas de arquitetura em inglês** saíram como
+   `Survey / Preliminary Study / Schematic Design / Executive Design`, sem mapear
+   para as fases da AIA americana — mapear alegaria uma equivalência que não
+   existe, e os prints mostram os nomes em português. Confirmar se está bom.
+
+### 2. Task 18 — o deploy, não executado
+
+O brief está em `docs/superpowers/plans/…` §Tarefa 18. **Um detalhe dele está
+errado:** ele assume que o trabalho vive numa branch `site` a ser mesclada na
+`main`. Não existe branch `site` — tudo foi commitado direto na `main`, que está
+26 commits à frente de `origin/main`. Então o Passo 2 vira, na prática:
+
+```bash
+git push origin main
+```
+
+e depois, na Vercel: **Add New → Project**, importar `gacherubini/portfolio`,
+framework Next.js, nenhuma variável de ambiente. O `vercel.json` já fixa o
+`buildCommand`, e `npm run build` é `vitest run && next build` — se o teste
+falhar, a build falha, que é o desenho.
+
+No log da build, conferir: o Vitest rodou antes do `next build`; apareceu o aviso
+do currículo ausente; **não** apareceu aviso de tradução.
+
+### 3. Bloqueado por falta de credencial
+
+- **Print do `/assistente` do Office Timesheet.** A `AGENT_API_KEY` do `.env`
+  local responde `403 Forbidden`. Precisa de uma chave válida da DeepSeek ou da
+  NVIDIA. Enquanto isso, `destaque.prints: []` e o bloco é carregado pelo texto
+  e pela lista dos 17 tools — que é exatamente o comp P3 aprovado, não um
+  buraco.
+
+### 4. Cosmético, se algum dia incomodar
+
+- Os quatro arquivos de conteúdo foram traduzidos por quatro agentes em
+  paralelo, e ficou deriva de **formatação**: `office-timesheet.ts` manteve
+  `ficha` em uma linha (até 155 caracteres) enquanto os outros expandiram para
+  multilinha; `bddente.ts` manteve `numeros` em uma linha. Não há prettier no
+  repo e nada quebra.
+- `app/globals.css` tem 14 media blocks em 4 breakpoints, sendo três
+  `max-width: 820px` e cinco `max-width: 900px` separados — a costura visível de
+  seis tasks acrescentando na mesma folha. **Cuidado ao consolidar:**
+  `test/folha.test.ts` acha o reset móvel por
+  `indexOf('@media (max-width: 820px) {\n  .faixa .grade')`, então juntar blocos
+  quebra um teste verde.
+- 14 dos 32 prints em `public/prints/` não são referenciados por nenhum conteúdo.
+  Todos foram conferidos um a um, então é peso, não risco.
+- Todos os links externos abrem na mesma aba. Um recrutador que clica em "Entrar
+  no sistema" sai do portfólio.
 
 ## Ambientes locais
 
