@@ -1,6 +1,6 @@
 # Estado do trabalho — gacherubini.dev
 
-Atualizado: 2026-09-04. Este arquivo existe para sobreviver a um `/clear`.
+Atualizado: 2026-09-05. Este arquivo existe para sobreviver a um `/clear`.
 Se você é um agente retomando o trabalho, leia isto primeiro, depois a spec e os
 levantamentos.
 
@@ -11,8 +11,24 @@ Repositório: **https://github.com/gacherubini/portfolio** — e ele é **públi
 Portfólio pessoal de **Gabriel Cherubini**, domínio **gacherubini.dev**.
 Next.js 15 + TypeScript + Tailwind 4, deploy na Vercel. Bilíngue PT/EN.
 
-**Nenhuma linha do site foi escrita ainda.** O repo tem spec, levantamentos,
-seeds, prints e o texto do "Sobre". Falta o plano de implementação e o código.
+**As Tasks 1–11 do plano já foram implementadas na `main`.** O repo tem o app
+Next.js funcional, conteúdo dos quatro projetos, home em PT/EN, páginas de
+projeto em PT/EN e a suíte de verificação. A retomada deve começar na Task 12.
+
+Último estado completo:
+
+| Item | Estado |
+|---|---|
+| Commit HEAD | `53deb4d` — rota e topo da página de projeto |
+| Tasks concluídas | 1–11 |
+| Testes | 128/128 em 12 arquivos |
+| Build | aprovado; 13 páginas estáticas, incluindo `/pt`, `/en` e 8 páginas de projeto |
+| Working tree | limpa |
+| Próxima task | 12 — destaque |
+
+As revisões internas e do Claude foram feitas ao final de cada task. A Task 10
+também recebeu correções de padding e do teste do slot do currículo antes do
+`APPROVED`; a Task 11 foi aprovada sem findings P0–P2.
 
 ## Decisões fechadas (não reabrir)
 
@@ -53,7 +69,10 @@ seeds, prints e o texto do "Sobre". Falta o plano de implementação e o código
 | `docs/levantamentos/bddente.md` | idem, BDDente |
 | `docs/levantamentos/office-timesheet.md` | idem, Office Timesheet |
 | `docs/levantamentos/autotune.md` | idem, Autotune |
-| `content/sobre.ts` | **o único conteúdo de site que existe** — PT e EN |
+| `content/sobre.ts` | conteúdo PT e EN do Sobre |
+| `content/projetos/*.ts` | conteúdo PT/EN de Revy, BDDente, Office Timesheet e Autotune |
+| `app/`, `components/`, `lib/`, `test/` | implementação das Tasks 1–11 e sua suíte |
+| `docs/superpowers/plans/2026-09-04-portfolio-implementacao.md` | plano executável de 18 tasks |
 | `scripts/seed-*.{py,js}` | os três seeds de dados fictícios |
 | `public/prints/<slug>/` | 32 prints |
 | `mockups/` | os comps das decisões de 04/09 — **ver abaixo** |
@@ -76,8 +95,9 @@ Rode `python -m http.server 4321` na raiz e abra `/mockups/`.
 | `index.html`, `autotune.html`, `sobre.html` | comparadores das três rodadas de decisão |
 | os outros | as alternativas descartadas, guardadas para não refazer a discussão |
 
-Nada em `docs/` aparece no site. O texto que o visitante lê vai morar em
-`content/projetos/*.ts`, que ainda não existe.
+Nada em `docs/` aparece no site. O texto que o visitante lê mora em
+`content/projetos/*.ts`; os relatórios e o ledger de execução ficam em
+`.superpowers/sdd/`, fora do índice do Git.
 
 ## Prints: 32, todos conferidos
 
@@ -116,12 +136,13 @@ Os quatro levantamentos seguem o mesmo formato: uma feature abre a página.
 
 ## Pendências
 
-1. **Escrever o plano de implementação.** É o passo que trava tudo. A spec diz
-   o quê; falta a ordem.
-2. **O PDF do currículo não existe.** O fechamento da home linka
-   `/curriculo-gabriel-cherubini.pdf` e o arquivo precisa entrar em `public/`
-   antes do deploy, senão é botão morto. Confirmar também se o currículo tem
-   versão em inglês — o rótulo do botão é bilíngue, o arquivo é um só.
+1. **Executar as Tasks 12–18** conforme o plano. A próxima é a Task 12, o
+   destaque — o arquivo `test/componentes/destaque.test.tsx` parcial deixado por
+   uma execução interrompida foi movido para um artefato ignorado; a task deve
+   ser recomeçada limpa.
+2. **O PDF do currículo não existe.** O fechamento da home oferece o slot apenas
+   quando o arquivo existir; a build avisa enquanto ele não está em `public/`.
+   Antes do deploy, jogar o PDF em `public/` e confirmar a versão em inglês.
 3. **Print do `/assistente` do Office Timesheet.** Bloqueado: a `AGENT_API_KEY`
    do `.env` local do office-timesheet responde `403 Forbidden`. Precisa de uma
    chave válida da DeepSeek ou da NVIDIA.

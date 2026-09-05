@@ -30,4 +30,4 @@ produção não mostravam.
 | `revy/` | 6 | stack local, loja fictícia "Garagem Vale Motos" |
 | `office-timesheet/` | 13 | instância local, escritório fictício |
 | `bddente/` | 8 | instância local, "Consultório Bela Vista" fictício |
-| `autotune/` | 4 | plugin Standalone capturado da janela + 2 gráficos do repo Python |
+| `autotune/` | 5 | plugin Standalone capturado da janela + 2 gráficos do repo Python |

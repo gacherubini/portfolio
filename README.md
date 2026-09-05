@@ -4,9 +4,14 @@ Portfólio pessoal de Gabriel Cherubini. Os sistemas que eu construí, cada um c
 prints, explicação em português comum e — quando o sistema é público — link para
 entrar e clicar.
 
-**Estado: em construção.** Design aprovado e especificado; o código do site ainda
-não foi escrito. O que existe aqui hoje é a spec, os scripts que geram os dados
-de demonstração e os prints já capturados.
+**Estado: em construção.** As Tasks 1–11 do plano de implementação já estão na
+`main`: conteúdo dos quatro projetos, casca da home, quatro faixas, Sobre,
+fechamento, rotas PT/EN e a página de projeto com topo, ficha e estado sem link.
+O próximo ponto de retomada é a Task 12, o destaque.
+
+Verificação do último estado completo: `npm test` com 128 testes, `npm run build`
+com 13 páginas estáticas e `git diff --check` limpo. O PDF do currículo continua
+deliberadamente ausente; a build avisa e o botão não aparece.
 
 ## Stack
 
@@ -38,3 +43,5 @@ Os scripts que fazem isso vivem em [`scripts/`](scripts/) e são reexecutáveis:
 
 - [`ESTADO.md`](ESTADO.md) — estado corrente do trabalho e como reproduzir os prints
 - [`docs/superpowers/specs/`](docs/superpowers/specs/) — a spec de design
+- [`docs/superpowers/plans/`](docs/superpowers/plans/) — plano e ordem de implementação
+- `.superpowers/sdd/2026-09-04-portfolio-implementacao/progress.md` — ledger local das tasks e revisões
