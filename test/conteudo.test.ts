@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { validarProjeto } from '@/content/tipos'
 import { bddente } from '@/content/projetos/bddente'
+import { officeTimesheet } from '@/content/projetos/office-timesheet'
 import { revy } from '@/content/projetos/revy'
 
 describe('revy', () => {
@@ -53,5 +54,43 @@ describe('bddente', () => {
 
   it('tem três notas técnicas', () => {
     expect(bddente.tecnico.notas).toHaveLength(3)
+  })
+})
+
+describe('office-timesheet', () => {
+  it('passa no contrato', () => {
+    expect(validarProjeto(officeTimesheet)).toEqual([])
+  })
+
+  it('não tem link — é sistema interno do escritório', () => {
+    expect(officeTimesheet.links).toEqual([])
+    expect(officeTimesheet.semLink?.titulo.pt).toBe('Sem link para entrar')
+  })
+
+  // Slot: quando o print do /assistente existir, isto vira toHaveLength(1).
+  it('tem destaque sem print, porque a captura do assistente está bloqueada', () => {
+    expect(officeTimesheet.destaque?.prints).toEqual([])
+  })
+
+  it('conta o assistente pela lista dos 17 tools de leitura', () => {
+    expect(officeTimesheet.destaque?.lista?.itens).toHaveLength(17)
+  })
+
+  it('tem as três amarras do assistente', () => {
+    expect(officeTimesheet.destaque?.amarras).toHaveLength(3)
+  })
+
+  it('abre com o print do quadro de tarefas, já que o destaque não tem imagem', () => {
+    expect(officeTimesheet.printAbertura?.arquivo).toBe('03-tarefas-kanban.png')
+  })
+
+  it('tem a galeria em duas fileiras nomeadas', () => {
+    expect(officeTimesheet.galeria).toHaveLength(2)
+    expect(officeTimesheet.galeria.map((f) => f.prints.length)).toEqual([3, 3])
+  })
+
+  it('é a única paleta clara, e o laranja passa raspando', () => {
+    expect(officeTimesheet.tema.fundo).toBe('#ECECEC')
+    expect(officeTimesheet.tema.destaque).toBe('#CB6D31')
   })
 })
