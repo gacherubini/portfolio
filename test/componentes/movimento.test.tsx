@@ -168,4 +168,41 @@ describe('o movimento com o mouse', () => {
     render(<Movimento />)
     expect(document.querySelector('.revela')?.classList.contains('dentro')).toBe(true)
   })
+
+  // `data-anima` é o atributo que esconde os `.revela`; quem os traz de volta é
+  // o observador. Escrito ANTES do construtor, um observador que falhasse
+  // deixava o atributo posto, ninguém observando e nenhuma limpeza registrada:
+  // o site inteiro em opacidade zero, para sempre.
+  it('o observador que falha não deixa o site escondido', () => {
+    const original = window.IntersectionObserver
+    window.IntersectionObserver = function () {
+      throw new Error('sem observador')
+    } as unknown as typeof window.IntersectionObserver
+    document.body.innerHTML = '<div class="revela">x</div>'
+    try {
+      try {
+        render(<Movimento />)
+      } catch {
+        // A falha em si não é o assunto: o assunto é o que ela deixa no `<html>`.
+      }
+      expect(document.documentElement.hasAttribute('data-anima')).toBe(false)
+    } finally {
+      window.IntersectionObserver = original
+    }
+  })
+
+  // Num telefone o CSS já anula brilho, ímã e inclinação. Se o laço rodasse
+  // assim mesmo, cada quadro de arrasto pagaria um `elementFromPoint` — que
+  // força flush de estilo e layout — para escrever variáveis que ninguém lê.
+  it('num aparelho sem cursor, arrastar o dedo não agenda quadro nenhum', () => {
+    vi.spyOn(window, 'matchMedia').mockImplementation(
+      (consulta: string) => ({ matches: consulta.includes('hover: none') }) as MediaQueryList,
+    )
+    document.body.innerHTML = '<section class="faixa" data-brilho><a class="cta">x</a></section>'
+    render(<Movimento />)
+
+    const quadros = vi.spyOn(window, 'requestAnimationFrame')
+    dispatchEvent(new Event('pointermove'))
+    expect(quadros).not.toHaveBeenCalled()
+  })
 })

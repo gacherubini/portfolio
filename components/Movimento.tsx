@@ -25,6 +25,10 @@ export function Movimento() {
     // consulta, e não o `.matches`: `aoRedimensionar` a relê a cada quadro de
     // redimensionamento, porque atravessar 900px muda a resposta.
     const estreito = matchMedia('(max-width: 900px)')
+    // Onde não há cursor não há laço do cursor. Guardada a consulta, e não o
+    // `.matches`, pela mesma razão de `estreito`: num híbrido, plugar um mouse
+    // muda a resposta sem recarregar a página.
+    const semCursor = matchMedia('(hover: none)')
     const pranchas = [...document.querySelectorAll<HTMLElement>('.prancha')]
     let aberta: HTMLElement | null = null
 
@@ -151,6 +155,11 @@ export function Movimento() {
         if (voos.get(p) !== anim) return
         voos.delete(p)
         p.classList.remove('prancha--virando')
+        // Abrir e fechar reflui a página inteira, e fechar não rola nada — o
+        // `scrollIntoView` acima só roda no ramo `.aberta`. Sem invalidar o
+        // cache aqui, nenhum `scroll` nem `resize` avisaria o laço do cursor, e
+        // o ímã passaria a puxar os botões para onde eles estavam.
+        sujar()
       })
     }
 
@@ -228,7 +237,6 @@ export function Movimento() {
     if (menos) {
       reveladores.forEach((n) => n.classList.add('dentro'))
     } else {
-      raiz.dataset.anima = 'sim'
       observador = new IntersectionObserver(
         (entradas) => {
           for (const e of entradas) {
@@ -240,6 +248,13 @@ export function Movimento() {
         { rootMargin: '0px 0px -12% 0px', threshold: 0.06 },
       )
       reveladores.forEach((n) => observador!.observe(n))
+      // POR ÚLTIMO, e não antes do construtor: `data-anima` é o que esconde os
+      // `.revela`, e quem os traz de volta é este observador. Escrito antes,
+      // um construtor que lançasse deixaria o atributo posto, ninguém
+      // observando e nenhuma limpeza registrada — todo `.revela` do site em
+      // `opacity: 0` para sempre. É a mesma razão pela qual `data-mov` é a
+      // última linha do efeito.
+      raiz.dataset.anima = 'sim'
     }
 
     // --- o cursor ---
@@ -250,6 +265,7 @@ export function Movimento() {
     let botoes: HTMLElement[] = []
     let caixas = new WeakMap<Element, DOMRect>()
     let inclinado: HTMLElement | null = null
+    let brilhando: HTMLElement | null = null
 
     function medir() {
       botoes = [...document.querySelectorAll<HTMLElement>('.cta')]
@@ -272,7 +288,15 @@ export function Movimento() {
       if (sujo) medir()
       const sob = document.elementFromPoint(px, py)
 
-      const brilho = sob?.closest<HTMLElement>('[data-brilho]')
+      const brilho = sob?.closest<HTMLElement>('[data-brilho]') ?? null
+      // Limpar ao sair, como a inclinação faz: o brilho só aparece no `:hover`,
+      // então a sujeira é invisível — até o cursor voltar, e aí ele nasce no
+      // ponto antigo por um quadro antes de saltar para debaixo do cursor.
+      if (brilhando && brilhando !== brilho) {
+        brilhando.style.removeProperty('--mx')
+        brilhando.style.removeProperty('--my')
+      }
+      brilhando = brilho
       if (brilho) {
         const r = caixa(brilho)
         brilho.style.setProperty('--mx', `${((px - r.left) / r.width) * 100}%`)
@@ -314,6 +338,11 @@ export function Movimento() {
     }
 
     const aoMover = (e: PointerEvent) => {
+      // O CSS já anula brilho, ímã e inclinação em `@media (hover: none)`. Sem
+      // esta saída, um arrasto de dedo ainda pagaria um `elementFromPoint` por
+      // quadro — que força flush de estilo e layout — para escrever variáveis
+      // que ninguém lê.
+      if (semCursor.matches) return
       px = e.clientX; py = e.clientY
       if (!pendente) { pendente = true; quadro = requestAnimationFrame(pintar) }
     }
