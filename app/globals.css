@@ -480,3 +480,51 @@ nav a:hover { color: var(--tinta); }
   .prancha--margem:nth-child(even) .prancha-alvo { grid-column: 1; grid-row: auto; }
   .pranchas { gap: 48px; }
 }
+
+/* --- a tela de entrada --------------------------------------------------- */
+.entrada {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; place-items: center;
+  /* O clarão central não é estilo: a marca fica no meio exato da tela, que é
+     justo onde a abertura clara vira a faixa preta da Revy. Numa janela mais
+     alta a marca escura cairia sobre o preto e sumiria. */
+  background:
+    radial-gradient(circle 440px at 50% 50%,
+      color-mix(in srgb, var(--casca) 75%, transparent) 0%, transparent 72%),
+    color-mix(in srgb, var(--casca) 85%, transparent);
+  backdrop-filter: blur(14px) saturate(.5);
+  -webkit-backdrop-filter: blur(14px) saturate(.5);
+  animation: ent-veu .42s cubic-bezier(.55,0,.35,1) 1.06s forwards;
+}
+html[data-entrada="visto"] .entrada { display: none; }
+@keyframes ent-veu { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+
+.entrada-centro { display: grid; justify-items: center; }
+.entrada .marca {
+  font-size: 26px; letter-spacing: -.02em;
+  clip-path: inset(0 100% 0 0);
+  animation: ent-marca .62s cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes ent-marca { to { clip-path: inset(0 0 0 0); } }
+
+.entrada-regua {
+  width: 244px; height: 3px; margin-top: 20px; border-radius: 3px;
+  background: var(--regua); overflow: hidden;
+}
+.entrada-regua i {
+  display: block; height: 100%; width: 0; border-radius: 3px;
+  animation: ent-corre 1.05s linear forwards, ent-cor 1.05s linear forwards;
+}
+@keyframes ent-corre { from { width: 0 } to { width: 100% } }
+/* Em degrau, sem transição entre as cores: com degradê vira arco-íris e some
+   a ideia de que são quatro sistemas. */
+@keyframes ent-cor {
+  0%,   24.99% { background: #7FBFA3 }
+  25%,  49.99% { background: #5A21B4 }
+  50%,  74.99% { background: #CB6D31 }
+  75%,    100% { background: #F3B843 }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrada { display: none; }
+}

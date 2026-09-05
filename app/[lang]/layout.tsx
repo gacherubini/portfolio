@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import { Archivo } from 'next/font/google'
 import { ehIdioma } from '@/content/tipos'
+import { Entrada } from '@/components/Entrada'
 import './../globals.css'
 
 export const metadata: Metadata = {
@@ -35,7 +36,22 @@ export default async function LayoutRaiz({
 
   return (
     <html lang={lang === 'en' ? 'en' : 'pt-BR'} className={archivo.variable}>
-      <body>{children}</body>
+      <head>
+        {/* Toca uma vez por sessão. Inline e antes do corpo porque precisa
+            valer no primeiro quadro: em `useEffect` o véu piscaria em toda
+            navegação. `try` porque navegador em modo restrito lança ao ler
+            sessionStorage, e aí o certo é mostrar o véu, não quebrar. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(sessionStorage.getItem('entrada')){document.documentElement.dataset.entrada='visto'}else{sessionStorage.setItem('entrada','1')}}catch(e){}",
+          }}
+        />
+      </head>
+      <body>
+        <Entrada />
+        {children}
+      </body>
     </html>
   )
 }
