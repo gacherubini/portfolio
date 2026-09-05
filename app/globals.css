@@ -65,6 +65,11 @@ nav a:hover { color: var(--tinta); }
 
 /* --- a faixa de projeto ------------------------------------------------- */
 .faixa { background: var(--fundo); color: var(--texto); padding: 64px 0; }
+/* A regra global usa `currentColor`, que dentro de `.cta` é `--ctaTexto` — e
+   em Revy e Autotune `--ctaTexto` é igual a `--fundo` da própria faixa
+   (1,00:1): o anel de foco existe e não aparece. `--destaque` é o que
+   `verificarTema` garante ≥ 3:1 contra `--fundo` nas quatro paletas. */
+.faixa a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
 .faixa .grade {
   display: grid; grid-template-columns: 1fr 1.15fr; gap: 56px; align-items: center;
 }
@@ -388,7 +393,10 @@ nav a:hover { color: var(--tinta); }
 
 /* --- bloco técnico ------------------------------------------------------ */
 .tecnico { border-top: 1px solid var(--borda); padding: 56px 0 72px; }
-.tecnico .aviso { margin: 0 0 30px; font-size: 14px; color: var(--calmo); max-width: 52ch; }
+/* Era `<p>`; virou `<h2>` para dar landmark de heading ao bloco técnico sem
+   mudar a aparência — por isso `font-weight: 400` cancela o negrito padrão
+   do navegador para `h2`. */
+.tecnico .aviso { margin: 0 0 30px; font-size: 14px; font-weight: 400; color: var(--calmo); max-width: 52ch; }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 34px; }
 .chip {
   font-size: 13px; font-weight: 500; border: 1px solid var(--borda);

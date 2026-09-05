@@ -53,6 +53,13 @@ describe('Destaque', () => {
     expect(screen.getByText('0,18 ms')).toBeInTheDocument()
   })
 
+  // A vírgula decimal de pt não pode vazar para o inglês.
+  it('em inglês, a latência das placas usa ponto decimal', () => {
+    render(<Destaque projeto={autotune} lang="en" />)
+    expect(screen.getByText('61.72 ms')).toBeInTheDocument()
+    expect(screen.getByText('0.18 ms')).toBeInTheDocument()
+  })
+
   it('o fecho do Autotune destaca o fator', () => {
     const { container } = render(<Destaque projeto={autotune} lang="pt" />)
     expect(container.querySelector('.leitura b')).toHaveTextContent('340')

@@ -6,8 +6,8 @@ Código em `../dentalis`.
 
 ## A história
 
-Substituiu o **Dentalis**, sistema em FoxPro que rodou no consultório da
-Dra. Kátia **de 1996 a 2024** e hoje é inutilizável.
+Substituiu o **Dentalis**, sistema em FoxPro que rodou no consultório
+**de 1996 a 2024** e hoje é inutilizável.
 
 Esse é o gancho do projeto, e os números sustentam:
 
@@ -97,7 +97,7 @@ cada dente desenhado com as faces separadas. Clica num dente e o painel abre:
 Três camadas de cor no desenho: **vermelho** planejado, **verde** realizado,
 **azul** já existente. A camada azul é uma tabela separada (`condicao`) — estado
 que já estava lá quando o prontuário começou, sem preço e sem status, porque não
-foi a Dra. Kátia que fez.
+foi a atual responsável que fez.
 
 ### Histórico de atendimentos
 

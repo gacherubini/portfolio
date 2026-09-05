@@ -1694,7 +1694,7 @@ export const bddente: Projeto = {
 
   problema: [
     {
-      pt: 'O consultório da Dra. Kátia rodou num sistema em FoxPro de 1996 a 2024. Ele parou de ser usável, e junto com ele ficaram presos o cadastro de 5.559 pacientes e 44.812 lançamentos clínicos — o que cada um tinha, o que foi feito, quando e por quanto.',
+      pt: 'O consultório rodou num sistema em FoxPro de 1996 a 2024. Ele parou de ser usável, e junto com ele ficaram presos o cadastro de 5.559 pacientes e 44.812 lançamentos clínicos — o que cada um tinha, o que foi feito, quando e por quanto.',
     },
     {
       pt: 'Trocar de sistema aqui não é começar do zero: é levar trinta anos de prontuário para o outro lado sem perder e sem inventar nada. Por isso migração, LGPD e backup foram escopo do primeiro dia, não fase 2 — o sistema entrou em uso real já com prontuário de gente dentro, e não existe "depois a gente arruma" nesse caso.',
@@ -1703,7 +1703,7 @@ export const bddente: Projeto = {
 
   oQueFaz: [
     {
-      pt: 'É o consultório inteiro numa tela só: prontuário, agenda e dinheiro. O odontograma desenha a arcada completa e guarda, dente por dente e face por face, o que está planejado, o que já foi feito e o que já estava lá antes de a Dra. Kátia assumir.',
+      pt: 'É o consultório inteiro numa tela só: prontuário, agenda e dinheiro. O odontograma desenha a arcada completa e guarda, dente por dente e face por face, o que está planejado, o que já foi feito e o que já estava lá antes de a atual responsável assumir.',
     },
     {
       pt: 'A agenda marca e atende por semana ou por mês. O financeiro separa duas coisas que costumam ser confundidas — o que foi produzido no mês e o dinheiro que de fato entrou. Anamnese, prontuário em PDF, backup com restauração testada.',

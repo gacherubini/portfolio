@@ -27,9 +27,9 @@ const BASE: Projeto = {
   problema: [txt('Por que o sistema existe.')],
   oQueFaz: [txt('O que o sistema faz.')],
   numeros: [
-    { valor: '1', rotulo: txt('um') },
-    { valor: '2', rotulo: txt('dois') },
-    { valor: '3', rotulo: txt('três') },
+    { valor: txt('1'), rotulo: txt('um') },
+    { valor: txt('2'), rotulo: txt('dois') },
+    { valor: txt('3'), rotulo: txt('três') },
   ],
   galeria: [],
   links: [],
@@ -95,7 +95,7 @@ describe('limites máximos aceitos pelo contrato', () => {
   })
 
   it('aceita quatro números', () => {
-    const numeros = [1, 2, 3, 4].map((n) => ({ valor: String(n), rotulo: txt(String(n)) }))
+    const numeros = [1, 2, 3, 4].map((n) => ({ valor: txt(String(n)), rotulo: txt(String(n)) }))
     expect(validarProjeto({ ...BASE, numeros })).toEqual([])
   })
 
@@ -122,7 +122,7 @@ describe('validarProjeto — o que ele recusa', () => {
   })
 
   it('recusa cinco números (viram sopa)', () => {
-    const cinco = [1, 2, 3, 4, 5].map((n) => ({ valor: String(n), rotulo: txt(String(n)) }))
+    const cinco = [1, 2, 3, 4, 5].map((n) => ({ valor: txt(String(n)), rotulo: txt(String(n)) }))
     expect(validarProjeto({ ...BASE, numeros: cinco }).join(' ')).toMatch(/numeros/)
   })
 

@@ -109,7 +109,9 @@ describe('autotune', () => {
 
   it('tem o par de motores no destaque, cada placa com etiqueta e latência', () => {
     expect(autotune.destaque?.prints).toHaveLength(2)
-    expect(autotune.destaque?.prints.map((p) => p.valor)).toEqual(['61,72 ms', '0,18 ms'])
+    expect(autotune.destaque?.prints.map((p) => p.valor?.pt)).toEqual(['61,72 ms', '0,18 ms'])
+    // Formato de número muda com o idioma: vírgula de decimal em pt vira ponto em en.
+    expect(autotune.destaque?.prints.map((p) => p.valor?.en)).toEqual(['61.72 ms', '0.18 ms'])
   })
 
   it('fecha o destaque com a leitura da comparação', () => {

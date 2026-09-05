@@ -56,7 +56,9 @@ export function Destaque({ projeto, lang }: { projeto: Projeto; lang: Idioma }) 
                 <div className="placa" key={print.arquivo}>
                   <div className="topo-placa">
                     <span className="motor">{t(print.etiqueta, lang, `${campo}.prints.${i}.etiqueta`)}</span>
-                    {print.valor ? <span className="lat">{print.valor}</span> : null}
+                    {print.valor ? (
+                      <span className="lat">{t(print.valor, lang, `${campo}.prints.${i}.valor`)}</span>
+                    ) : null}
                   </div>
                   <div className="pequeno">{figura}</div>
                 </div>

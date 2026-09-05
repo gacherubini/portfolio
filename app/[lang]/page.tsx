@@ -16,7 +16,11 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>
 }): Promise<Metadata> {
   const { lang } = await params
-  const pt = lang !== 'en'
+  // `ehIdioma`, não `lang !== 'en'`: a segunda tratava qualquer lixo como
+  // português e grudava canonical de `/pt` num corpo que é 404. Segmento
+  // inválido não recebe metadata nenhuma — a página ali nem é esta.
+  if (!ehIdioma(lang)) return {}
+  const pt = lang === 'pt'
 
   return {
     title: pt

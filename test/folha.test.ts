@@ -49,4 +49,18 @@ describe('a regra da folha', () => {
       blocoMobile.match(/\.faixa\.espelho \.col-texto, \.faixa\.espelho \.col-print \{([^}]*)\}/)?.[1] ?? ''
     expect(reset).not.toMatch(/grid-row:\s*1\b/)
   })
+
+  it('toda superfície com tema declara seu próprio a:focus-visible', () => {
+    // `a:focus-visible { outline: 2px solid currentColor }`, a regra global,
+    // some dentro de `.faixa` e `.pagina-projeto`: lá `currentColor` é
+    // `--ctaTexto`/`--texto`, pintado igual ao próprio `--fundo` em mais de
+    // uma paleta (Revy e Autotune, 1.00:1) — o anel de foco existe e é
+    // invisível. Cada superfície temática precisa da própria regra, presa a
+    // `--destaque`, que `verificarTema` já garante ≥ 3:1 contra `--fundo`.
+    for (const superficie of ['.faixa', '.pagina-projeto', '.fechamento']) {
+      const escapada = superficie.replace('.', '\\.')
+      const regex = new RegExp(`${escapada}\\s*a:focus-visible\\s*\\{`)
+      expect(folha).toMatch(regex)
+    }
+  })
 })

@@ -46,8 +46,8 @@ export const bddente: Projeto = {
 
   problema: [
     {
-      pt: 'O consultório da Dra. Kátia rodou num sistema em FoxPro de 1996 a 2024. Ele parou de ser usável, e junto com ele ficaram presos o cadastro de 5.559 pacientes e 44.812 lançamentos clínicos — o que cada um tinha, o que foi feito, quando e por quanto.',
-      en: "Dr. Kátia's practice ran on a FoxPro system from 1996 to 2024. It stopped being usable, and trapped inside it were the records of 5.559 patients and 44.812 clinical entries — what each one had, what was done, when, and for how much.",
+      pt: 'O consultório rodou num sistema em FoxPro de 1996 a 2024. Ele parou de ser usável, e junto com ele ficaram presos o cadastro de 5.559 pacientes e 44.812 lançamentos clínicos — o que cada um tinha, o que foi feito, quando e por quanto.',
+      en: "The practice ran on a FoxPro system from 1996 to 2024. It stopped being usable, and trapped inside it were the records of 5,559 patients and 44,812 clinical entries — what each one had, what was done, when, and for how much.",
     },
     {
       pt: 'Trocar de sistema aqui não é começar do zero: é levar trinta anos de prontuário para o outro lado sem perder e sem inventar nada. Por isso migração, LGPD e backup foram escopo do primeiro dia, não fase 2 — o sistema entrou em uso real já com prontuário de gente dentro, e não existe "depois a gente arruma" nesse caso.',
@@ -57,8 +57,8 @@ export const bddente: Projeto = {
 
   oQueFaz: [
     {
-      pt: 'É o consultório inteiro numa tela só: prontuário, agenda e dinheiro. O odontograma desenha a arcada completa e guarda, dente por dente e face por face, o que está planejado, o que já foi feito e o que já estava lá antes de a Dra. Kátia assumir.',
-      en: "It's the whole practice on one screen: patient records, scheduling, and money. The odontogram draws the full arch and tracks, tooth by tooth and surface by surface, what's planned, what's already been done, and what was already there before Dr. Kátia took over.",
+      pt: 'É o consultório inteiro numa tela só: prontuário, agenda e dinheiro. O odontograma desenha a arcada completa e guarda, dente por dente e face por face, o que está planejado, o que já foi feito e o que já estava lá antes de a atual responsável assumir.',
+      en: "It's the whole practice on one screen: patient records, scheduling, and money. The odontogram draws the full arch and tracks, tooth by tooth and surface by surface, what's planned, what's already been done, and what was already there before the current dentist took over.",
     },
     {
       pt: 'A agenda marca e atende por semana ou por mês. O financeiro separa duas coisas que costumam ser confundidas — o que foi produzido no mês e o dinheiro que de fato entrou. Anamnese, prontuário em PDF, backup com restauração testada.',
@@ -74,11 +74,11 @@ export const bddente: Projeto = {
     texto: [
       {
         pt: 'A agenda diz, consulta por consulta, quem está autorizado a receber o lembrete de véspera. São três respostas, não duas: tem permissão, não tem, e — a que importa — *nunca foi perguntado*. Os 5.559 pacientes que vieram do sistema antigo entraram assim, porque o FoxPro nunca perguntou, e presumir autorização de 5.559 pessoas é exatamente o que a lei não permite. O botão "perguntar" é como isso vira sim ou não, uma pessoa por vez, com ela na cadeira.',
-        en: "The schedule tells you, appointment by appointment, who is authorized to get the day-before reminder. There are three answers, not two: has consent, doesn't, and — the one that matters — *was never asked*. The 5.559 patients who came from the old system arrived this way, because FoxPro never asked, and assuming consent for 5.559 people is exactly what the law doesn't allow. The \"ask\" button is how that turns into a yes or a no, one person at a time, with them in the chair.",
+        en: "The schedule tells you, appointment by appointment, who is authorized to get the day-before reminder. There are three answers, not two: has consent, doesn't, and — the one that matters — *was never asked*. The 5,559 patients who came from the old system arrived this way, because FoxPro never asked, and assuming consent for 5,559 people is exactly what the law doesn't allow. The \"ask\" button is how that turns into a yes or a no, one person at a time, with them in the chair.",
       },
       {
         pt: 'O envio em si está construído e desligado. A tarja no alto da tela é o próprio sistema avisando que ninguém está sendo lembrado da consulta hoje: a chave nasce fechada e só abre quando a clínica conectar o WhatsApp. Um sistema que herda 5.559 cadastros e escolhe não mandar nada para nenhum deles até perguntar.',
-        en: 'Sending itself is built and switched off. The banner at the top of the screen is the system itself admitting that no one is being reminded about their appointment today: the switch is born closed and only opens once the practice connects WhatsApp. A system that inherits 5.559 records and chooses to send nothing to any of them until it asks.',
+        en: 'Sending itself is built and switched off. The banner at the top of the screen is the system itself admitting that no one is being reminded about their appointment today: the switch is born closed and only opens once the practice connects WhatsApp. A system that inherits 5,559 records and chooses to send nothing to any of them until it asks.',
       },
     ],
     prints: [
@@ -103,10 +103,10 @@ export const bddente: Projeto = {
   // se 914 e 44.812 podem virar vitrine" — se o dono disser que não, o
   // conserto é o mesmo da Revy: `numeros: []` e a régua some sozinha.
   numeros: [
-    { valor: '~30', rotulo: { pt: 'anos de histórico migrados', en: 'years of history migrated' } },
-    { valor: '5.559', rotulo: { pt: 'pacientes no cadastro histórico', en: 'patients in the historical records' } },
-    { valor: '44.812', rotulo: { pt: 'lançamentos clínicos migrados', en: 'clinical entries migrated' } },
-    { valor: '914', rotulo: { pt: 'testes passando', en: 'tests passing' } },
+    { valor: { pt: '~30', en: '~30' }, rotulo: { pt: 'anos de histórico migrados', en: 'years of history migrated' } },
+    { valor: { pt: '5.559', en: '5,559' }, rotulo: { pt: 'pacientes no cadastro histórico', en: 'patients in the historical records' } },
+    { valor: { pt: '44.812', en: '44,812' }, rotulo: { pt: 'lançamentos clínicos migrados', en: 'clinical entries migrated' } },
+    { valor: { pt: '914', en: '914' }, rotulo: { pt: 'testes passando', en: 'tests passing' } },
   ],
 
   galeria: [
@@ -178,7 +178,7 @@ export const bddente: Projeto = {
         texto: [
           {
             pt: 'O campo `aceita_whatsapp` aceita `NULL`, e `NULL` não é "não": é nunca perguntamos. Os 5.559 pacientes migrados entraram assim, e nenhum recebe mensagem nesse estado. Foi a decisão mais difícil de implementar e a mais fácil de explicar para a clínica.',
-            en: "The `aceita_whatsapp` field accepts `NULL`, and `NULL` doesn't mean \"no\": it means we never asked. The 5.559 migrated patients arrived in this state, and none of them get messaged while they're in it. It was the hardest decision to implement and the easiest to explain to the practice.",
+            en: "The `aceita_whatsapp` field accepts `NULL`, and `NULL` doesn't mean \"no\": it means we never asked. The 5,559 migrated patients arrived in this state, and none of them get messaged while they're in it. It was the hardest decision to implement and the easiest to explain to the practice.",
           },
         ],
       },

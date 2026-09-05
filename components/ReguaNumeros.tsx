@@ -11,9 +11,9 @@ export function ReguaNumeros({ projeto, lang }: { projeto: Projeto; lang: Idioma
   return (
     <section className={`wrap regua regua--${projeto.numeros.length}`}>
       {projeto.numeros.map((n, i) => (
-        <div className="num" key={n.valor + i}>
-          <b>{n.valor}</b>
-          <span>{t(n.rotulo, lang, `${projeto.slug}.numeros.${i}`)}</span>
+        <div className="num" key={i}>
+          <b>{t(n.valor, lang, `${projeto.slug}.numeros.${i}.valor`)}</b>
+          <span>{t(n.rotulo, lang, `${projeto.slug}.numeros.${i}.rotulo`)}</span>
         </div>
       ))}
     </section>

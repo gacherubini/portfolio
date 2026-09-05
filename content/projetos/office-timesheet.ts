@@ -149,13 +149,13 @@ export const officeTimesheet: Projeto = {
   },
 
   numeros: [
-    { valor: '1.452', rotulo: { pt: 'casos de teste, contra Postgres real no CI', en: 'test cases, against real Postgres in CI' } },
-    { valor: '148', rotulo: { pt: 'endpoints HTTP', en: 'HTTP endpoints' } },
-    { valor: '40', rotulo: { pt: 'tabelas no banco', en: 'tables in the database' } },
+    { valor: { pt: '1.452', en: '1,452' }, rotulo: { pt: 'casos de teste, contra Postgres real no CI', en: 'test cases, against real Postgres in CI' } },
+    { valor: { pt: '148', en: '148' }, rotulo: { pt: 'endpoints HTTP', en: 'HTTP endpoints' } },
+    { valor: { pt: '40', en: '40' }, rotulo: { pt: 'tabelas no banco', en: 'tables in the database' } },
     // O comp P3 escreve "34 · 17 de leitura, 15 de escrita", e 17+15 dá 32.
     // O levantamento explica o resto: 34 = 17 leitura + 15 escrita + SQL
     // ad-hoc + meta. Conta errada na tela é pior que rótulo comprido.
-    { valor: '34', rotulo: { pt: 'tools no assistente, 17 deles só de leitura', en: 'tools in the assistant, 17 of them read-only' } },
+    { valor: { pt: '34', en: '34' }, rotulo: { pt: 'tools no assistente, dos quais 17 de leitura e 15 de escrita — o resto é SQL avulso e meta', en: 'tools in the assistant, of which 17 read-only and 15 write — the rest is ad-hoc SQL and meta' } },
   ],
 
   galeria: [

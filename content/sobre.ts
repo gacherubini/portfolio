@@ -41,7 +41,7 @@ export const sobre: {
   ficha: [
     {
       rotulo: { pt: 'Onde', en: 'Where' },
-      valor: { pt: 'Porto Alegre, Brasil · GMT-3', en: 'Porto Alegre, Brazil · GMT-3' },
+      valor: { pt: 'Porto Alegre, Brasil · GMT−3', en: 'Porto Alegre, Brazil · GMT−3' },
     },
     {
       rotulo: { pt: 'Trabalho', en: 'Work' },
@@ -53,7 +53,7 @@ export const sobre: {
     },
     {
       rotulo: { pt: 'Inglês', en: 'English' },
-      valor: { pt: 'Fluente', en: 'Full professional' },
+      valor: { pt: 'Fluente', en: 'Fluent' },
     },
   ],
 

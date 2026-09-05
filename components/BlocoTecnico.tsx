@@ -14,7 +14,11 @@ export function BlocoTecnico({ projeto, lang }: { projeto: Projeto; lang: Idioma
 
   return (
     <section className="wrap tecnico">
-      <p className="aviso">{t(ui.avisoTecnico, lang, 'ui.avisoTecnico')}</p>
+      {/* Único bloco da página sem `h2` antes desta linha: quem navega por
+          heading não tinha marco nenhum na seção que o próprio texto convida
+          a pular. `.aviso` continua definindo a aparência — só o elemento
+          mudou de `p` para `h2`. */}
+      <h2 className="aviso">{t(ui.avisoTecnico, lang, 'ui.avisoTecnico')}</h2>
 
       <div className="chips">
         {stack.map((item) => (

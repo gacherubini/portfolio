@@ -15,6 +15,13 @@ describe('ReguaNumeros', () => {
     expect(screen.getByText('5.559')).toBeInTheDocument()
   })
 
+  // Separador de milhar de pt (".") não pode aparecer em inglês (",").
+  it('em inglês, o separador de milhar vira vírgula', () => {
+    render(<ReguaNumeros projeto={bddente} lang="en" />)
+    expect(screen.getByText('5,559')).toBeInTheDocument()
+    expect(screen.getByText('44,812')).toBeInTheDocument()
+  })
+
   it('com três, desenha três', () => {
     const { container } = render(<ReguaNumeros projeto={autotune} lang="pt" />)
     expect(container.querySelectorAll('.num')).toHaveLength(3)

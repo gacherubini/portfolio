@@ -92,14 +92,14 @@ export const autotune: Projeto = {
         altura: 455,
         // Nome de motor é nome, não código: fica em Archivo, não em mono.
         etiqueta: { pt: 'TD-PSOLA', en: 'TD-PSOLA' },
-        valor: '61,72 ms',
+        valor: { pt: '61,72 ms', en: '61.72 ms' },
         alt: {
           pt: 'O plugin corrigindo ao vivo com TD-PSOLA, Low Latency desmarcado: nota-alvo E3, cantado 154,0 Hz contra alvo 164,8 Hz, correção de +118 cents, o gráfico cheio com a voz sendo corrigida, e latência de 61,72 ms no rodapé.',
-          en: 'The plugin correcting live with TD-PSOLA, Low Latency unchecked: target note E3, sung at 154,0 Hz against a target of 164,8 Hz, a correction of +118 cents, the graph filled with the voice being corrected, and a latency of 61,72 ms in the footer.',
+          en: 'The plugin correcting live with TD-PSOLA, Low Latency unchecked: target note E3, sung at 154.0 Hz against a target of 164.8 Hz, a correction of +118 cents, the graph filled with the voice being corrected, and a latency of 61.72 ms in the footer.',
         },
         legenda: {
           pt: 'O motor padrão, corrigindo. E3 na mira: cantado a 154,0 Hz, alvo 164,8 Hz, +118 cents. Ele reconstrói o sinal preservando os formantes — a voz continua soando como a pessoa —, e cobra 61,72 ms por isso. Corrigindo uma faixa já gravada, esse é o motor certo: o formante importa mais que a latência.',
-          en: "The default engine, correcting. E3 in the crosshairs: sung at 154,0 Hz, target 164,8 Hz, +118 cents. It reconstructs the signal while preserving the formants — the voice still sounds like the person —, and it charges 61,72 ms for that. Correcting a track that's already recorded, this is the right engine: the formant matters more than the latency.",
+          en: "The default engine, correcting. E3 in the crosshairs: sung at 154.0 Hz, target 164.8 Hz, +118 cents. It reconstructs the signal while preserving the formants — the voice still sounds like the person —, and it charges 61.72 ms for that. Correcting a track that's already recorded, this is the right engine: the formant matters more than the latency.",
         },
       },
       {
@@ -107,17 +107,17 @@ export const autotune: Projeto = {
         largura: 639,
         altura: 458,
         etiqueta: { pt: 'Ponteiro móvel (v3)', en: 'Moving pointer (v3)' },
-        valor: '0,18 ms',
+        valor: { pt: '0,18 ms', en: '0.18 ms' },
         // O comp da home abre a faixa do Autotune com este print, não com o
         // TD-PSOLA que vem primeiro no destaque.
         naFaixa: true,
         alt: {
           pt: 'O mesmo plugin corrigindo voz ao vivo, com Low Latency marcado e o cabeçalho pYIN para ponteiro móvel (v3): nota-alvo F3, cantado 170,9 Hz contra alvo 174,6 Hz, correção de mais 38 cents, o gráfico cheio com a linha de correção ao longo do tempo e a latência de 0,18 ms.',
-          en: 'The same plugin correcting voice live, with Low Latency checked and the pYIN header set to moving pointer (v3): target note F3, sung at 170,9 Hz against a target of 174,6 Hz, a correction of plus 38 cents, the graph filled with the correction line over time and a latency of 0,18 ms.',
+          en: 'The same plugin correcting voice live, with Low Latency checked and the pYIN header set to moving pointer (v3): target note F3, sung at 170.9 Hz against a target of 174.6 Hz, a correction of plus 38 cents, the graph filled with the correction line over time and a latency of 0.18 ms.',
         },
         legenda: {
           pt: 'O mesmo plugin, o mesmo cantor, com Low Latency marcado. F3 na mira: cantado a 170,9 Hz, alvo 174,6 Hz, correção de +38 cents ao vivo. São 8 amostras fixas de atraso. Monitorando a própria voz, 61 ms é intolerável — aqui esse problema some.',
-          en: 'The same plugin, the same singer, with Low Latency checked. F3 in the crosshairs: sung at 170,9 Hz, target 174,6 Hz, a correction of +38 cents live. That is 8 fixed samples of delay. Monitoring your own voice, 61 ms is intolerable — here that problem disappears.',
+          en: 'The same plugin, the same singer, with Low Latency checked. F3 in the crosshairs: sung at 170.9 Hz, target 174.6 Hz, a correction of +38 cents live. That is 8 fixed samples of delay. Monitoring your own voice, 61 ms is intolerable — here that problem disappears.',
         },
       },
     ],
@@ -129,15 +129,15 @@ export const autotune: Projeto = {
 
   numeros: [
     {
-      valor: '61,72 ms',
+      valor: { pt: '61,72 ms', en: '61.72 ms' },
       rotulo: { pt: 'TD-PSOLA, preserva os formantes', en: 'TD-PSOLA, preserves the formants' },
     },
     {
-      valor: '0,18 ms',
+      valor: { pt: '0,18 ms', en: '0.18 ms' },
       rotulo: { pt: 'ponteiro móvel, 8 amostras fixas', en: 'moving pointer, 8 fixed samples' },
     },
     {
-      valor: '340×',
+      valor: { pt: '340×', en: '340×' },
       rotulo: { pt: 'de diferença entre os dois motores', en: 'difference between the two engines' },
     },
   ],
@@ -183,7 +183,7 @@ export const autotune: Projeto = {
       ].join('\n'),
       legenda: {
         pt: 'O mesmo núcleo roda fora do plugin, por linha de comando. Cinco segundos de áudio em *0,207 s* — cerca de 24× mais rápido que o tempo real.',
-        en: 'The same core runs outside the plugin, from the command line. Five seconds of audio in *0,207 s* — about 24× faster than real time.',
+        en: 'The same core runs outside the plugin, from the command line. Five seconds of audio in *0.207 s* — about 24× faster than real time.',
       },
     },
 
@@ -209,11 +209,11 @@ export const autotune: Projeto = {
         texto: [
           {
             pt: 'O segundo repositório, em Python, compara algoritmos de detecção de pitch antes de o C++ existir. É esse estudo que fundamenta a escolha do pYIN para o protótipo.',
-            en: 'The second repository, in Python, compares pitch detection algorithms from before the C++ existed. That study is what grounds the choice of pYIN for the prototype.',
+            en: 'The second repository, in Python, compares pitch detection algorithms before the C++ existed. That study is what grounds the choice of pYIN for the prototype.',
           },
           {
             pt: 'É trabalho que não aparece na interface e sustenta tudo o que aparece.',
-            en: "It's work that doesn't show up in the interface and props up everything that does.",
+            en: "It's work that doesn't show up in the interface and holds up everything that does.",
           },
         ],
       },

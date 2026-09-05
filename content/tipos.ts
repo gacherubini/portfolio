@@ -45,8 +45,8 @@ export type Print = {
   altura: number
   /** P4: o nome do motor no alto da placa ("TD-PSOLA") */
   etiqueta?: Texto
-  /** P4: o número que acompanha a etiqueta ("61,72 ms") */
-  valor?: string
+  /** P4: o número que acompanha a etiqueta ("61,72 ms" / "61.72 ms") */
+  valor?: Texto
   /**
    * Marca o print que abre a faixa da home. Sem marca nenhuma, a faixa usa o
    * primeiro do destaque. O Autotune precisa da marca: o comp da home mostra
@@ -94,8 +94,12 @@ export type Projeto = {
     fecho?: Texto
   }
 
-  /** 3 ou 4. Zero significa "ainda não confirmado" e some da tela. */
-  numeros: { valor: string; rotulo: Texto }[]
+  /**
+   * 3 ou 4. Zero significa "ainda não confirmado" e some da tela.
+   * `valor` é `Texto`, não `string`: pt e en usam separador de milhar
+   * diferente ("5.559" vira "5,559"), e o campo precisa carregar os dois.
+   */
+  numeros: { valor: Texto; rotulo: Texto }[]
   galeria: FileiraGaleria[]
   links: { rotulo: Texto; href: string; primario?: boolean }[]
 

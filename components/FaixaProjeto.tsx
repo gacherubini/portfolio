@@ -57,10 +57,10 @@ export function FaixaProjeto({
 
           {projeto.numeros.length > 0 ? (
             <div className="numeros">
-              {projeto.numeros.map((n) => (
-                <div className="num" key={n.valor + n.rotulo.pt}>
-                  <b>{n.valor}</b>
-                  <span>{t(n.rotulo, lang, `${campo}.numeros`)}</span>
+              {projeto.numeros.map((n, i) => (
+                <div className="num" key={i}>
+                  <b>{t(n.valor, lang, `${campo}.numeros.${i}.valor`)}</b>
+                  <span>{t(n.rotulo, lang, `${campo}.numeros.${i}.rotulo`)}</span>
                 </div>
               ))}
             </div>
