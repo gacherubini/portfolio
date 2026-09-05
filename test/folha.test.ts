@@ -23,4 +23,10 @@ describe('a regra da folha', () => {
     )
     expect(errados).toEqual([])
   })
+
+  it('mantém o padding lateral de .wrap no Sobre', () => {
+    const regraSobre = folha.match(/\.sobre\s*\{([^}]*)\}/)?.[1] ?? ''
+    expect(regraSobre).toContain('padding-block: 84px 92px')
+    expect(regraSobre).not.toMatch(/padding\s*:/)
+  })
 })

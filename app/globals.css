@@ -124,7 +124,7 @@ nav a:hover { color: var(--tinta); }
 }
 
 /* --- o Sobre, último bloco da home -------------------------------------- */
-.sobre { padding: 84px 0 92px; }
+.sobre { padding-block: 84px 92px; }
 /* A ficha anda junto do texto: encostada na direita ela deixava um vão de
    300px no meio do bloco. */
 .sobre .grade {
