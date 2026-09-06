@@ -32,9 +32,9 @@ describe('Sobre', () => {
 describe('Fechamento', () => {
   it('põe e-mail e telefone em tamanho de leitura, como link direto', () => {
     render(<Fechamento lang="pt" temCurriculo />)
-    expect(screen.getByRole('link', { name: 'bielcheeeeee@gmail.com' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'bielche2009@hotmail.com' })).toHaveAttribute(
       'href',
-      'mailto:bielcheeeeee@gmail.com',
+      'mailto:bielche2009@hotmail.com',
     )
     expect(screen.getByRole('link', { name: '(51) 98033-6365' })).toHaveAttribute(
       'href',

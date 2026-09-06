@@ -70,16 +70,17 @@ export const sobre: {
   // público não"). O repositório é público e o histórico do git é permanente:
   // uma vez commitados, os dois ficam registrados mesmo se saírem do site.
   contato: {
-    email: 'bielcheeeeee@gmail.com',
+    email: 'bielche2009@hotmail.com',
     telefone: {
       href: 'https://wa.me/5551980336365',
       exibicao: '(51) 98033-6365',
       via: { pt: 'chama no WhatsApp', en: 'message me on WhatsApp' },
     },
-    // O arquivo ainda não existe. Precisa ir para public/ antes do deploy.
+    // O arquivo entrou em public/ em 05/09/2026. `curriculoDisponivel()`
+    // ainda checa: se ele sumir, o botão some junto, em vez de baixar 404.
     curriculo: {
       href: '/curriculo-gabriel-cherubini.pdf',
-      rotulo: { pt: 'Baixar o currículo', en: 'Download my résumé' },
+      rotulo: { pt: 'Baixar o currículo', en: 'Download my resume' },
     },
   },
 
