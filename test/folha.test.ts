@@ -29,7 +29,7 @@ describe('a regra da folha', () => {
     // home. Hoje ele é uma `.secao` como as outras — e `.secao` divide o
     // elemento com `.wrap`, então vale a mesma regra: eixo, nunca o atalho.
     const regraSecao = folha.match(/\.secao\s*\{([^}]*)\}/)?.[1] ?? ''
-    expect(regraSecao).toContain('padding-block: 76px')
+    expect(regraSecao).toContain('padding-block: 56px')
     expect(regraSecao).not.toMatch(/(?:^|;)\s*padding\s*:/)
   })
 

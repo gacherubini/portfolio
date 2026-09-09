@@ -76,10 +76,10 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .idioma a { text-decoration: none; }
 .idioma a:hover { color: var(--tinta); }
 
-.abertura-home { padding-block: 92px 80px; }
+.abertura-home { padding-block: 64px 52px; }
 .abertura-home h1 {
   font-size: 46px; line-height: 1.08; font-weight: 700;
-  letter-spacing: -.028em; margin: 0 0 18px; max-width: 15ch;
+  letter-spacing: -.028em; margin: 0 0 14px; max-width: 15ch;
 }
 .abertura p { margin: 0; color: var(--calmo); font-size: 17px; max-width: 54ch; }
 
@@ -89,13 +89,13 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 /* `padding-block`, nunca o atalho: `.secao` divide o elemento com `.wrap`,
    as duas têm especificidade (0,1,0), e um atalho levaria a goteira lateral
    junto. É a regra do topo desta folha. */
-.secao { padding-block: 76px; border-top: 1px solid var(--regua); }
+.secao { padding-block: 56px; border-top: 1px solid var(--regua); }
 .secao > h2 {
-  margin: 0 0 34px; font-size: 13px; font-weight: 600; color: var(--calmo);
+  margin: 0 0 22px; font-size: 13px; font-weight: 600; color: var(--calmo);
   display: flex; align-items: baseline; gap: 12px;
 }
 .secao > h2::after { content: ""; flex: 1; height: 1px; background: var(--regua); }
-.projetos-apoio { margin: -14px 0 34px; font-size: 16px; color: var(--calmo); max-width: 56ch; }
+.projetos-apoio { margin: -6px 0 24px; font-size: 16px; color: var(--calmo); max-width: 56ch; }
 
 /* --- a faixa de projeto, hoje um cartão ------------------------------------------------ */
 /* Atravessava a tela inteira; hoje é um cartão dentro da coluna de 1000px.
@@ -106,10 +106,10 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
    `closest('.faixa')` para posicionar a prancha aberta, e a folha tem
    dezenas de regras presas a ele — renomear por causa do desenho novo
    trocaria um nome interno por risco de quebra silenciosa. */
-.cartoes { display: grid; gap: 22px; }
+.cartoes { display: grid; gap: 18px; }
 .faixa {
   background: var(--fundo); color: var(--texto);
-  border-radius: 14px; padding: 38px 40px; overflow: hidden;
+  border-radius: 14px; padding: 30px 32px; overflow: hidden;
 }
 /* A regra global usa `currentColor`, que dentro de `.cta` é `--ctaTexto` — e
    em Revy e Autotune `--ctaTexto` é igual a `--fundo` do próprio cartão
@@ -117,7 +117,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
    `verificarTema` garante ≥ 3:1 contra `--fundo` nas quatro paletas. */
 .faixa a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
 .faixa .grade {
-  display: grid; grid-template-columns: 1fr 1.08fr; gap: 40px; align-items: center;
+  display: grid; grid-template-columns: 1fr 1.08fr; gap: 32px; align-items: center;
 }
 /* `grid-column` explícito avança o cursor de auto-placement em DOM order:
    sem `grid-row` fixo, `.col-texto` (que vem primeiro no DOM) tomava a
@@ -135,9 +135,9 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   margin: 0 0 0 auto; font-size: 11.5px; font-weight: 600;
   border: 1px solid var(--borda); border-radius: 999px; padding: 3px 10px; opacity: .85;
 }
-.resumo { font-size: 16px; margin: 0 0 22px; max-width: 46ch; line-height: 1.55; opacity: .92; }
+.resumo { font-size: 16px; margin: 0 0 18px; max-width: 46ch; line-height: 1.55; opacity: .92; }
 
-.numeros { display: flex; gap: 32px; margin-bottom: 26px; flex-wrap: wrap; }
+.numeros { display: flex; gap: 32px; margin-bottom: 20px; flex-wrap: wrap; }
 /* Escopadas no cartão: a régua da página do projeto reusa `.num` com o
    rótulo em `var(--calmo)`, e calmo não aguenta opacity. Ver Tarefa 13. */
 .faixa .num b {
@@ -173,19 +173,19 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
    300px no meio do bloco. */
 .sobre .grade {
   display: grid; grid-template-columns: minmax(0, 1fr) 268px;
-  gap: 64px; align-items: start;
+  gap: 48px; align-items: start;
 }
 .sobre .lede {
-  margin: 0 0 26px; font-size: 28px; line-height: 1.22; font-weight: 700;
+  margin: 0 0 18px; font-size: 28px; line-height: 1.22; font-weight: 700;
   letter-spacing: -.025em; max-width: 20ch;
 }
-.sobre p.corpo { margin: 0 0 16px; font-size: 16.5px; line-height: 1.6; max-width: 58ch; color: #2A2E32; }
+.sobre p.corpo { margin: 0 0 14px; font-size: 16.5px; line-height: 1.6; max-width: 58ch; color: #2A2E32; }
 .sobre p.corpo:last-child { margin-bottom: 0; }
 
 /* --- a experiência ------------------------------------------------------ */
 .posto {
   display: grid; grid-template-columns: 138px minmax(0, 1fr);
-  gap: 34px; padding: 26px 0; border-bottom: 1px solid var(--regua);
+  gap: 34px; padding: 20px 0; border-bottom: 1px solid var(--regua);
 }
 .posto:first-of-type { padding-top: 0; }
 .posto:last-of-type { border-bottom: 0; padding-bottom: 0; }
@@ -197,7 +197,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 /* CADA LINHA DO CARGO É UM BLOCO COM TÍTULO, não um bullet: quem varre a
    página lê só os títulos e decide onde parar. Lista de frases soltas do
    mesmo tamanho obriga a ler tudo ou nada. */
-.blocos { margin: 0; display: grid; gap: 15px; }
+.blocos { margin: 0; display: grid; gap: 12px; }
 .blocos dt { font-size: 14.5px; font-weight: 700; letter-spacing: -.012em; margin-bottom: 3px; }
 /* Fio curto no lugar do marcador: cada bloco é uma frente de trabalho, não
    item de compra. */
@@ -208,7 +208,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 }
 .blocos dd { margin: 0; font-size: 15px; line-height: 1.58; max-width: 62ch; color: #3A3E42; }
 
-.pilha { margin: 14px 0 0; display: flex; gap: 7px; flex-wrap: wrap; }
+.pilha { margin: 12px 0 0; display: flex; gap: 7px; flex-wrap: wrap; }
 .pilha span {
   font-size: 12.5px; font-weight: 500; color: var(--calmo);
   border: 1px solid var(--regua); border-radius: 4px; padding: 3px 9px; background: #fff;
@@ -224,7 +224,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .rail dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
 
 /* --- o fechamento, na cor da casa --------------------------------------- */
-.fechamento { background: var(--dev); color: #fff; padding: 58px 0 52px; margin-top: 76px; }
+.fechamento { background: var(--dev); color: #fff; padding: 44px 0 40px; margin-top: 56px; }
 .fechamento .linha { display: grid; grid-template-columns: 1fr auto; gap: 56px; align-items: end; }
 .canais { display: flex; flex-direction: column; gap: 16px; }
 .canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
@@ -251,7 +251,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .perfis a.curriculo span { font-weight: 400; opacity: .85; font-size: 13px; }
 
 .assinatura {
-  margin-top: 44px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.22);
+  margin-top: 32px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.22);
   display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
   font-size: 13px; opacity: .88;
 }
@@ -263,12 +263,12 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .fechamento a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 @media (max-width: 900px) {
-  .abertura-home { padding-block: 56px 48px; }
+  .abertura-home { padding-block: 40px 32px; }
   .abertura-home h1 { font-size: 33px; }
-  .secao { padding-block: 52px; }
+  .secao { padding-block: 40px; }
   .posto { grid-template-columns: 1fr; gap: 8px; }
   nav { gap: 16px; font-size: 13px; }
-  .sobre .grade { grid-template-columns: 1fr; gap: 40px; }
+  .sobre .grade { grid-template-columns: 1fr; gap: 32px; }
   .sobre .lede { font-size: 23px; }
   .fechamento .linha { grid-template-columns: 1fr; gap: 34px; align-items: start; }
   .perfis { flex-direction: row; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
