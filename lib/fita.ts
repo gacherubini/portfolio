@@ -33,7 +33,7 @@ const ALTURA = 200
 
 export const FITA_VIEWBOX = `0 0 ${CICLO * VOLTAS} ${ALTURA}`
 
-type Perfil = {
+export type Perfil = {
   semente: number
   /** Distância entre amostras. Menor = linha mais nervosa. */
   passo: number
@@ -46,7 +46,7 @@ type Perfil = {
   puxao: number
 }
 
-function serie({ semente, passo, inercia, ruido, salto, puxao }: Perfil): string {
+export function serie({ semente, passo, inercia, ruido, salto, puxao }: Perfil): string {
   let s = semente
   const rnd = () => (s = (s * 1103515245 + 12345) % 2147483648) / 2147483648
 
