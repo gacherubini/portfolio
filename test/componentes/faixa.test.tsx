@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { FaixaProjeto } from '@/components/FaixaProjeto'
+import { PrintFigura } from '@/components/PrintFigura'
 import { estiloDoTema } from '@/lib/tema'
 import { revy } from '@/content/projetos/revy'
 import { bddente } from '@/content/projetos/bddente'
@@ -119,5 +120,41 @@ describe('FaixaProjeto', () => {
     cleanup()
     const { container: sem } = render(<FaixaProjeto projeto={bddente} lang="pt" espelho />)
     expect(sem.querySelector('.selo')).toBeNull()
+  })
+})
+
+describe('o print da vitrine não abre', () => {
+  // A prancha existe DENTRO do projeto, com legenda e com as outras telas em
+  // volta. Na home ela abria para um PNG cru fora do site, sem volta e sem
+  // contexto, competindo com "Ver o projeto".
+  it('o alvo da faixa não é link', () => {
+    const { container } = render(<FaixaProjeto projeto={revy} lang="pt" espelho={false} />)
+    const alvo = container.querySelector('.prancha-alvo')!
+    expect(alvo.tagName).toBe('DIV')
+    expect(alvo).not.toHaveAttribute('href')
+  })
+
+  it('nasce presa, que é o estado em que Movimento devolve o clique sem abrir', () => {
+    const { container } = render(<FaixaProjeto projeto={revy} lang="pt" espelho={false} />)
+    expect(container.querySelector('.prancha')).toHaveClass('prancha--fixa')
+    // Sem `data-largura`, `avaliar()` para antes de reavaliar e nunca
+    // devolve o href que acabou de sair.
+    expect(container.querySelector('.prancha-alvo')).not.toHaveAttribute('data-largura')
+  })
+
+  it('mas dentro do projeto a prancha continua abrindo', () => {
+    const { container } = render(
+      <PrintFigura
+        print={revy.galeria[0].prints[0]}
+        slug={revy.slug}
+        lang="pt"
+        campo="teste"
+        sizes="100vw"
+      />,
+    )
+    const alvo = container.querySelector('.prancha-alvo')!
+    expect(alvo.tagName).toBe('A')
+    expect(alvo).toHaveAttribute('href')
+    expect(alvo).toHaveAttribute('data-largura')
   })
 })

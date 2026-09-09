@@ -31,6 +31,19 @@ import { srcsetDe } from '@/lib/prints'
  *   `margem` — legenda na coluna ao lado (a galeria)
  *   `abaixo` — legenda embaixo (o print de abertura, as placas do Autotune)
  *   `nua`    — sem legenda (a faixa da home)
+ *
+ * ## A vitrine não abre
+ *
+ * `nua` é a única variante que NÃO vira link. Na home o print é cartaz: quem
+ * quiser ver de perto entra no projeto, onde a prancha existe com legenda e
+ * com as outras telas em volta. Abrir ali levava a pessoa para um PNG cru
+ * fora do site, sem volta e sem contexto — e competia com "Ver o projeto",
+ * que é o caminho que a página quer que ela tome.
+ *
+ * Nasce com `prancha--fixa`, que é o mesmo estado que `Movimento.tsx` dá a
+ * uma prancha sem resolução a revelar: o clique volta sem abrir e o cursor
+ * não convida. E sem `data-largura`, `avaliar()` para na primeira linha e
+ * nunca devolve o `href`.
  */
 export function PrintFigura({
   print,
@@ -51,8 +64,10 @@ export function PrintFigura({
   className?: string
   variante?: 'margem' | 'abaixo' | 'nua'
 }) {
+  const Alvo = variante === 'nua' ? 'div' : 'a'
   const caminho = `/prints/${slug}/${print.arquivo}`
   const temNota = variante !== 'nua' && Boolean(print.legenda)
+  const abre = variante !== 'nua'
 
   return (
     // `<figure>` + `<figcaption>` é a única construção nativa que liga a
@@ -60,17 +75,21 @@ export function PrintFigura({
     // ligam nada. O `figcaption` é o PRIMEIRO filho, que é legal e é a ordem
     // que a variante `margem` precisa no DOM — na `abaixo` quem o joga para
     // baixo é o `column-reverse` da folha, não a ordem.
-    <figure className={`prancha prancha--${variante}${className ? ` ${className}` : ''}`}>
+    <figure
+      className={`prancha prancha--${variante}${abre ? '' : ' prancha--fixa'}${className ? ` ${className}` : ''}`}
+    >
       {temNota ? (
         <figcaption className="prancha-nota">
           <p>{t(print.legenda!, lang, `${campo}.legenda`)}</p>
         </figcaption>
       ) : null}
 
-      <a
+      {/* `<div>` e não `<a>` quando não abre: link sem destino é anunciado
+          como link pelo leitor de tela e entra na ordem de tabulação para
+          não fazer nada. */}
+      <Alvo
         className="prancha-alvo"
-        href={caminho}
-        data-largura={print.largura}
+        {...(abre ? { href: caminho, 'data-largura': print.largura } : {})}
         style={{ '--nat': `${print.largura}px` } as CSSProperties}
       >
         <picture>
@@ -99,7 +118,7 @@ export function PrintFigura({
             fetchPriority={prioridade ? 'high' : undefined}
           />
         </picture>
-      </a>
+      </Alvo>
     </figure>
   )
 }
