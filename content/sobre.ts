@@ -17,6 +17,9 @@ export const sobre: {
   /** Perfis, secundários ao lado do contato. */
   links: { rotulo: string; href: string }[]
 } = {
+  // Reescrito em 09/09/2026 a partir do currículo em PDF. O Sobre subiu para
+  // o topo da home (antes era o último bloco), então "aqui de cima" virou
+  // "aqui embaixo" — os projetos agora vêm depois.
   paragrafos: [
     {
       pt: 'Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.',
@@ -29,14 +32,24 @@ export const sobre: {
       en: "I've been programming for more than 5 years. I live in Porto Alegre, Brazil, and work remotely for Ambush, in Austin, Texas. I started in Go and today I work on Binance's backend, in Java.",
     },
     {
-      pt: 'Os quatro sistemas aqui de cima são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.',
-      en: 'The four systems above were built outside work hours. I built each one end to end, alone, and put it in front of real users.',
+      // Entrou em 09/09 com o currículo. Sem ele o Sobre diz onde a pessoa
+      // trabalha e o que ela usa, mas não COMO ela trabalha — e é isso que
+      // separa um perfil de outro na mesma stack.
+      pt: 'É sistema que mexe com dinheiro dos outros. Contrato de API que não pode quebrar, cache que não pode servir saldo velho, erro que aparece no painel antes de aparecer no suporte.',
+      en: 'It’s a system that handles other people’s money. An API contract that can’t break, a cache that can’t serve a stale balance, an error that shows on the dashboard before it shows in support.',
     },
     {
       pt: 'IA é onde minha atenção está hoje, e não como quem usa chat. Construo por dentro: agentes que chamam funções do próprio produto, skills, loops de agente que tocam a tarefa inteira e param exatamente onde precisam de uma pessoa. O assistente do Office Timesheet e o agente de WhatsApp da Revy saíram daí. Este site também.',
       en: "AI is where my attention is right now, and not as someone who uses a chat window. I build the inside of it: agents that call functions in the product itself, skills, agent loops that carry a task all the way and stop exactly where a person is needed. The Office Timesheet assistant and Revy's WhatsApp agent came out of that. So did this site.",
     },
+    {
+      // "aqui de cima" virou "aqui embaixo" em 09/09: o Sobre subiu para o
+      // topo da home e os quatro sistemas passaram a vir depois dele.
+      pt: 'Os quatro sistemas aqui embaixo são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.',
+      en: 'The four systems below were built outside work hours. I built each one end to end, alone, and put it in front of real users.',
+    },
   ],
+
 
   ficha: [
     {
@@ -64,6 +77,7 @@ export const sobre: {
       valor: { pt: 'Fluente', en: 'Fluent' },
     },
   ],
+
 
   // O telefone e o currículo entraram em 04/09, por decisão do dono, revertendo
   // a regra anterior ("número e currículo você manda para quem escolhe, site

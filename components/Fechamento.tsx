@@ -12,7 +12,7 @@ import { Marca } from '@/components/Marca'
  */
 export function Fechamento({ lang, temCurriculo }: { lang: Idioma; temCurriculo: boolean }) {
   return (
-    <section className="fechamento">
+    <section className="fechamento" id="contato">
       <div className="wrap">
         <div className="linha">
           <div className="canais">

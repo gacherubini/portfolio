@@ -1,9 +1,12 @@
 import type { Idioma, Situacao, Texto } from '@/content/tipos'
 
 export const ui = {
+  // A ordem aqui é a ordem da home: sobre, experiência, projetos, contato.
   nav: {
-    projetos: { pt: 'Projetos', en: 'Projects' },
     sobre: { pt: 'Sobre', en: 'About' },
+    experiencia: { pt: 'Experiência', en: 'Experience' },
+    projetos: { pt: 'Projetos', en: 'Projects' },
+    contato: { pt: 'Contato', en: 'Contact' },
   },
   abertura: {
     titulo: { pt: 'Os sistemas que eu construí.', en: 'The systems I built.' },
@@ -20,7 +23,13 @@ export const ui = {
   } satisfies Record<Situacao, Texto>,
   verOProjeto: { pt: 'Ver o projeto', en: 'See the project' },
   voltar: { pt: '← Todos os projetos', en: '← All projects' },
-  sobreTitulo: { pt: 'Quem fez', en: 'Who built this' },
+  sobreTitulo: { pt: 'Sobre', en: 'About' },
+  experienciaTitulo: { pt: 'Experiência', en: 'Experience' },
+  projetosTitulo: { pt: 'Projetos', en: 'Projects' },
+  projetosApoio: {
+    pt: 'Quatro sistemas construídos fora do expediente, cada um inteiro e sozinho.',
+    en: 'Four systems built outside work hours, each one end to end and alone.',
+  },
   avisoTecnico: {
     pt: 'Esta parte é pra quem é da área. Se não for o seu caso, pode pular — acabou aqui.',
     en: "This part is for the technical crowd. If that's not you, feel free to stop here.",

@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="pt-BR" data-fundo="camaleao">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTÓTIPO v3 — quatro fundos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =======================================================================
+   PROTÓTIPO DESCARTÁVEL — só para escolher o fundo.
+   O layout é a versão A já aprovada (cartão centralizado).
+   Use a barra no rodapé para trocar de fundo com a página rodando.
+   ======================================================================= */
+
+:root {
+  --casca:  #FAFAF7;
+  --tinta:  #15171A;
+  --regua:  #E4E4DE;
+  --calmo:  #585D62;
+  --marca:  #0F1317;
+  --dev:    #2A4FD7;
+
+  --pagina: 1000px;
+  --lado:   28px;
+
+  --c-revy:     #7FBFA3;
+  --c-bddente:  #5A21B4;
+  --c-office:   #CB6D31;
+  --c-autotune: #F3B843;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--casca);
+  color: var(--tinta);
+  font-family: Archivo, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.wrap { max-width: var(--pagina); margin: 0 auto; padding-inline: var(--lado); }
+
+/* Tudo o que é conteúdo passa por cima de qualquer fundo. */
+.casca-topo, main, .fechamento { position: relative; z-index: 1; }
+
+
+/* ####################################################################### */
+/* #####                    OS QUATRO FUNDOS                         ##### */
+/* ####################################################################### */
+
+.fundo { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.fundo > * { position: absolute; inset: 0; }
+
+/* Nenhum fundo mostra sua camada até ser escolhido. */
+.camaleao, .fita, .varredura { display: none; }
+html[data-fundo="camaleao"]  .camaleao  { display: block; }
+html[data-fundo="fita"]      .fita      { display: block; }
+html[data-fundo="varredura"] .varredura { display: block; }
+
+
+/* -----------------------------------------------------------------------
+   A · O CAMALEÃO
+   A tese do site já é essa: "não tenho cor, visto a de cada sistema".
+   Aqui a casca inteira faz isso. Duas manchas enormes e macias moram nas
+   MARGENS — justo no espaço que o layout centralizado acabou de liberar,
+   fora da coluna de 1000px — e trocam de cor conforme você chega em cada
+   projeto. Zero animação em loop: quem move é a sua rolagem.
+
+   `@property` é o que faz a cor transicionar: custom property comum não
+   interpola, pula seco de uma cor para outra.
+   ----------------------------------------------------------------------- */
+@property --ambiente {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #2A4FD7;
+}
+
+.camaleao {
+  --ambiente: var(--dev);
+  transition: --ambiente 1.1s cubic-bezier(.4,0,.2,1);
+  background:
+    radial-gradient(60% 46% at -6% 34%,
+      color-mix(in srgb, var(--ambiente) 26%, transparent) 0%, transparent 68%),
+    radial-gradient(56% 50% at 106% 72%,
+      color-mix(in srgb, var(--ambiente) 22%, transparent) 0%, transparent 66%);
+}
+
+
+/* -----------------------------------------------------------------------
+   B · A FITA DE MERCADO
+   Você trabalha em dados de mercado da Binance. A fita é o desenho mais
+   literal desse mundo: uma série de preço andando. Duas lâminas de 200%
+   de largura correndo em velocidades diferentes, presas no rodapé da
+   tela — mesma construção das ondas do site de referência, mas a forma é
+   um gráfico de preço, não uma onda do mar.
+   ----------------------------------------------------------------------- */
+.fita { top: auto; height: 46vh; min-height: 300px; color: var(--dev); }
+.fita svg { position: absolute; bottom: 0; left: 0; width: 200%; height: 100%; }
+.fita .lamina-1 { animation: deslizar 46s linear infinite; }
+.fita .lamina-2 { bottom: -34px; animation: deslizar 29s linear infinite reverse; }
+@keyframes deslizar { to { transform: translateX(-50%); } }
+
+
+/* -----------------------------------------------------------------------
+   C · A VARREDURA
+   O ingrediente que melhor funciona no site do Enzo, na sua cor: uma
+   faixa de luz larga e diagonal atravessando a tela devagar. Não desenha
+   nada, só faz a casca respirar. É o mais discreto dos quatro.
+   ----------------------------------------------------------------------- */
+.varredura {
+  background: linear-gradient(
+    100deg,
+    transparent 36%,
+    color-mix(in srgb, var(--dev) 9%, transparent) 50%,
+    transparent 64%
+  );
+  animation: varrer 17s ease-in-out infinite;
+}
+@keyframes varrer {
+  0%, 100% { transform: translateX(-30%); }
+  50%      { transform: translateX(30%); }
+}
+
+
+/* -----------------------------------------------------------------------
+   D · O GRÃO  (acumula com qualquer um dos três)
+   Não é animação, é material: um grão finíssimo que tira o plano do
+   off-white e dá superfície de papel à casca. Some no zoom, aparece no
+   conjunto. Marque junto com A, B ou C.
+   ----------------------------------------------------------------------- */
+.grao { display: none; }
+html[data-grao="sim"] .grao { display: block; }
+.grao {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: .055;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camaleao { transition: none; }
+  .fita svg, .varredura { animation: none; }
+}
+
+
+/* ####################################################################### */
+/* #####                   O LAYOUT — VERSÃO A                       ##### */
+/* ####################################################################### */
+
+.casca-topo {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--casca) 86%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--regua);
+}
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; }
+.marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; color: var(--marca); }
+.marca-dev { color: var(--dev); }
+nav { display: flex; gap: 24px; font-size: 14px; color: var(--calmo); }
+nav a { text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
+nav a:hover { color: var(--tinta); }
+nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color: var(--dev); }
+.idioma { margin: 0; font-size: 13px; color: var(--calmo); }
+.idioma b { color: var(--tinta); font-weight: 600; }
+
+.abertura { padding: 92px 0 80px; }
+.abertura h1 { margin: 0 0 18px; font-size: 46px; line-height: 1.08; font-weight: 700; letter-spacing: -.028em; max-width: 15ch; }
+.abertura p { margin: 0; color: var(--calmo); font-size: 17px; max-width: 54ch; }
+
+.secao { padding: 76px 0; border-top: 1px solid var(--regua); }
+.secao > h2 { margin: 0 0 34px; font-size: 13px; font-weight: 600; color: var(--calmo); display: flex; align-items: baseline; gap: 12px; }
+.secao > h2::after { content: ""; flex: 1; height: 1px; background: var(--regua); }
+
+.sobre .grade { display: grid; grid-template-columns: minmax(0, 1fr) 268px; gap: 64px; align-items: start; }
+.sobre .lede { margin: 0 0 24px; font-size: 27px; line-height: 1.22; font-weight: 700; letter-spacing: -.025em; max-width: 20ch; }
+.sobre p.corpo { margin: 0 0 16px; font-size: 16.5px; line-height: 1.6; max-width: 58ch; color: #2A2E32; }
+.sobre p.corpo:last-child { margin-bottom: 0; }
+.rail { border-top: 2px solid var(--tinta); padding-top: 16px; }
+.rail dl { margin: 0; }
+.rail dt { font-size: 12.5px; color: var(--calmo); margin-top: 15px; }
+.rail div:first-child dt { margin-top: 0; }
+.rail dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
+
+.posto { display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 34px; padding: 26px 0; border-bottom: 1px solid var(--regua); }
+.posto:first-child { padding-top: 0; }
+.posto:last-child { border-bottom: 0; padding-bottom: 0; }
+.quando { font-size: 13.5px; color: var(--calmo); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.posto h3 { margin: 0 0 3px; font-size: 18px; font-weight: 700; letter-spacing: -.015em; }
+.posto .papel { margin: 0 0 4px; font-size: 15px; font-weight: 500; }
+.posto .onde { margin: 0 0 14px; font-size: 13.5px; color: var(--calmo); }
+.posto ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.posto li { font-size: 15px; line-height: 1.55; max-width: 58ch; padding-left: 17px; position: relative; color: #2A2E32; }
+.posto li::before { content: ""; position: absolute; left: 0; top: .68em; width: 9px; height: 1.5px; background: var(--dev); }
+.posto .pilha { margin: 14px 0 0; display: flex; gap: 7px; flex-wrap: wrap; }
+.posto .pilha span { font-size: 12.5px; font-weight: 500; color: var(--calmo); border: 1px solid var(--regua); border-radius: 4px; padding: 3px 9px; background: #fff; }
+
+.projetos-intro { margin: -14px 0 34px; font-size: 16px; color: var(--calmo); max-width: 56ch; }
+.cartoes { display: grid; gap: 22px; }
+.cartao { background: var(--fundo); color: var(--texto); border-radius: 14px; padding: 38px 40px; overflow: hidden; }
+.cartao a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
+.cartao .grade { display: grid; grid-template-columns: 1fr 1.08fr; gap: 40px; align-items: center; }
+.cartao.espelho .col-texto { grid-column: 2; grid-row: 1; }
+.cartao.espelho .col-print { grid-column: 1; grid-row: 1; }
+
+.ficha-faixa { display: flex; align-items: baseline; gap: 13px; padding-bottom: 11px; margin-bottom: 18px; border-bottom: 1px solid var(--borda); }
+.nome { margin: 0; font-size: 31px; font-weight: 800; letter-spacing: -.022em; line-height: 1; }
+.paraquem { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+.situacao { margin: 0 0 0 auto; font-size: 11.5px; font-weight: 600; border: 1px solid var(--borda); border-radius: 999px; padding: 3px 10px; color: var(--calmo-tema); }
+.resumo { font-size: 16px; margin: 0 0 22px; max-width: 46ch; line-height: 1.55; }
+.numeros { display: flex; gap: 32px; margin-bottom: 26px; flex-wrap: wrap; }
+.num b { display: block; font-size: 23px; font-weight: 700; color: var(--destaque); letter-spacing: -.015em; }
+.num span { font-size: 12px; color: var(--calmo-tema); display: block; max-width: 16ch; line-height: 1.35; }
+.botoes { display: flex; gap: 11px; align-items: center; flex-wrap: wrap; }
+.cta { background: var(--ctaFundo); color: var(--ctaTexto); text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 19px; border-radius: 6px; }
+.cta.fantasma { background: transparent; color: var(--texto); border: 1px solid var(--borda); }
+.fechado { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+.col-print img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--borda); }
+.col-print figure { margin: 0; }
+
+.fechamento { background: var(--dev); color: #fff; padding: 58px 0 52px; margin-top: 76px; }
+.fechamento .linha { display: grid; grid-template-columns: 1fr auto; gap: 52px; align-items: end; }
+.canais { display: flex; flex-direction: column; gap: 15px; }
+.canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.canal a { font-size: 25px; font-weight: 600; letter-spacing: -.022em; color: #fff; text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.3); padding-bottom: 3px; }
+.canal .via { font-size: 13px; color: rgba(255,255,255,.85); }
+.perfis { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.perfis a { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.9); text-decoration: none; }
+.assinatura { margin-top: 40px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.22); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.88); }
+.assinatura .marca, .assinatura .marca-dev { color: #fff; }
+
+
+/* ####################################################################### */
+/* #####            A BARRA DO PROTÓTIPO — some no site              ##### */
+/* ####################################################################### */
+.barra {
+  position: fixed; z-index: 50; left: 50%; bottom: 18px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center;
+  background: #15171A; color: #FAFAF7; border-radius: 999px; padding: 8px 10px;
+  box-shadow: 0 6px 28px rgba(0,0,0,.28); max-width: calc(100vw - 24px);
+}
+.barra p { margin: 0 6px 0 8px; font-size: 12.5px; color: #9BA09E; }
+.barra button {
+  font: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer;
+  background: transparent; color: #C9CCC8; border: 1px solid #33373A;
+  border-radius: 999px; padding: 5px 13px;
+}
+.barra button:hover { color: #fff; border-color: #6C7175; }
+.barra button[aria-pressed="true"] { background: #FAFAF7; color: #15171A; border-color: #FAFAF7; font-weight: 600; }
+.barra .sep { width: 1px; height: 20px; background: #33373A; margin: 0 3px; }
+
+@media (max-width: 900px) {
+  .sobre .grade { grid-template-columns: 1fr; gap: 36px; }
+  .cartao .grade, .cartao.espelho .grade { grid-template-columns: 1fr; gap: 26px; }
+  .cartao.espelho .col-texto, .cartao.espelho .col-print { grid-column: 1; grid-row: auto; }
+  .posto { grid-template-columns: 1fr; gap: 8px; }
+  .fechamento .linha { grid-template-columns: 1fr; gap: 30px; align-items: start; }
+  .perfis { flex-direction: row; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .abertura h1 { font-size: 33px; }
+  .abertura { padding: 56px 0 48px; }
+  .cartao { padding: 26px 24px; }
+  nav { gap: 16px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== AS CAMADAS DE FUNDO ===================== -->
+<div class="fundo" aria-hidden="true">
+
+  <!-- A · camaleão -->
+  <div class="camaleao"></div>
+
+  <!-- B · fita de mercado -->
+  <div class="fita">
+    <svg class="lamina-1" viewBox="0 0 1200 300" preserveAspectRatio="none" fill="none">
+      <path d="M0 232 L50 214 L100 241 L150 199 L200 210 L250 168 L300 186 L350 141 L400 158 L450 121 L500 148 L550 104 L600 130 L650 88 L700 112 L750 74 L800 96 L850 58 L900 84 L950 46 L1000 70 L1050 36 L1100 60 L1150 28 L1200 48 L1200 300 L0 300 Z"
+            fill="currentColor" fill-opacity=".07"/>
+      <path d="M0 232 L50 214 L100 241 L150 199 L200 210 L250 168 L300 186 L350 141 L400 158 L450 121 L500 148 L550 104 L600 130 L650 88 L700 112 L750 74 L800 96 L850 58 L900 84 L950 46 L1000 70 L1050 36 L1100 60 L1150 28 L1200 48"
+            stroke="currentColor" stroke-opacity=".16" stroke-width="2"/>
+    </svg>
+    <svg class="lamina-2" viewBox="0 0 1200 300" preserveAspectRatio="none" fill="none">
+      <path d="M0 276 L60 252 L120 268 L180 231 L240 249 L300 214 L360 236 L420 198 L480 222 L540 186 L600 206 L660 172 L720 194 L780 158 L840 180 L900 146 L960 168 L1020 134 L1080 156 L1140 124 L1200 144 L1200 300 L0 300 Z"
+            fill="currentColor" fill-opacity=".05"/>
+    </svg>
+  </div>
+
+  <!-- C · varredura -->
+  <div class="varredura"></div>
+
+  <!-- D · grão, acumula com os outros -->
+  <div class="grao"></div>
+
+</div>
+
+<header class="casca-topo">
+  <div class="wrap topo">
+    <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    <nav>
+      <a href="#sobre">Sobre</a>
+      <a href="#experiencia">Experiência</a>
+      <a href="#projetos">Projetos</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <p class="idioma"><b>PT</b> · EN</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="wrap abertura">
+    <h1>Os sistemas que eu construí.</h1>
+    <p>Cada um com print, explicação em português comum e, quando o sistema é público, link para entrar e clicar.</p>
+  </div>
+
+  <section class="secao sobre wrap" id="sobre">
+    <h2>Sobre</h2>
+    <div class="grade">
+      <div>
+        <p class="lede">Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.</p>
+        <p class="corpo">Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas, desde 2023. Comecei numa plataforma interna de RH escrita em Go. Hoje estou no backend da Binance: carteira, saldo, depósito e saque, dados de mercado e os fluxos de compliance.</p>
+        <p class="corpo">Tenho 23 anos e estou terminando a faculdade de Ciência da Computação na PUC-RS.</p>
+        <p class="corpo">Os quatro sistemas aqui embaixo são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.</p>
+      </div>
+      <aside class="rail">
+        <dl>
+          <div><dt>Onde</dt><dd>Porto Alegre, Brasil · GMT−3</dd></div>
+          <div><dt>Trabalho</dt><dd>Backend na Ambush · Austin, Texas · remoto</dd></div>
+          <div><dt>Stack</dt><dd>Java · Spring Boot · Go · PostgreSQL</dd></div>
+          <div><dt>Inglês</dt><dd>Fluente</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="secao wrap" id="experiencia">
+    <h2>Experiência</h2>
+    <article class="posto">
+      <p class="quando">2023 — hoje</p>
+      <div>
+        <h3>Ambush</h3>
+        <p class="papel">Desenvolvedor backend</p>
+        <p class="onde">Austin, Texas · remoto</p>
+        <ul>
+          <li>Backend da Binance: carteira, saldo, depósito e saque, dados de mercado e os fluxos de compliance.</li>
+          <li>Antes disso, a plataforma interna de RH da empresa, escrita em Go — foi por onde entrei.</li>
+        </ul>
+        <p class="pilha"><span>Java</span><span>Spring Boot</span><span>Go</span><span>PostgreSQL</span></p>
+      </div>
+    </article>
+    <article class="posto">
+      <p class="quando">terminando</p>
+      <div>
+        <h3>PUC-RS</h3>
+        <p class="papel">Ciência da Computação</p>
+        <p class="onde">Porto Alegre, Brasil</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="secao wrap" id="projetos">
+    <h2>Projetos</h2>
+    <p class="projetos-intro">Quatro sistemas construídos fora do expediente, cada um inteiro e sozinho.</p>
+    <div class="cartoes">
+
+      <article class="cartao" data-cor="#7FBFA3" style="--fundo:#111111;--texto:#EAF0EA;--borda:#2A322C;--destaque:#7FBFA3;--ctaFundo:#7FBFA3;--ctaTexto:#111111;--calmo-tema:#9AA39D">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Revy</h3>
+              <p class="paraquem">Loja de motos usadas</p>
+              <p class="situacao">no ar</p>
+            </div>
+            <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa a moto do estoque, responde preço e condição, e passa para uma pessoa quando o assunto sai do roteiro.</p>
+            <div class="botoes"><a class="cta" href="#">Abrir a Revy</a><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/revy/01-visao-geral.png" alt="Painel do lojista com os indicadores de estoque e de tráfego." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao espelho" data-cor="#5A21B4" style="--fundo:#5A21B4;--texto:#F4EEFC;--borda:#7E4EC0;--destaque:#D9C4F5;--ctaFundo:#FFFFFF;--ctaTexto:#4A1A8C;--calmo-tema:#CBBCE8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">BDDente</h3>
+              <p class="paraquem">Consultório odontológico</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a 2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup foram escopo do primeiro dia, não fase dois.</p>
+            <div class="numeros">
+              <div class="num"><b>~30</b><span>anos de histórico migrados</span></div>
+              <div class="num"><b>5.559</b><span>pacientes no cadastro histórico</span></div>
+              <div class="num"><b>914</b><span>testes passando</span></div>
+            </div>
+            <div class="botoes"><p class="fechado">Sistema fechado, roda no consultório.</p><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/bddente/01-agenda-semana.png" alt="Agenda da semana do consultório." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao" data-cor="#CB6D31" style="--fundo:#ECECEC;--texto:#1D2724;--borda:#C9CFCC;--destaque:#CB6D31;--ctaFundo:#2E3D38;--ctaTexto:#FFFFFF;--calmo-tema:#55605C">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Office Timesheet</h3>
+              <p class="paraquem">Escritório de arquitetura</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada projeto custou. Tem um assistente que responde as perguntas chatas de segunda-feira sem ninguém abrir sete telas.</p>
+            <div class="numeros">
+              <div class="num"><b>1.452</b><span>casos de teste, contra Postgres real no CI</span></div>
+              <div class="num"><b>148</b><span>endpoints HTTP</span></div>
+              <div class="num"><b>40</b><span>tabelas no banco</span></div>
+            </div>
+            <div class="botoes"><p class="fechado">Sistema fechado, interno do escritório.</p><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/office-timesheet/08-dashboard-admin.png" alt="Painel do administrador com as horas da equipe." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao espelho" data-cor="#F3B843" style="--fundo:#10312F;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#F3B843;--ctaFundo:#F3B843;--ctaTexto:#10312F;--calmo-tema:#9FBCB8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Autotune</h3>
+              <p class="paraquem">Quem grava voz</p>
+              <p class="situacao">publicado</p>
+            </div>
+            <p class="resumo">O que o Auto-Tune faz, feito do zero em C++. Dois motores de correção com o mesmo deslocamento: um preserva a voz da pessoa, o outro preserva a latência.</p>
+            <div class="numeros">
+              <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+              <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+              <div class="num"><b>340×</b><span>de diferença entre os dois motores</span></div>
+            </div>
+            <div class="botoes"><a class="cta" href="#">Baixar o plugin</a><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/autotune/01-plugin-cantando-v3.png" alt="Plugin em funcionamento durante o canto." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<section class="fechamento" id="contato">
+  <div class="wrap">
+    <div class="linha">
+      <div class="canais">
+        <p class="canal"><a href="#">bielcheeeeee@gmail.com</a></p>
+        <p class="canal"><a href="#">(51) 98033-6365</a><span class="via">chama no WhatsApp</span></p>
+      </div>
+      <div class="perfis"><a href="#">GitHub</a><a href="#">LinkedIn</a></div>
+    </div>
+    <div class="assinatura">
+      <span>Gabriel Cherubini · Porto Alegre · GMT−3</span>
+      <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    </div>
+  </div>
+</section>
+
+<div class="barra">
+  <p>Fundo</p>
+  <button data-set="camaleao">A · camaleão</button>
+  <button data-set="fita">B · fita</button>
+  <button data-set="varredura">C · varredura</button>
+  <button data-set="nenhum">nenhum</button>
+  <span class="sep"></span>
+  <button data-grao>D · grão</button>
+</div>
+
+<script>
+const raiz = document.documentElement
+
+// --- a barra ----------------------------------------------------------
+const botoes = [...document.querySelectorAll('.barra button[data-set]')]
+function pintarBarra() {
+  botoes.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === raiz.dataset.fundo)))
+  grao.setAttribute('aria-pressed', String(raiz.dataset.grao === 'sim'))
+}
+botoes.forEach(b => b.addEventListener('click', () => { raiz.dataset.fundo = b.dataset.set; pintarBarra() }))
+const grao = document.querySelector('.barra button[data-grao]')
+grao.addEventListener('click', () => {
+  raiz.dataset.grao = raiz.dataset.grao === 'sim' ? 'nao' : 'sim'
+  pintarBarra()
+})
+
+// --- A · o camaleão ---------------------------------------------------
+// A casca veste a cor do projeto que está na tela. Fora dos projetos ela
+// volta para o azul da marca. É a mesma regra do site inteiro, agora no
+// fundo: "não tenho cor, visto a de cada sistema".
+const camaleao = document.querySelector('.camaleao')
+const AZUL = getComputedStyle(raiz).getPropertyValue('--dev').trim()
+const cartoes = [...document.querySelectorAll('.cartao[data-cor]')]
+const visiveis = new Set()
+
+const obs = new IntersectionObserver(entradas => {
+  // Quando dois cartões dividem a tela, vale o que está mais acima.
+  for (const e of entradas) e.isIntersecting ? visiveis.add(e.target) : visiveis.delete(e.target)
+  const dono = cartoes.find(c => visiveis.has(c))
+  camaleao.style.setProperty('--ambiente', dono ? dono.dataset.cor : AZUL)
+}, { rootMargin: '-38% 0px -38% 0px' })
+cartoes.forEach(c => obs.observe(c))
+
+// --- a seção ativa no topo -------------------------------------------
+const elos = new Map([...document.querySelectorAll('nav a')].map(a => [a.getAttribute('href').slice(1), a]))
+const secoes = [...document.querySelectorAll('main section[id]'), document.getElementById('contato')]
+const obsNav = new IntersectionObserver(entradas => {
+  for (const e of entradas) {
+    if (!e.isIntersecting) continue
+    elos.forEach(a => a.removeAttribute('aria-current'))
+    elos.get(e.target.id)?.setAttribute('aria-current', 'true')
+  }
+}, { rootMargin: '-20% 0px -70% 0px' })
+secoes.forEach(s => obsNav.observe(s))
+
+pintarBarra()
+</script>
+
+</body>
+</html>

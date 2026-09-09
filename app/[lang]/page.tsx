@@ -7,7 +7,9 @@ import { CabecalhoCasca } from '@/components/CabecalhoCasca'
 import { projetos } from '@/content/indice'
 import { FaixaProjeto } from '@/components/FaixaProjeto'
 import { Sobre } from '@/components/Sobre'
+import { Experiencia } from '@/components/Experiencia'
 import { Fechamento } from '@/components/Fechamento'
+import { Fita } from '@/components/Fita'
 import { curriculoDisponivel } from '@/lib/curriculo'
 
 export async function generateMetadata({
@@ -46,27 +48,39 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
   return (
     <>
+      {/* Decoração pura, atrás de tudo e ancorada no topo do documento. */}
+      <Fita />
       <CabecalhoCasca lang={lang} />
       <main>
         <div className="wrap abertura-home">
           <h1>{t(ui.abertura.titulo, lang, 'ui.abertura.titulo')}</h1>
           <p>{t(ui.abertura.apoio, lang, 'ui.abertura.apoio')}</p>
         </div>
-        <div id="projetos">
-          {projetos.map((projeto, i) => (
-            <FaixaProjeto
-              key={projeto.slug}
-              projeto={projeto}
-              lang={lang}
-              // O lado do print alterna para o olho não cansar.
-              espelho={i % 2 === 1}
-              // Nada essencial só depois de rolar: a primeira faixa carrega no primeiro quadro.
-              prioridade={i === 0}
-            />
-          ))}
-        </div>
+
+        {/* A ORDEM DA HOME MUDOU EM 09/09/2026: quem chega quer saber quem
+            é a pessoa antes de olhar sistema. Sobre, experiência, e só
+            então os quatro projetos. */}
+        <Sobre lang={lang} />
+        <Experiencia lang={lang} />
+
+        <section className="secao wrap" id="projetos">
+          <h2>{t(ui.projetosTitulo, lang, 'ui.projetosTitulo')}</h2>
+          <p className="projetos-apoio">{t(ui.projetosApoio, lang, 'ui.projetosApoio')}</p>
+          <div className="cartoes">
+            {projetos.map((projeto, i) => (
+              <FaixaProjeto
+                key={projeto.slug}
+                projeto={projeto}
+                lang={lang}
+                // O lado do print alterna para o olho não cansar.
+                espelho={i % 2 === 1}
+                // O primeiro cartão está na primeira tela em telas altas.
+                prioridade={i === 0}
+              />
+            ))}
+          </div>
+        </section>
       </main>
-      <Sobre lang={lang} />
       <Fechamento lang={lang} temCurriculo={temCurriculo} />
     </>
   )

@@ -4,15 +4,16 @@ import { ui } from '@/content/ui'
 import { sobre } from '@/content/sobre'
 
 /**
- * O Sobre é o último bloco da home, não uma página — decidido em 04/09 depois
- * de três comps. O primeiro parágrafo é a lede, em corpo grande; os outros
- * são texto normal. Tudo sobre o neutro da casca.
+ * O Sobre abre a home, não é página — subiu para o topo em 09/09/2026, antes
+ * da experiência e dos projetos: quem chega quer saber quem é a pessoa antes
+ * de olhar sistema. O primeiro parágrafo é a lede, em corpo grande; os
+ * outros são texto normal. Tudo sobre o neutro da casca.
  */
 export function Sobre({ lang }: { lang: Idioma }) {
   const [lede, ...resto] = sobre.paragrafos
 
   return (
-    <section className="sobre wrap" id="sobre">
+    <section className="secao sobre wrap" id="sobre">
       <h2>{t(ui.sobreTitulo, lang, 'ui.sobreTitulo')}</h2>
       <div className="grade">
         <div className="revela">

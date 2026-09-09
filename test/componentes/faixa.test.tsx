@@ -64,18 +64,18 @@ describe('FaixaProjeto', () => {
     expect(container.querySelectorAll('.num')).toHaveLength(4)
   })
 
-  it('a faixa espelhada troca o lado do print', () => {
+  it('o cartão espelhado troca o lado do print', () => {
     const { container } = render(<FaixaProjeto projeto={bddente} lang="pt" espelho />)
     expect(container.querySelector('.faixa')).toHaveClass('espelho')
   })
 
-  it('pinta a faixa com o tema do projeto', () => {
+  it('pinta o cartão com o tema do projeto', () => {
     const { container } = render(<FaixaProjeto projeto={bddente} lang="pt" espelho />)
     const faixa = container.querySelector('.faixa') as HTMLElement
     expect(faixa.style.getPropertyValue('--fundo')).toBe('#5A21B4')
   })
 
-  it('o Autotune abre a faixa pelo print marcado, não pelo primeiro do destaque', () => {
+  it('o Autotune abre o cartão pelo print marcado, não pelo primeiro do destaque', () => {
     render(<FaixaProjeto projeto={autotune} lang="pt" espelho />)
     expect(screen.getByAltText(/Low Latency marcado/)).toBeInTheDocument()
   })

@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="pt-BR" data-fundo="fita">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTÓTIPO v3 — a fita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =======================================================================
+   PROTÓTIPO DESCARTÁVEL — só para escolher o fundo.
+   O layout é a versão A já aprovada (cartão centralizado).
+   Use a barra no rodapé para trocar de fundo com a página rodando.
+   ======================================================================= */
+
+:root {
+  --casca:  #FAFAF7;
+  --tinta:  #15171A;
+  --regua:  #E4E4DE;
+  --calmo:  #585D62;
+  --marca:  #0F1317;
+  --dev:    #2A4FD7;
+
+  --pagina: 1000px;
+  --lado:   28px;
+
+  --c-revy:     #7FBFA3;
+  --c-bddente:  #5A21B4;
+  --c-office:   #CB6D31;
+  --c-autotune: #F3B843;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--casca);
+  color: var(--tinta);
+  font-family: Archivo, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.wrap { max-width: var(--pagina); margin: 0 auto; padding-inline: var(--lado); }
+
+/* Tudo o que é conteúdo passa por cima de qualquer fundo. */
+.casca-topo, main, .fechamento { position: relative; z-index: 1; }
+
+
+/* ####################################################################### */
+/* #####                    OS QUATRO FUNDOS                         ##### */
+/* ####################################################################### */
+
+.fundo { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.fundo > * { position: absolute; inset: 0; }
+
+/* Nenhum fundo mostra sua camada até ser escolhido. */
+.fita { display: none; }
+html[data-fundo^="fita"] .fita { display: block; }
+
+
+/* -----------------------------------------------------------------------
+   A FITA — a série de preço no rodapé da tela
+
+   Três decisões, todas para tirar peso:
+
+   1. Sem preenchimento. Só o fio. A área embaixo da linha era o que dava
+      volume e roubava a atenção do texto.
+   2. Sem loop no tempo. A fita fica PARADA enquanto você lê e só anda
+      quando você rola. Rolar a página é rolar a série — nada se mexe
+      sozinho na sua frente.
+   3. Presa na borda de baixo, longe da coluna de leitura.
+
+   O caminho é costurável: o desenho se repete a cada 1440 unidades, e o
+   deslocamento para em múltiplo do ciclo — não tem emenda visível.
+   ----------------------------------------------------------------------- */
+.fita { top: auto; height: 34vh; min-height: 210px; color: var(--dev); }
+.fita svg {
+  position: absolute; bottom: 0; left: 0; height: 100%;
+  width: 300%;                       /* três ciclos: dá dois de curso */
+  transform: translateX(calc(var(--avanco, 0) * -66.667%));
+}
+
+/* Onde o navegador tem linha do tempo de rolagem, a conta é dele: roda
+   fora da main thread e não passa por JavaScript nenhum. */
+@supports (animation-timeline: scroll()) {
+  .fita svg {
+    transform: none;
+    animation: correr linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes correr { from { transform: translateX(0); } to { transform: translateX(-66.667%); } }
+
+/* B2 · o eixo: um fio horizontal só, na base. */
+.fita .eixo { display: none; }
+html[data-fundo="fita-eixo"] .fita .eixo { display: block; }
+
+/* B3 · a segunda lâmina, mais apagada e mais lenta — só profundidade. */
+.fita .lamina-2 { display: none; }
+html[data-fundo="fita-dupla"] .fita .lamina-2 {
+  display: block;
+  transform: translateX(calc(var(--avanco, 0) * -40%));
+}
+@supports (animation-timeline: scroll()) {
+  html[data-fundo="fita-dupla"] .fita .lamina-2 {
+    transform: none;
+    animation: correr-lento linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes correr-lento { from { transform: translateX(0); } to { transform: translateX(-40%); } }
+
+/* -----------------------------------------------------------------------
+   O GRÃO — acumula com a fita. Não é animação, é material.
+   ----------------------------------------------------------------------- */
+.grao { display: none; }
+html[data-grao="sim"] .grao { display: block; }
+.grao {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: .055;
+}
+
+/* Rolagem não é animação: com movimento reduzido a fita continua, parada
+   no lugar. O que some é qualquer coisa que ande sozinha — e aqui não tem
+   nada que ande sozinha. */
+@media (prefers-reduced-motion: reduce) {
+  .fita svg { animation: none; transform: none; }
+}
+
+/* ####################################################################### */
+/* #####                   O LAYOUT — VERSÃO A                       ##### */
+/* ####################################################################### */
+
+.casca-topo {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--casca) 86%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--regua);
+}
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; }
+.marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; color: var(--marca); }
+.marca-dev { color: var(--dev); }
+nav { display: flex; gap: 24px; font-size: 14px; color: var(--calmo); }
+nav a { text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
+nav a:hover { color: var(--tinta); }
+nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color: var(--dev); }
+.idioma { margin: 0; font-size: 13px; color: var(--calmo); }
+.idioma b { color: var(--tinta); font-weight: 600; }
+
+.abertura { padding: 92px 0 80px; }
+.abertura h1 { margin: 0 0 18px; font-size: 46px; line-height: 1.08; font-weight: 700; letter-spacing: -.028em; max-width: 15ch; }
+.abertura p { margin: 0; color: var(--calmo); font-size: 17px; max-width: 54ch; }
+
+.secao { padding: 76px 0; border-top: 1px solid var(--regua); }
+.secao > h2 { margin: 0 0 34px; font-size: 13px; font-weight: 600; color: var(--calmo); display: flex; align-items: baseline; gap: 12px; }
+.secao > h2::after { content: ""; flex: 1; height: 1px; background: var(--regua); }
+
+.sobre .grade { display: grid; grid-template-columns: minmax(0, 1fr) 268px; gap: 64px; align-items: start; }
+.sobre .lede { margin: 0 0 24px; font-size: 27px; line-height: 1.22; font-weight: 700; letter-spacing: -.025em; max-width: 20ch; }
+.sobre p.corpo { margin: 0 0 16px; font-size: 16.5px; line-height: 1.6; max-width: 58ch; color: #2A2E32; }
+.sobre p.corpo:last-child { margin-bottom: 0; }
+.rail { border-top: 2px solid var(--tinta); padding-top: 16px; }
+.rail dl { margin: 0; }
+.rail dt { font-size: 12.5px; color: var(--calmo); margin-top: 15px; }
+.rail div:first-child dt { margin-top: 0; }
+.rail dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
+
+.posto { display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 34px; padding: 26px 0; border-bottom: 1px solid var(--regua); }
+.posto:first-child { padding-top: 0; }
+.posto:last-child { border-bottom: 0; padding-bottom: 0; }
+.quando { font-size: 13.5px; color: var(--calmo); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.posto h3 { margin: 0 0 3px; font-size: 18px; font-weight: 700; letter-spacing: -.015em; }
+.posto .papel { margin: 0 0 4px; font-size: 15px; font-weight: 500; }
+.posto .onde { margin: 0 0 14px; font-size: 13.5px; color: var(--calmo); }
+.posto ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.posto li { font-size: 15px; line-height: 1.55; max-width: 58ch; padding-left: 17px; position: relative; color: #2A2E32; }
+.posto li::before { content: ""; position: absolute; left: 0; top: .68em; width: 9px; height: 1.5px; background: var(--dev); }
+.posto .pilha { margin: 14px 0 0; display: flex; gap: 7px; flex-wrap: wrap; }
+.posto .pilha span { font-size: 12.5px; font-weight: 500; color: var(--calmo); border: 1px solid var(--regua); border-radius: 4px; padding: 3px 9px; background: #fff; }
+
+.projetos-intro { margin: -14px 0 34px; font-size: 16px; color: var(--calmo); max-width: 56ch; }
+.cartoes { display: grid; gap: 22px; }
+.cartao { background: var(--fundo); color: var(--texto); border-radius: 14px; padding: 38px 40px; overflow: hidden; }
+.cartao a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
+.cartao .grade { display: grid; grid-template-columns: 1fr 1.08fr; gap: 40px; align-items: center; }
+.cartao.espelho .col-texto { grid-column: 2; grid-row: 1; }
+.cartao.espelho .col-print { grid-column: 1; grid-row: 1; }
+
+.ficha-faixa { display: flex; align-items: baseline; gap: 13px; padding-bottom: 11px; margin-bottom: 18px; border-bottom: 1px solid var(--borda); }
+.nome { margin: 0; font-size: 31px; font-weight: 800; letter-spacing: -.022em; line-height: 1; }
+.paraquem { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+.situacao { margin: 0 0 0 auto; font-size: 11.5px; font-weight: 600; border: 1px solid var(--borda); border-radius: 999px; padding: 3px 10px; color: var(--calmo-tema); }
+.resumo { font-size: 16px; margin: 0 0 22px; max-width: 46ch; line-height: 1.55; }
+.numeros { display: flex; gap: 32px; margin-bottom: 26px; flex-wrap: wrap; }
+.num b { display: block; font-size: 23px; font-weight: 700; color: var(--destaque); letter-spacing: -.015em; }
+.num span { font-size: 12px; color: var(--calmo-tema); display: block; max-width: 16ch; line-height: 1.35; }
+.botoes { display: flex; gap: 11px; align-items: center; flex-wrap: wrap; }
+.cta { background: var(--ctaFundo); color: var(--ctaTexto); text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 19px; border-radius: 6px; }
+.cta.fantasma { background: transparent; color: var(--texto); border: 1px solid var(--borda); }
+.fechado { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+.col-print img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--borda); }
+.col-print figure { margin: 0; }
+
+.fechamento { background: var(--dev); color: #fff; padding: 58px 0 52px; margin-top: 76px; }
+.fechamento .linha { display: grid; grid-template-columns: 1fr auto; gap: 52px; align-items: end; }
+.canais { display: flex; flex-direction: column; gap: 15px; }
+.canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.canal a { font-size: 25px; font-weight: 600; letter-spacing: -.022em; color: #fff; text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.3); padding-bottom: 3px; }
+.canal .via { font-size: 13px; color: rgba(255,255,255,.85); }
+.perfis { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.perfis a { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.9); text-decoration: none; }
+.assinatura { margin-top: 40px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.22); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.88); }
+.assinatura .marca, .assinatura .marca-dev { color: #fff; }
+
+
+/* ####################################################################### */
+/* #####            A BARRA DO PROTÓTIPO — some no site              ##### */
+/* ####################################################################### */
+.barra {
+  position: fixed; z-index: 50; left: 50%; bottom: 18px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center;
+  background: #15171A; color: #FAFAF7; border-radius: 999px; padding: 8px 10px;
+  box-shadow: 0 6px 28px rgba(0,0,0,.28); max-width: calc(100vw - 24px);
+}
+.barra p { margin: 0 6px 0 8px; font-size: 12.5px; color: #9BA09E; }
+.barra button {
+  font: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer;
+  background: transparent; color: #C9CCC8; border: 1px solid #33373A;
+  border-radius: 999px; padding: 5px 13px;
+}
+.barra button:hover { color: #fff; border-color: #6C7175; }
+.barra button[aria-pressed="true"] { background: #FAFAF7; color: #15171A; border-color: #FAFAF7; font-weight: 600; }
+.barra .sep { width: 1px; height: 20px; background: #33373A; margin: 0 3px; }
+
+@media (max-width: 900px) {
+  .sobre .grade { grid-template-columns: 1fr; gap: 36px; }
+  .cartao .grade, .cartao.espelho .grade { grid-template-columns: 1fr; gap: 26px; }
+  .cartao.espelho .col-texto, .cartao.espelho .col-print { grid-column: 1; grid-row: auto; }
+  .posto { grid-template-columns: 1fr; gap: 8px; }
+  .fechamento .linha { grid-template-columns: 1fr; gap: 30px; align-items: start; }
+  .perfis { flex-direction: row; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .abertura h1 { font-size: 33px; }
+  .abertura { padding: 56px 0 48px; }
+  .cartao { padding: 26px 24px; }
+  nav { gap: 16px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== AS CAMADAS DE FUNDO ===================== -->
+<div class="fundo" aria-hidden="true">
+
+  <div class="fita">
+    <svg class="lamina-2" viewBox="0 0 4320 150" preserveAspectRatio="none" fill="none">
+      <path d="M0 93.6 L24 105.0 L48 112.2 L72 115.1 L96 115.6 L120 110.0 L144 101.4 L168 100.0 L192 93.5 L216 91.8 L240 84.8 L264 66.2 L288 50.3 L312 45.5 L336 39.9 L360 39.2 L384 43.8 L408 52.2 L432 63.5 L456 76.8 L480 91.7 L504 102.0 L528 115.7 L552 125.9 L576 136.1 L600 138.0 L624 137.5 L648 132.9 L672 124.7 L696 116.4 L720 105.1 L744 96.2 L768 92.2 L792 97.0 L816 101.1 L840 105.8 L864 111.3 L888 114.9 L912 118.7 L936 121.8 L960 120.2 L984 120.4 L1008 113.5 L1032 111.1 L1056 105.4 L1080 104.9 L1104 108.2 L1128 113.4 L1152 117.2 L1176 122.9 L1200 116.4 L1224 113.9 L1248 108.9 L1272 101.3 L1296 96.5 L1320 94.0 L1344 91.7 L1368 92.3 L1392 92.4 L1416 93.6 L1440 93.6 L1464 105.0 L1488 112.2 L1512 115.1 L1536 115.6 L1560 110.0 L1584 101.4 L1608 100.0 L1632 93.5 L1656 91.8 L1680 84.8 L1704 66.2 L1728 50.3 L1752 45.5 L1776 39.9 L1800 39.2 L1824 43.8 L1848 52.2 L1872 63.5 L1896 76.8 L1920 91.7 L1944 102.0 L1968 115.7 L1992 125.9 L2016 136.1 L2040 138.0 L2064 137.5 L2088 132.9 L2112 124.7 L2136 116.4 L2160 105.1 L2184 96.2 L2208 92.2 L2232 97.0 L2256 101.1 L2280 105.8 L2304 111.3 L2328 114.9 L2352 118.7 L2376 121.8 L2400 120.2 L2424 120.4 L2448 113.5 L2472 111.1 L2496 105.4 L2520 104.9 L2544 108.2 L2568 113.4 L2592 117.2 L2616 122.9 L2640 116.4 L2664 113.9 L2688 108.9 L2712 101.3 L2736 96.5 L2760 94.0 L2784 91.7 L2808 92.3 L2832 92.4 L2856 93.6 L2880 93.6 L2904 105.0 L2928 112.2 L2952 115.1 L2976 115.6 L3000 110.0 L3024 101.4 L3048 100.0 L3072 93.5 L3096 91.8 L3120 84.8 L3144 66.2 L3168 50.3 L3192 45.5 L3216 39.9 L3240 39.2 L3264 43.8 L3288 52.2 L3312 63.5 L3336 76.8 L3360 91.7 L3384 102.0 L3408 115.7 L3432 125.9 L3456 136.1 L3480 138.0 L3504 137.5 L3528 132.9 L3552 124.7 L3576 116.4 L3600 105.1 L3624 96.2 L3648 92.2 L3672 97.0 L3696 101.1 L3720 105.8 L3744 111.3 L3768 114.9 L3792 118.7 L3816 121.8 L3840 120.2 L3864 120.4 L3888 113.5 L3912 111.1 L3936 105.4 L3960 104.9 L3984 108.2 L4008 113.4 L4032 117.2 L4056 122.9 L4080 116.4 L4104 113.9 L4128 108.9 L4152 101.3 L4176 96.5 L4200 94.0 L4224 91.7 L4248 92.3 L4272 92.4 L4296 93.6 L4320 93.6" stroke="currentColor" stroke-opacity=".10" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    </svg>
+    <svg class="lamina-1" viewBox="0 0 4320 150" preserveAspectRatio="none" fill="none">
+      <line class="eixo" x1="0" y1="149" x2="4320" y2="149"
+            stroke="currentColor" stroke-opacity=".12" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <path d="M0 93.6 L24 105.0 L48 112.2 L72 115.1 L96 115.6 L120 110.0 L144 101.4 L168 100.0 L192 93.5 L216 91.8 L240 84.8 L264 66.2 L288 50.3 L312 45.5 L336 39.9 L360 39.2 L384 43.8 L408 52.2 L432 63.5 L456 76.8 L480 91.7 L504 102.0 L528 115.7 L552 125.9 L576 136.1 L600 138.0 L624 137.5 L648 132.9 L672 124.7 L696 116.4 L720 105.1 L744 96.2 L768 92.2 L792 97.0 L816 101.1 L840 105.8 L864 111.3 L888 114.9 L912 118.7 L936 121.8 L960 120.2 L984 120.4 L1008 113.5 L1032 111.1 L1056 105.4 L1080 104.9 L1104 108.2 L1128 113.4 L1152 117.2 L1176 122.9 L1200 116.4 L1224 113.9 L1248 108.9 L1272 101.3 L1296 96.5 L1320 94.0 L1344 91.7 L1368 92.3 L1392 92.4 L1416 93.6 L1440 93.6 L1464 105.0 L1488 112.2 L1512 115.1 L1536 115.6 L1560 110.0 L1584 101.4 L1608 100.0 L1632 93.5 L1656 91.8 L1680 84.8 L1704 66.2 L1728 50.3 L1752 45.5 L1776 39.9 L1800 39.2 L1824 43.8 L1848 52.2 L1872 63.5 L1896 76.8 L1920 91.7 L1944 102.0 L1968 115.7 L1992 125.9 L2016 136.1 L2040 138.0 L2064 137.5 L2088 132.9 L2112 124.7 L2136 116.4 L2160 105.1 L2184 96.2 L2208 92.2 L2232 97.0 L2256 101.1 L2280 105.8 L2304 111.3 L2328 114.9 L2352 118.7 L2376 121.8 L2400 120.2 L2424 120.4 L2448 113.5 L2472 111.1 L2496 105.4 L2520 104.9 L2544 108.2 L2568 113.4 L2592 117.2 L2616 122.9 L2640 116.4 L2664 113.9 L2688 108.9 L2712 101.3 L2736 96.5 L2760 94.0 L2784 91.7 L2808 92.3 L2832 92.4 L2856 93.6 L2880 93.6 L2904 105.0 L2928 112.2 L2952 115.1 L2976 115.6 L3000 110.0 L3024 101.4 L3048 100.0 L3072 93.5 L3096 91.8 L3120 84.8 L3144 66.2 L3168 50.3 L3192 45.5 L3216 39.9 L3240 39.2 L3264 43.8 L3288 52.2 L3312 63.5 L3336 76.8 L3360 91.7 L3384 102.0 L3408 115.7 L3432 125.9 L3456 136.1 L3480 138.0 L3504 137.5 L3528 132.9 L3552 124.7 L3576 116.4 L3600 105.1 L3624 96.2 L3648 92.2 L3672 97.0 L3696 101.1 L3720 105.8 L3744 111.3 L3768 114.9 L3792 118.7 L3816 121.8 L3840 120.2 L3864 120.4 L3888 113.5 L3912 111.1 L3936 105.4 L3960 104.9 L3984 108.2 L4008 113.4 L4032 117.2 L4056 122.9 L4080 116.4 L4104 113.9 L4128 108.9 L4152 101.3 L4176 96.5 L4200 94.0 L4224 91.7 L4248 92.3 L4272 92.4 L4296 93.6 L4320 93.6" stroke="currentColor" stroke-opacity=".26" stroke-width="1.25" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </div>
+
+  <div class="grao"></div>
+
+</div>
+
+<header class="casca-topo">
+  <div class="wrap topo">
+    <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    <nav>
+      <a href="#sobre">Sobre</a>
+      <a href="#experiencia">Experiência</a>
+      <a href="#projetos">Projetos</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <p class="idioma"><b>PT</b> · EN</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="wrap abertura">
+    <h1>Os sistemas que eu construí.</h1>
+    <p>Cada um com print, explicação em português comum e, quando o sistema é público, link para entrar e clicar.</p>
+  </div>
+
+  <section class="secao sobre wrap" id="sobre">
+    <h2>Sobre</h2>
+    <div class="grade">
+      <div>
+        <p class="lede">Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.</p>
+        <p class="corpo">Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas, desde 2023. Comecei numa plataforma interna de RH escrita em Go. Hoje estou no backend da Binance: carteira, saldo, depósito e saque, dados de mercado e os fluxos de compliance.</p>
+        <p class="corpo">Tenho 23 anos e estou terminando a faculdade de Ciência da Computação na PUC-RS.</p>
+        <p class="corpo">Os quatro sistemas aqui embaixo são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.</p>
+      </div>
+      <aside class="rail">
+        <dl>
+          <div><dt>Onde</dt><dd>Porto Alegre, Brasil · GMT−3</dd></div>
+          <div><dt>Trabalho</dt><dd>Backend na Ambush · Austin, Texas · remoto</dd></div>
+          <div><dt>Stack</dt><dd>Java · Spring Boot · Go · PostgreSQL</dd></div>
+          <div><dt>Inglês</dt><dd>Fluente</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="secao wrap" id="experiencia">
+    <h2>Experiência</h2>
+    <article class="posto">
+      <p class="quando">2023 — hoje</p>
+      <div>
+        <h3>Ambush</h3>
+        <p class="papel">Desenvolvedor backend</p>
+        <p class="onde">Austin, Texas · remoto</p>
+        <ul>
+          <li>Backend da Binance: carteira, saldo, depósito e saque, dados de mercado e os fluxos de compliance.</li>
+          <li>Antes disso, a plataforma interna de RH da empresa, escrita em Go — foi por onde entrei.</li>
+        </ul>
+        <p class="pilha"><span>Java</span><span>Spring Boot</span><span>Go</span><span>PostgreSQL</span></p>
+      </div>
+    </article>
+    <article class="posto">
+      <p class="quando">terminando</p>
+      <div>
+        <h3>PUC-RS</h3>
+        <p class="papel">Ciência da Computação</p>
+        <p class="onde">Porto Alegre, Brasil</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="secao wrap" id="projetos">
+    <h2>Projetos</h2>
+    <p class="projetos-intro">Quatro sistemas construídos fora do expediente, cada um inteiro e sozinho.</p>
+    <div class="cartoes">
+
+      <article class="cartao" data-cor="#7FBFA3" style="--fundo:#111111;--texto:#EAF0EA;--borda:#2A322C;--destaque:#7FBFA3;--ctaFundo:#7FBFA3;--ctaTexto:#111111;--calmo-tema:#9AA39D">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Revy</h3>
+              <p class="paraquem">Loja de motos usadas</p>
+              <p class="situacao">no ar</p>
+            </div>
+            <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa a moto do estoque, responde preço e condição, e passa para uma pessoa quando o assunto sai do roteiro.</p>
+            <div class="botoes"><a class="cta" href="#">Abrir a Revy</a><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/revy/01-visao-geral.png" alt="Painel do lojista com os indicadores de estoque e de tráfego." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao espelho" data-cor="#5A21B4" style="--fundo:#5A21B4;--texto:#F4EEFC;--borda:#7E4EC0;--destaque:#D9C4F5;--ctaFundo:#FFFFFF;--ctaTexto:#4A1A8C;--calmo-tema:#CBBCE8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">BDDente</h3>
+              <p class="paraquem">Consultório odontológico</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a 2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup foram escopo do primeiro dia, não fase dois.</p>
+            <div class="numeros">
+              <div class="num"><b>~30</b><span>anos de histórico migrados</span></div>
+              <div class="num"><b>5.559</b><span>pacientes no cadastro histórico</span></div>
+              <div class="num"><b>914</b><span>testes passando</span></div>
+            </div>
+            <div class="botoes"><p class="fechado">Sistema fechado, roda no consultório.</p><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/bddente/01-agenda-semana.png" alt="Agenda da semana do consultório." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao" data-cor="#CB6D31" style="--fundo:#ECECEC;--texto:#1D2724;--borda:#C9CFCC;--destaque:#CB6D31;--ctaFundo:#2E3D38;--ctaTexto:#FFFFFF;--calmo-tema:#55605C">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Office Timesheet</h3>
+              <p class="paraquem">Escritório de arquitetura</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada projeto custou. Tem um assistente que responde as perguntas chatas de segunda-feira sem ninguém abrir sete telas.</p>
+            <div class="numeros">
+              <div class="num"><b>1.452</b><span>casos de teste, contra Postgres real no CI</span></div>
+              <div class="num"><b>148</b><span>endpoints HTTP</span></div>
+              <div class="num"><b>40</b><span>tabelas no banco</span></div>
+            </div>
+            <div class="botoes"><p class="fechado">Sistema fechado, interno do escritório.</p><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/office-timesheet/08-dashboard-admin.png" alt="Painel do administrador com as horas da equipe." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao espelho" data-cor="#F3B843" style="--fundo:#10312F;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#F3B843;--ctaFundo:#F3B843;--ctaTexto:#10312F;--calmo-tema:#9FBCB8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Autotune</h3>
+              <p class="paraquem">Quem grava voz</p>
+              <p class="situacao">publicado</p>
+            </div>
+            <p class="resumo">O que o Auto-Tune faz, feito do zero em C++. Dois motores de correção com o mesmo deslocamento: um preserva a voz da pessoa, o outro preserva a latência.</p>
+            <div class="numeros">
+              <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+              <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+              <div class="num"><b>340×</b><span>de diferença entre os dois motores</span></div>
+            </div>
+            <div class="botoes"><a class="cta" href="#">Baixar o plugin</a><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/autotune/01-plugin-cantando-v3.png" alt="Plugin em funcionamento durante o canto." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<section class="fechamento" id="contato">
+  <div class="wrap">
+    <div class="linha">
+      <div class="canais">
+        <p class="canal"><a href="#">bielcheeeeee@gmail.com</a></p>
+        <p class="canal"><a href="#">(51) 98033-6365</a><span class="via">chama no WhatsApp</span></p>
+      </div>
+      <div class="perfis"><a href="#">GitHub</a><a href="#">LinkedIn</a></div>
+    </div>
+    <div class="assinatura">
+      <span>Gabriel Cherubini · Porto Alegre · GMT−3</span>
+      <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    </div>
+  </div>
+</section>
+
+<div class="barra">
+  <p>Fita</p>
+  <button data-set="fita">só o fio</button>
+  <button data-set="fita-eixo">fio + eixo</button>
+  <button data-set="fita-dupla">duas lâminas</button>
+  <button data-set="nenhum">nenhuma</button>
+  <span class="sep"></span>
+  <button data-grao>grão</button>
+</div>
+
+<script>
+const raiz = document.documentElement
+
+// --- a barra ----------------------------------------------------------
+const botoes = [...document.querySelectorAll('.barra button[data-set]')]
+function pintarBarra() {
+  botoes.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === raiz.dataset.fundo)))
+  grao.setAttribute('aria-pressed', String(raiz.dataset.grao === 'sim'))
+}
+botoes.forEach(b => b.addEventListener('click', () => { raiz.dataset.fundo = b.dataset.set; pintarBarra() }))
+const grao = document.querySelector('.barra button[data-grao]')
+grao.addEventListener('click', () => {
+  raiz.dataset.grao = raiz.dataset.grao === 'sim' ? 'nao' : 'sim'
+  pintarBarra()
+})
+
+// --- a fita anda com a rolagem ----------------------------------------
+// Só entra onde o navegador não tem `animation-timeline: scroll()`. Onde
+// tem, a conta é dele e este bloco nem roda.
+if (!CSS.supports('animation-timeline: scroll()')) {
+  let pedido = 0
+  const medir = () => {
+    pedido = 0
+    const curso = document.documentElement.scrollHeight - innerHeight
+    raiz.style.setProperty('--avanco', curso > 0 ? (scrollY / curso).toFixed(4) : 0)
+  }
+  addEventListener('scroll', () => { pedido ||= requestAnimationFrame(medir) }, { passive: true })
+  addEventListener('resize', medir)
+  medir()
+}
+
+// --- a seção ativa no topo -------------------------------------------
+const elos = new Map([...document.querySelectorAll('nav a')].map(a => [a.getAttribute('href').slice(1), a]))
+const secoes = [...document.querySelectorAll('main section[id]'), document.getElementById('contato')]
+const obsNav = new IntersectionObserver(entradas => {
+  for (const e of entradas) {
+    if (!e.isIntersecting) continue
+    elos.forEach(a => a.removeAttribute('aria-current'))
+    elos.get(e.target.id)?.setAttribute('aria-current', 'true')
+  }
+}, { rootMargin: '-20% 0px -70% 0px' })
+secoes.forEach(s => obsNav.observe(s))
+
+pintarBarra()
+</script>
+
+</body>
+</html>

@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="pt-BR" data-movimento="tempo" data-laminas="5" data-brilho="sim">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTÓTIPO v3 — prints em cacos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =======================================================================
+   PROTÓTIPO DESCARTÁVEL — só para escolher o fundo.
+   O layout é a versão A já aprovada (cartão centralizado).
+   Use a barra no rodapé para trocar de fundo com a página rodando.
+   ======================================================================= */
+
+:root {
+  --casca:  #FAFAF7;
+  --tinta:  #15171A;
+  --regua:  #E4E4DE;
+  --calmo:  #585D62;
+  --marca:  #0F1317;
+  --dev:    #2A4FD7;
+
+  --pagina: 1000px;
+  --lado:   28px;
+
+  --c-revy:     #7FBFA3;
+  --c-bddente:  #5A21B4;
+  --c-office:   #CB6D31;
+  --c-autotune: #F3B843;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  position: relative;   /* âncora do .fundo, que é absoluto */
+  background: var(--casca);
+  color: var(--tinta);
+  font-family: Archivo, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.wrap { max-width: var(--pagina); margin: 0 auto; padding-inline: var(--lado); }
+
+/* Tudo o que é conteúdo passa por cima de qualquer fundo. */
+.casca-topo, main, .fechamento { position: relative; z-index: 1; }
+
+
+/* ####################################################################### */
+/* #####                    OS QUATRO FUNDOS                         ##### */
+/* ####################################################################### */
+
+/* O AMBIENTE NÃO ACOMPANHA A ROLAGEM. Era `position: fixed`, e a fita
+   descia grudada na janela o tempo todo. Ancorado no topo do DOCUMENTO,
+   ele fica onde nasceu e sai de cena quando você desce — é o que o
+   AmbienteLiquido do Enzo faz (`inset: 0 0 auto; height: 92vh`).
+
+   E DISSOLVE NA BASE, não termina: sem a máscara a faixa acabaria numa
+   linha reta atravessando a página, que o olho lê como erro de pintura. */
+.fundo {
+  position: absolute; top: 0; left: 0; right: 0; height: 105vh;
+  z-index: 0; pointer-events: none; overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+}
+.fundo > * { position: absolute; inset: 0; }
+
+/* Nenhum fundo mostra sua camada até ser escolhido. */
+
+
+/* -----------------------------------------------------------------------
+   A FITA — três lâminas de série de preço
+
+   Doutrina emprestada do AcqMar do Enzo:
+
+   · TRÊS LÂMINAS, e o número é o dele: com uma o olho lê uma curva parada,
+     com duas lê padrão repetido, com quatro a soma fica opaca e some a
+     profundidade. Cada uma com opacidade, velocidade e altura próprias —
+     iguais, as três viram uma massa só.
+   · VELOCIDADES SEM DIVISOR COMUM (41s, 29s, 19s, primos). Com divisor
+     comum o arranjo se recompõe rápido e o laço ganha batida.
+   · A FITA DISSOLVE, NÃO TERMINA. Sem a máscara o topo acaba numa linha
+     reta atravessando a página, que o olho lê como falha de renderização.
+
+   DOIS DESLOCAMENTOS EMPILHADOS, e é por isso que cada lâmina tem uma
+   pista. A deriva no tempo mora na PISTA; a rolagem mora no SVG dentro
+   dela. Um elemento só não serve: não dá para animar `transform` em duas
+   linhas do tempo diferentes ao mesmo tempo — a segunda ganha e a
+   primeira some.
+
+   Foi o conserto do "estático no início": só com rolagem, o topo da
+   página — que é onde todo mundo chega — tem progresso zero, e a fita
+   ficava congelada justo na primeira tela. Agora ela sempre respira, e
+   rolar acrescenta curso.
+
+   O SVG TEM 400% E CADA CURSO É DE UM CICLO. A pista corre um ciclo
+   (-100% dela) e o SVG corre outro (-25% dele): 200% de deslocamento
+   somado, contra 400% de desenho. Sobra folga, e os dois param em
+   múltiplo do ciclo — não existe emenda em nenhuma combinação.
+   ----------------------------------------------------------------------- */
+.fita {
+  top: auto; height: 40vh; min-height: 250px; color: var(--dev);
+  mask-image: linear-gradient(to top, #000 52%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 52%, transparent 100%);
+}
+.pista { position: absolute; left: 0; right: 0; height: 100%; }
+/* Velocidades sem divisor comum — 53, 41, 37, 29, 19, todos primos. Com
+   divisor comum o arranjo se recompõe em intervalo curto e o laço ganha
+   batida audível. */
+.pista.l1 { bottom: 0;     --dur: 41s; }
+.pista.l2 { bottom: -14px; --dur: 29s; }
+.pista.l3 { bottom: -28px; --dur: 19s; }
+.pista.l4 { bottom: -42px; --dur: 53s; }
+.pista.l5 { bottom: -56px; --dur: 37s; }
+.fita svg { position: absolute; bottom: 0; left: 0; height: 100%; width: 400%; }
+
+/* CINCO LÂMINAS CABEM PORQUE SÃO FIOS. O Enzo mede que a quarta já deixa a
+   soma opaca — no caso dele, que são ÁREAS preenchidas, e área empilha
+   opacidade na região inteira. Fio de 1px só se soma no cruzamento, então
+   o teto é bem mais alto; e cinco séries lêem como fita de mercado, que é
+   o assunto, melhor do que três. */
+html[data-laminas="3"] .pista.l4,
+html[data-laminas="3"] .pista.l5,
+html[data-laminas="4"] .pista.l5 { display: none; }
+
+/* A deriva de sempre, na pista. */
+.pista { animation: derivar var(--dur) linear infinite; }
+.pista.l2 { animation-direction: reverse; }
+@keyframes derivar { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+/* A rolagem, no SVG. Some no modo "só tempo". */
+html[data-movimento="tempo"] .fita svg { animation: none; transform: none; }
+.fita svg { transform: translateX(calc(var(--avanco, 0) * -25%)); }
+@supports (animation-timeline: scroll()) {
+  .fita svg { transform: none; animation: rolar linear both; animation-timeline: scroll(root block); }
+}
+@keyframes rolar { from { transform: translateX(0); } to { transform: translateX(-25%); } }
+
+/* --- O BRILHO — a varredura dele, na sua cor. --- */
+.brilho { display: none; }
+html[data-brilho="sim"] .brilho { display: block; }
+.brilho {
+  background: linear-gradient(104deg, transparent 30%,
+    color-mix(in srgb, var(--dev) 13%, transparent) 50%, transparent 70%);
+  animation: brilhar 19s ease-in-out infinite;
+}
+@keyframes brilhar { 0%, 100% { transform: translateX(-32%); } 50% { transform: translateX(32%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pista, .fita svg, .brilho { animation: none; transform: none; }
+}
+
+/* -----------------------------------------------------------------------
+   O GRÃO — acumula com a fita. Não é animação, é material.
+   ----------------------------------------------------------------------- */
+.grao { display: none; }
+html[data-grao="sim"] .grao { display: block; }
+.grao {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: .055;
+}
+
+/* Rolagem não é animação: com movimento reduzido a fita continua, parada
+   no lugar. O que some é qualquer coisa que ande sozinha — e aqui não tem
+   nada que ande sozinha. */
+@media (prefers-reduced-motion: reduce) {
+  .fita svg { animation: none; transform: none; }
+}
+
+/* ####################################################################### */
+/* #####                   O LAYOUT — VERSÃO A                       ##### */
+/* ####################################################################### */
+
+.casca-topo {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--casca) 86%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--regua);
+}
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; }
+.marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; color: var(--marca); }
+.marca-dev { color: var(--dev); }
+nav { display: flex; gap: 24px; font-size: 14px; color: var(--calmo); }
+nav a { text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
+nav a:hover { color: var(--tinta); }
+nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color: var(--dev); }
+.idioma { margin: 0; font-size: 13px; color: var(--calmo); }
+.idioma b { color: var(--tinta); font-weight: 600; }
+
+.abertura { padding: 92px 0 80px; }
+.abertura h1 { margin: 0 0 18px; font-size: 46px; line-height: 1.08; font-weight: 700; letter-spacing: -.028em; max-width: 15ch; }
+.abertura p { margin: 0; color: var(--calmo); font-size: 17px; max-width: 54ch; }
+
+.secao { padding: 76px 0; border-top: 1px solid var(--regua); }
+.secao > h2 { margin: 0 0 34px; font-size: 13px; font-weight: 600; color: var(--calmo); display: flex; align-items: baseline; gap: 12px; }
+.secao > h2::after { content: ""; flex: 1; height: 1px; background: var(--regua); }
+
+.sobre .grade { display: grid; grid-template-columns: minmax(0, 1fr) 268px; gap: 64px; align-items: start; }
+.sobre .lede { margin: 0 0 24px; font-size: 27px; line-height: 1.22; font-weight: 700; letter-spacing: -.025em; max-width: 20ch; }
+.sobre p.corpo { margin: 0 0 16px; font-size: 16.5px; line-height: 1.6; max-width: 58ch; color: #2A2E32; }
+.sobre p.corpo:last-child { margin-bottom: 0; }
+.rail { border-top: 2px solid var(--tinta); padding-top: 16px; }
+.rail dl { margin: 0; }
+.rail dt { font-size: 12.5px; color: var(--calmo); margin-top: 15px; }
+.rail div:first-child dt { margin-top: 0; }
+.rail dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
+
+.posto { display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 34px; padding: 26px 0; border-bottom: 1px solid var(--regua); }
+.posto:first-child { padding-top: 0; }
+.posto:last-child { border-bottom: 0; padding-bottom: 0; }
+.quando { font-size: 13.5px; color: var(--calmo); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.posto h3 { margin: 0 0 3px; font-size: 18px; font-weight: 700; letter-spacing: -.015em; }
+.posto .papel { margin: 0 0 4px; font-size: 15px; font-weight: 500; }
+.posto .onde { margin: 0 0 14px; font-size: 13.5px; color: var(--calmo); }
+/* CADA LINHA DO CARGO É UM BLOCO COM TÍTULO, não um bullet. Quem varre a
+   página lê só os títulos e decide onde parar; uma lista de frases soltas
+   do mesmo tamanho obriga a ler tudo ou nada. É a peça `atividades:
+   { title, desc }` do currículo do Enzo. */
+.blocos { margin: 0; display: grid; gap: 15px; }
+.blocos dt {
+  font-size: 14.5px; font-weight: 700; letter-spacing: -.012em;
+  margin-bottom: 3px;
+}
+/* O fio curto no lugar do marcador: cada bloco é uma frente de trabalho,
+   não item de compra. */
+.blocos dt::before {
+  content: ""; display: inline-block; vertical-align: middle;
+  width: 10px; height: 2px; background: var(--dev);
+  margin-right: 9px; transform: translateY(-1px);
+}
+.blocos dd { margin: 0; font-size: 15px; line-height: 1.58; max-width: 62ch; color: #3A3E42; }
+
+/* A formação não tem blocos: fica mais leve, só a linha. */
+.posto.formacao h3 { font-size: 16px; }
+.posto.formacao .onde { margin-bottom: 0; }
+.posto .pilha { margin: 14px 0 0; display: flex; gap: 7px; flex-wrap: wrap; }
+.posto .pilha span { font-size: 12.5px; font-weight: 500; color: var(--calmo); border: 1px solid var(--regua); border-radius: 4px; padding: 3px 9px; background: #fff; }
+
+.projetos-intro { margin: -14px 0 34px; font-size: 16px; color: var(--calmo); max-width: 56ch; }
+.cartoes { display: grid; gap: 22px; }
+.cartao { background: var(--fundo); color: var(--texto); border-radius: 14px; padding: 38px 40px; overflow: hidden; }
+.cartao a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
+.cartao .grade { display: grid; grid-template-columns: 1fr 1.08fr; gap: 40px; align-items: center; }
+.cartao.espelho .col-texto { grid-column: 2; grid-row: 1; }
+.cartao.espelho .col-print { grid-column: 1; grid-row: 1; }
+
+.ficha-faixa { display: flex; align-items: baseline; gap: 13px; padding-bottom: 11px; margin-bottom: 18px; border-bottom: 1px solid var(--borda); }
+.nome { margin: 0; font-size: 31px; font-weight: 800; letter-spacing: -.022em; line-height: 1; }
+.paraquem { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+.situacao { margin: 0 0 0 auto; font-size: 11.5px; font-weight: 600; border: 1px solid var(--borda); border-radius: 999px; padding: 3px 10px; color: var(--calmo-tema); }
+.resumo { font-size: 16px; margin: 0 0 22px; max-width: 46ch; line-height: 1.55; }
+.numeros { display: flex; gap: 32px; margin-bottom: 26px; flex-wrap: wrap; }
+.num b { display: block; font-size: 23px; font-weight: 700; color: var(--destaque); letter-spacing: -.015em; }
+.num span { font-size: 12px; color: var(--calmo-tema); display: block; max-width: 16ch; line-height: 1.35; }
+.botoes { display: flex; gap: 11px; align-items: center; flex-wrap: wrap; }
+.cta { background: var(--ctaFundo); color: var(--ctaTexto); text-decoration: none; font-weight: 600; font-size: 14px; padding: 10px 19px; border-radius: 6px; }
+.cta.fantasma { background: transparent; color: var(--texto); border: 1px solid var(--borda); }
+.fechado { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+.col-print img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--borda); }
+.col-print figure { margin: 0; }
+
+.fechamento { background: var(--dev); color: #fff; padding: 58px 0 52px; margin-top: 76px; }
+.fechamento .linha { display: grid; grid-template-columns: 1fr auto; gap: 52px; align-items: end; }
+.canais { display: flex; flex-direction: column; gap: 15px; }
+.canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.canal a { font-size: 25px; font-weight: 600; letter-spacing: -.022em; color: #fff; text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.3); padding-bottom: 3px; }
+.canal .via { font-size: 13px; color: rgba(255,255,255,.85); }
+.perfis { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.perfis a { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.9); text-decoration: none; }
+.assinatura { margin-top: 40px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.22); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.88); }
+.assinatura .marca, .assinatura .marca-dev { color: #fff; }
+
+
+/* #######################################################################
+   O PRINT QUE SE MONTA EM CACOS
+
+   Ideia emprestada do RetratoFragmentado.vue do Enzo, com duas diferenças:
+
+   1. TUDO EM PORCENTAGEM. Ele mede em px porque a moldura dele tem tamanho
+      fixo; print é fluido. Com `background-size: n*100%` e
+      `background-position: c/(n-1)*100%`, cada caco acerta a sua fatia
+      sozinho, em qualquer largura, e a conta de `cover` deixa de existir.
+
+   2. O REPOUSO É O QUADRO `from`. Igual ao dele, e é o que segura tudo:
+      sem JavaScript o `<img>` fica visível e nada acontece; sob movimento
+      reduzido os cacos nascem montados. A animação é o acréscimo.
+   ####################################################################### */
+.col-print figure { position: relative; }
+.col-print figure.fragmentado img { opacity: 0; }
+
+.cacos {
+  position: absolute; inset: 0;
+  overflow: hidden; border-radius: 8px; pointer-events: none;
+}
+
+.caco {
+  position: absolute;
+  background-repeat: no-repeat;
+  /* Estourado e sem cor: o caco chega como dado ainda não resolvido. */
+  transform: translate(var(--fx), var(--fy)) rotate(var(--giro)) scale(.62);
+  opacity: 0;
+  filter: brightness(2.2) saturate(0);
+}
+
+.pronto .caco {
+  animation: assentar .58s cubic-bezier(.16, 1, .3, 1) var(--atraso) forwards;
+}
+
+@keyframes assentar {
+  0%   { transform: translate(var(--fx), var(--fy)) rotate(var(--giro)) scale(.62);
+         opacity: 0; filter: brightness(2.2) saturate(0); }
+  55%  { filter: brightness(1.5) saturate(.55); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1);
+         opacity: 1; filter: brightness(1) saturate(1); }
+}
+
+/* A varredura: uma faixa clara passando uma vez logo depois da montagem,
+   como um render que confere o que acabou de desenhar. Opcional. */
+.varredura-print { display: none; }
+html[data-varredura="sim"] .pronto .varredura-print { display: block; }
+.varredura-print {
+  position: absolute; inset: 0; overflow: hidden;
+  border-radius: 8px; pointer-events: none; z-index: 2;
+}
+.varredura-print::before {
+  content: ""; position: absolute; inset: -30% -12%;
+  background: linear-gradient(100deg, transparent 43%, rgba(255,255,255,.42) 50%, transparent 57%);
+  animation: varrer-print 1.5s cubic-bezier(.5,0,.4,1) .55s 1 both;
+}
+@keyframes varrer-print {
+  from { transform: translateX(-125%); }
+  to   { transform: translateX(125%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sem redução o repouso É o quadro espalhado, então aqui o caco precisa
+     nascer montado — mesmo fim da animação, sem passar pelo meio. */
+  .caco { transform: none; opacity: 1; filter: none; }
+  .varredura-print { display: none; }
+}
+
+/* ####################################################################### */
+/* #####            A BARRA DO PROTÓTIPO — some no site              ##### */
+/* ####################################################################### */
+.barra {
+  position: fixed; z-index: 50; left: 50%; bottom: 18px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center;
+  background: #15171A; color: #FAFAF7; border-radius: 999px; padding: 8px 10px;
+  box-shadow: 0 6px 28px rgba(0,0,0,.28); max-width: calc(100vw - 24px);
+}
+.barra p { margin: 0 6px 0 8px; font-size: 12.5px; color: #9BA09E; }
+.barra button {
+  font: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer;
+  background: transparent; color: #C9CCC8; border: 1px solid #33373A;
+  border-radius: 999px; padding: 5px 13px;
+}
+.barra button:hover { color: #fff; border-color: #6C7175; }
+.barra button[aria-pressed="true"] { background: #FAFAF7; color: #15171A; border-color: #FAFAF7; font-weight: 600; }
+.barra .sep { width: 1px; height: 20px; background: #33373A; margin: 0 3px; }
+
+@media (max-width: 900px) {
+  .sobre .grade { grid-template-columns: 1fr; gap: 36px; }
+  .cartao .grade, .cartao.espelho .grade { grid-template-columns: 1fr; gap: 26px; }
+  .cartao.espelho .col-texto, .cartao.espelho .col-print { grid-column: 1; grid-row: auto; }
+  .posto { grid-template-columns: 1fr; gap: 8px; }
+  .fechamento .linha { grid-template-columns: 1fr; gap: 30px; align-items: start; }
+  .perfis { flex-direction: row; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .abertura h1 { font-size: 33px; }
+  .abertura { padding: 56px 0 48px; }
+  .cartao { padding: 26px 24px; }
+  nav { gap: 16px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== AS CAMADAS DE FUNDO ===================== -->
+<div class="fundo" aria-hidden="true">
+
+  <div class="fita">
+    <div class="pista l5">
+      <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+        <path d="M0 177.6 L48 139.6 L96 102.9 L144 97.5 L192 96.0 L240 88.8 L288 81.7 L336 94.4 L384 78.2 L432 61.7 L480 26.0 L528 26.5 L576 32.4 L624 50.0 L672 58.5 L720 45.9 L768 64.8 L816 75.8 L864 110.5 L912 114.5 L960 125.9 L1008 114.8 L1056 122.1 L1104 135.4 L1152 155.7 L1200 168.2 L1248 183.5 L1296 186.0 L1344 185.3 L1392 177.6 L1440 177.6 L1488 139.6 L1536 102.9 L1584 97.5 L1632 96.0 L1680 88.8 L1728 81.7 L1776 94.4 L1824 78.2 L1872 61.7 L1920 26.0 L1968 26.5 L2016 32.4 L2064 50.0 L2112 58.5 L2160 45.9 L2208 64.8 L2256 75.8 L2304 110.5 L2352 114.5 L2400 125.9 L2448 114.8 L2496 122.1 L2544 135.4 L2592 155.7 L2640 168.2 L2688 183.5 L2736 186.0 L2784 185.3 L2832 177.6 L2880 177.6 L2928 139.6 L2976 102.9 L3024 97.5 L3072 96.0 L3120 88.8 L3168 81.7 L3216 94.4 L3264 78.2 L3312 61.7 L3360 26.0 L3408 26.5 L3456 32.4 L3504 50.0 L3552 58.5 L3600 45.9 L3648 64.8 L3696 75.8 L3744 110.5 L3792 114.5 L3840 125.9 L3888 114.8 L3936 122.1 L3984 135.4 L4032 155.7 L4080 168.2 L4128 183.5 L4176 186.0 L4224 185.3 L4272 177.6 L4320 177.6 L4368 139.6 L4416 102.9 L4464 97.5 L4512 96.0 L4560 88.8 L4608 81.7 L4656 94.4 L4704 78.2 L4752 61.7 L4800 26.0 L4848 26.5 L4896 32.4 L4944 50.0 L4992 58.5 L5040 45.9 L5088 64.8 L5136 75.8 L5184 110.5 L5232 114.5 L5280 125.9 L5328 114.8 L5376 122.1 L5424 135.4 L5472 155.7 L5520 168.2 L5568 183.5 L5616 186.0 L5664 185.3 L5712 177.6 L5760 177.6" stroke="currentColor" stroke-opacity=".13" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      </svg>
+    </div>
+    <div class="pista l4">
+      <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+        <path d="M0 57.7 L30 47.6 L60 55.9 L90 61.0 L120 73.7 L150 94.6 L180 124.1 L210 151.3 L240 178.3 L270 186.0 L300 183.8 L330 179.4 L360 175.4 L390 160.4 L420 156.4 L450 163.9 L480 158.6 L510 149.4 L540 132.7 L570 123.2 L600 97.9 L630 65.9 L660 57.2 L690 44.5 L720 44.2 L750 42.6 L780 26.0 L810 29.1 L840 42.5 L870 37.5 L900 49.0 L930 66.3 L960 92.2 L990 100.6 L1020 110.3 L1050 100.9 L1080 86.7 L1110 81.9 L1140 87.8 L1170 83.6 L1200 77.2 L1230 75.1 L1260 75.3 L1290 72.1 L1320 60.9 L1350 59.0 L1380 59.4 L1410 57.7 L1440 57.7 L1470 47.6 L1500 55.9 L1530 61.0 L1560 73.7 L1590 94.6 L1620 124.1 L1650 151.3 L1680 178.3 L1710 186.0 L1740 183.8 L1770 179.4 L1800 175.4 L1830 160.4 L1860 156.4 L1890 163.9 L1920 158.6 L1950 149.4 L1980 132.7 L2010 123.2 L2040 97.9 L2070 65.9 L2100 57.2 L2130 44.5 L2160 44.2 L2190 42.6 L2220 26.0 L2250 29.1 L2280 42.5 L2310 37.5 L2340 49.0 L2370 66.3 L2400 92.2 L2430 100.6 L2460 110.3 L2490 100.9 L2520 86.7 L2550 81.9 L2580 87.8 L2610 83.6 L2640 77.2 L2670 75.1 L2700 75.3 L2730 72.1 L2760 60.9 L2790 59.0 L2820 59.4 L2850 57.7 L2880 57.7 L2910 47.6 L2940 55.9 L2970 61.0 L3000 73.7 L3030 94.6 L3060 124.1 L3090 151.3 L3120 178.3 L3150 186.0 L3180 183.8 L3210 179.4 L3240 175.4 L3270 160.4 L3300 156.4 L3330 163.9 L3360 158.6 L3390 149.4 L3420 132.7 L3450 123.2 L3480 97.9 L3510 65.9 L3540 57.2 L3570 44.5 L3600 44.2 L3630 42.6 L3660 26.0 L3690 29.1 L3720 42.5 L3750 37.5 L3780 49.0 L3810 66.3 L3840 92.2 L3870 100.6 L3900 110.3 L3930 100.9 L3960 86.7 L3990 81.9 L4020 87.8 L4050 83.6 L4080 77.2 L4110 75.1 L4140 75.3 L4170 72.1 L4200 60.9 L4230 59.0 L4260 59.4 L4290 57.7 L4320 57.7 L4350 47.6 L4380 55.9 L4410 61.0 L4440 73.7 L4470 94.6 L4500 124.1 L4530 151.3 L4560 178.3 L4590 186.0 L4620 183.8 L4650 179.4 L4680 175.4 L4710 160.4 L4740 156.4 L4770 163.9 L4800 158.6 L4830 149.4 L4860 132.7 L4890 123.2 L4920 97.9 L4950 65.9 L4980 57.2 L5010 44.5 L5040 44.2 L5070 42.6 L5100 26.0 L5130 29.1 L5160 42.5 L5190 37.5 L5220 49.0 L5250 66.3 L5280 92.2 L5310 100.6 L5340 110.3 L5370 100.9 L5400 86.7 L5430 81.9 L5460 87.8 L5490 83.6 L5520 77.2 L5550 75.1 L5580 75.3 L5610 72.1 L5640 60.9 L5670 59.0 L5700 59.4 L5730 57.7 L5760 57.7" stroke="currentColor" stroke-opacity=".18" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      </svg>
+    </div>
+    <div class="pista l3">
+      <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+        <path d="M0 111.9 L60 107.9 L120 92.0 L180 92.1 L240 78.5 L300 60.9 L360 59.5 L420 49.6 L480 28.0 L540 26.0 L600 33.8 L660 77.2 L720 117.2 L780 152.0 L840 176.4 L900 186.0 L960 180.4 L1020 173.8 L1080 158.9 L1140 151.1 L1200 140.8 L1260 129.7 L1320 121.8 L1380 111.9 L1440 111.9 L1500 107.9 L1560 92.0 L1620 92.1 L1680 78.5 L1740 60.9 L1800 59.5 L1860 49.6 L1920 28.0 L1980 26.0 L2040 33.8 L2100 77.2 L2160 117.2 L2220 152.0 L2280 176.4 L2340 186.0 L2400 180.4 L2460 173.8 L2520 158.9 L2580 151.1 L2640 140.8 L2700 129.7 L2760 121.8 L2820 111.9 L2880 111.9 L2940 107.9 L3000 92.0 L3060 92.1 L3120 78.5 L3180 60.9 L3240 59.5 L3300 49.6 L3360 28.0 L3420 26.0 L3480 33.8 L3540 77.2 L3600 117.2 L3660 152.0 L3720 176.4 L3780 186.0 L3840 180.4 L3900 173.8 L3960 158.9 L4020 151.1 L4080 140.8 L4140 129.7 L4200 121.8 L4260 111.9 L4320 111.9 L4380 107.9 L4440 92.0 L4500 92.1 L4560 78.5 L4620 60.9 L4680 59.5 L4740 49.6 L4800 28.0 L4860 26.0 L4920 33.8 L4980 77.2 L5040 117.2 L5100 152.0 L5160 176.4 L5220 186.0 L5280 180.4 L5340 173.8 L5400 158.9 L5460 151.1 L5520 140.8 L5580 129.7 L5640 121.8 L5700 111.9 L5760 111.9" stroke="currentColor" stroke-opacity=".24" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      </svg>
+    </div>
+    <div class="pista l2">
+      <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+        <path d="M0 119.6 L36 127.6 L72 136.4 L108 142.9 L144 143.4 L180 151.9 L216 155.9 L252 153.8 L288 158.6 L324 163.8 L360 167.6 L396 167.2 L432 172.2 L468 185.4 L504 186.0 L540 182.7 L576 177.7 L612 179.3 L648 176.8 L684 164.7 L720 163.0 L756 156.9 L792 125.2 L828 103.2 L864 87.3 L900 73.7 L936 59.0 L972 53.0 L1008 45.0 L1044 31.0 L1080 26.0 L1116 26.5 L1152 42.7 L1188 66.3 L1224 83.1 L1260 94.8 L1296 107.5 L1332 114.8 L1368 117.9 L1404 119.6 L1440 119.6 L1476 127.6 L1512 136.4 L1548 142.9 L1584 143.4 L1620 151.9 L1656 155.9 L1692 153.8 L1728 158.6 L1764 163.8 L1800 167.6 L1836 167.2 L1872 172.2 L1908 185.4 L1944 186.0 L1980 182.7 L2016 177.7 L2052 179.3 L2088 176.8 L2124 164.7 L2160 163.0 L2196 156.9 L2232 125.2 L2268 103.2 L2304 87.3 L2340 73.7 L2376 59.0 L2412 53.0 L2448 45.0 L2484 31.0 L2520 26.0 L2556 26.5 L2592 42.7 L2628 66.3 L2664 83.1 L2700 94.8 L2736 107.5 L2772 114.8 L2808 117.9 L2844 119.6 L2880 119.6 L2916 127.6 L2952 136.4 L2988 142.9 L3024 143.4 L3060 151.9 L3096 155.9 L3132 153.8 L3168 158.6 L3204 163.8 L3240 167.6 L3276 167.2 L3312 172.2 L3348 185.4 L3384 186.0 L3420 182.7 L3456 177.7 L3492 179.3 L3528 176.8 L3564 164.7 L3600 163.0 L3636 156.9 L3672 125.2 L3708 103.2 L3744 87.3 L3780 73.7 L3816 59.0 L3852 53.0 L3888 45.0 L3924 31.0 L3960 26.0 L3996 26.5 L4032 42.7 L4068 66.3 L4104 83.1 L4140 94.8 L4176 107.5 L4212 114.8 L4248 117.9 L4284 119.6 L4320 119.6 L4356 127.6 L4392 136.4 L4428 142.9 L4464 143.4 L4500 151.9 L4536 155.9 L4572 153.8 L4608 158.6 L4644 163.8 L4680 167.6 L4716 167.2 L4752 172.2 L4788 185.4 L4824 186.0 L4860 182.7 L4896 177.7 L4932 179.3 L4968 176.8 L5004 164.7 L5040 163.0 L5076 156.9 L5112 125.2 L5148 103.2 L5184 87.3 L5220 73.7 L5256 59.0 L5292 53.0 L5328 45.0 L5364 31.0 L5400 26.0 L5436 26.5 L5472 42.7 L5508 66.3 L5544 83.1 L5580 94.8 L5616 107.5 L5652 114.8 L5688 117.9 L5724 119.6 L5760 119.6" stroke="currentColor" stroke-opacity=".30" stroke-width="1.1" vector-effect="non-scaling-stroke"/>
+      </svg>
+    </div>
+    <div class="pista l1">
+      <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+        <path d="M0 114.2 L24 132.5 L48 144.2 L72 148.9 L96 149.7 L120 140.6 L144 126.8 L168 124.5 L192 113.9 L216 111.2 L240 99.8 L264 69.7 L288 44.0 L312 36.3 L336 27.2 L360 26.0 L384 33.5 L408 47.0 L432 65.3 L456 86.8 L480 111.0 L504 127.6 L528 149.8 L552 166.4 L576 182.9 L600 186.0 L624 185.2 L648 177.7 L672 164.5 L696 151.0 L720 132.8 L744 118.3 L768 111.8 L792 119.6 L816 126.3 L840 133.8 L864 142.7 L888 148.6 L912 154.8 L936 159.8 L960 157.2 L984 157.5 L1008 146.3 L1032 142.5 L1056 133.1 L1080 132.4 L1104 137.7 L1128 146.1 L1152 152.3 L1176 161.5 L1200 150.9 L1224 147.0 L1248 138.9 L1272 126.5 L1296 118.8 L1320 114.8 L1344 111.0 L1368 111.9 L1392 112.2 L1416 114.2 L1440 114.2 L1464 132.5 L1488 144.2 L1512 148.9 L1536 149.7 L1560 140.6 L1584 126.8 L1608 124.5 L1632 113.9 L1656 111.2 L1680 99.8 L1704 69.7 L1728 44.0 L1752 36.3 L1776 27.2 L1800 26.0 L1824 33.5 L1848 47.0 L1872 65.3 L1896 86.8 L1920 111.0 L1944 127.6 L1968 149.8 L1992 166.4 L2016 182.9 L2040 186.0 L2064 185.2 L2088 177.7 L2112 164.5 L2136 151.0 L2160 132.8 L2184 118.3 L2208 111.8 L2232 119.6 L2256 126.3 L2280 133.8 L2304 142.7 L2328 148.6 L2352 154.8 L2376 159.8 L2400 157.2 L2424 157.5 L2448 146.3 L2472 142.5 L2496 133.1 L2520 132.4 L2544 137.7 L2568 146.1 L2592 152.3 L2616 161.5 L2640 150.9 L2664 147.0 L2688 138.9 L2712 126.5 L2736 118.8 L2760 114.8 L2784 111.0 L2808 111.9 L2832 112.2 L2856 114.2 L2880 114.2 L2904 132.5 L2928 144.2 L2952 148.9 L2976 149.7 L3000 140.6 L3024 126.8 L3048 124.5 L3072 113.9 L3096 111.2 L3120 99.8 L3144 69.7 L3168 44.0 L3192 36.3 L3216 27.2 L3240 26.0 L3264 33.5 L3288 47.0 L3312 65.3 L3336 86.8 L3360 111.0 L3384 127.6 L3408 149.8 L3432 166.4 L3456 182.9 L3480 186.0 L3504 185.2 L3528 177.7 L3552 164.5 L3576 151.0 L3600 132.8 L3624 118.3 L3648 111.8 L3672 119.6 L3696 126.3 L3720 133.8 L3744 142.7 L3768 148.6 L3792 154.8 L3816 159.8 L3840 157.2 L3864 157.5 L3888 146.3 L3912 142.5 L3936 133.1 L3960 132.4 L3984 137.7 L4008 146.1 L4032 152.3 L4056 161.5 L4080 150.9 L4104 147.0 L4128 138.9 L4152 126.5 L4176 118.8 L4200 114.8 L4224 111.0 L4248 111.9 L4272 112.2 L4296 114.2 L4320 114.2 L4344 132.5 L4368 144.2 L4392 148.9 L4416 149.7 L4440 140.6 L4464 126.8 L4488 124.5 L4512 113.9 L4536 111.2 L4560 99.8 L4584 69.7 L4608 44.0 L4632 36.3 L4656 27.2 L4680 26.0 L4704 33.5 L4728 47.0 L4752 65.3 L4776 86.8 L4800 111.0 L4824 127.6 L4848 149.8 L4872 166.4 L4896 182.9 L4920 186.0 L4944 185.2 L4968 177.7 L4992 164.5 L5016 151.0 L5040 132.8 L5064 118.3 L5088 111.8 L5112 119.6 L5136 126.3 L5160 133.8 L5184 142.7 L5208 148.6 L5232 154.8 L5256 159.8 L5280 157.2 L5304 157.5 L5328 146.3 L5352 142.5 L5376 133.1 L5400 132.4 L5424 137.7 L5448 146.1 L5472 152.3 L5496 161.5 L5520 150.9 L5544 147.0 L5568 138.9 L5592 126.5 L5616 118.8 L5640 114.8 L5664 111.0 L5688 111.9 L5712 112.2 L5736 114.2 L5760 114.2" stroke="currentColor" stroke-opacity=".40" stroke-width="1.3" vector-effect="non-scaling-stroke"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="brilho"></div>
+
+</div>
+
+<header class="casca-topo">
+  <div class="wrap topo">
+    <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    <nav>
+      <a href="#sobre">Sobre</a>
+      <a href="#experiencia">Experiência</a>
+      <a href="#projetos">Projetos</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <p class="idioma"><b>PT</b> · EN</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="wrap abertura">
+    <h1>Os sistemas que eu construí.</h1>
+    <p>Cada um com print, explicação em português comum e, quando o sistema é público, link para entrar e clicar.</p>
+  </div>
+
+  <section class="secao sobre wrap" id="sobre">
+    <h2>Sobre</h2>
+    <div class="grade">
+      <div>
+        <p class="lede">Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.</p>
+        <p class="corpo">Trabalho remoto de Porto Alegre para a Ambush, em Austin, desde 2023. Hoje estou no backend da Binance: carteira, saldo, depósito, saque e dados de mercado.</p>
+        <p class="corpo">É sistema que mexe com dinheiro dos outros. Contrato de API que não pode quebrar, cache que não pode servir saldo velho, erro que aparece no painel antes de aparecer no suporte.</p>
+        <p class="corpo">Tenho 23 anos e termino Ciência da Computação na PUC-RS em dezembro de 2026.</p>
+        <p class="corpo">Os quatro sistemas aqui embaixo são de fora do expediente. Construí cada um sozinho e coloquei no ar com gente usando.</p>
+      </div>
+      <aside class="rail">
+        <dl>
+          <div><dt>Onde</dt><dd>Porto Alegre, Brasil · GMT−3</dd></div>
+          <div><dt>Trabalho</dt><dd>Backend na Ambush · Austin, Texas · remoto</dd></div>
+          <div><dt>Stack</dt><dd>Java · Spring Boot · Go · PostgreSQL · Redis</dd></div>
+          <div><dt>Formação</dt><dd>Ciência da Computação, PUC-RS · dez 2026</dd></div>
+          <div><dt>Inglês</dt><dd>Avançado profissional</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="secao wrap" id="experiencia">
+    <h2>Experiência</h2>
+    <article class="posto">
+      <p class="quando">fev 2023 — atual</p>
+      <div>
+        <h3>Ambush</h3>
+        <p class="papel">Desenvolvedor backend</p>
+        <p class="onde">Austin, Texas · remoto</p>
+        <dl class="blocos">
+          <div><dt>Carteira e mercado</dt><dd>Microsserviços em Java e Spring Boot no backend da Binance: saldo, depósito, saque, preço e cálculo de portfólio.</dd></div>
+          <div><dt>Contratos de API</dt><dd>REST e gRPC entre vários times consumindo os mesmos serviços. Documentação primeiro, código depois.</dd></div>
+          <div><dt>O que acontece depois do deploy</dt><dd>Cache em Redis, correção em lote com erro isolado por item, e painel que mostra a causa antes de o suporte perguntar.</dd></div>
+          <div><dt>Go, antes disso · fev 2023 — jun 2024</dt><dd>A plataforma interna de RH da empresa, sobre PostgreSQL. Foi por onde entrei.</dd></div>
+        </dl>
+        <p class="pilha"><span>Java</span><span>Spring Boot</span><span>Go</span><span>PostgreSQL</span><span>Redis</span></p>
+      </div>
+    </article>
+    <article class="posto">
+      <p class="quando">dez 2022 — fev 2023</p>
+      <div>
+        <h3>Prefeitura de Porto Alegre</h3>
+        <p class="papel">Estágio em suporte técnico</p>
+        <p class="onde">Porto Alegre, Brasil</p>
+        <dl class="blocos">
+          <div><dt>Onde eu comecei</dt><dd>Três meses do outro lado do balcão, que é de onde se aprende que sistema quebrado tem gente esperando.</dd></div>
+        </dl>
+
+      </div>
+    </article>
+    <article class="posto formacao">
+      <p class="quando">mar 2022 — dez 2026</p>
+      <div>
+        <h3>PUC-RS</h3>
+        <p class="papel">Bacharelado em Ciência da Computação</p>
+        <p class="onde">Porto Alegre, Brasil</p>
+
+
+      </div>
+    </article>
+  </section>
+
+  <section class="secao wrap" id="projetos">
+    <h2>Projetos</h2>
+    <p class="projetos-intro">Quatro sistemas construídos fora do expediente, cada um inteiro e sozinho.</p>
+    <div class="cartoes">
+
+      <article class="cartao" data-cor="#7FBFA3" style="--fundo:#111111;--texto:#EAF0EA;--borda:#2A322C;--destaque:#7FBFA3;--ctaFundo:#7FBFA3;--ctaTexto:#111111;--calmo-tema:#9AA39D">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Revy</h3>
+              <p class="paraquem">Loja de motos usadas</p>
+              <p class="situacao">no ar</p>
+            </div>
+            <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa a moto do estoque, responde preço e condição, e passa para uma pessoa quando o assunto sai do roteiro.</p>
+            <div class="botoes"><a class="cta" href="#">Abrir a Revy</a><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/revy/01-visao-geral.png" alt="Painel do lojista com os indicadores de estoque e de tráfego." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao espelho" data-cor="#5A21B4" style="--fundo:#5A21B4;--texto:#F4EEFC;--borda:#7E4EC0;--destaque:#D9C4F5;--ctaFundo:#FFFFFF;--ctaTexto:#4A1A8C;--calmo-tema:#CBBCE8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">BDDente</h3>
+              <p class="paraquem">Consultório odontológico</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a 2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup foram escopo do primeiro dia, não fase dois.</p>
+            <div class="numeros">
+              <div class="num"><b>~30</b><span>anos de histórico migrados</span></div>
+              <div class="num"><b>5.559</b><span>pacientes no cadastro histórico</span></div>
+              <div class="num"><b>914</b><span>testes passando</span></div>
+            </div>
+            <div class="botoes"><p class="fechado">Sistema fechado, roda no consultório.</p><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/bddente/01-agenda-semana.png" alt="Agenda da semana do consultório." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao" data-cor="#CB6D31" style="--fundo:#ECECEC;--texto:#1D2724;--borda:#C9CFCC;--destaque:#CB6D31;--ctaFundo:#2E3D38;--ctaTexto:#FFFFFF;--calmo-tema:#55605C">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Office Timesheet</h3>
+              <p class="paraquem">Escritório de arquitetura</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada projeto custou. Tem um assistente que responde as perguntas chatas de segunda-feira sem ninguém abrir sete telas.</p>
+            <div class="numeros">
+              <div class="num"><b>1.452</b><span>casos de teste, contra Postgres real no CI</span></div>
+              <div class="num"><b>148</b><span>endpoints HTTP</span></div>
+              <div class="num"><b>40</b><span>tabelas no banco</span></div>
+            </div>
+            <div class="botoes"><p class="fechado">Sistema fechado, interno do escritório.</p><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/office-timesheet/08-dashboard-admin.png" alt="Painel do administrador com as horas da equipe." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+      <article class="cartao espelho" data-cor="#F3B843" style="--fundo:#10312F;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#F3B843;--ctaFundo:#F3B843;--ctaTexto:#10312F;--calmo-tema:#9FBCB8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Autotune</h3>
+              <p class="paraquem">Quem grava voz</p>
+              <p class="situacao">publicado</p>
+            </div>
+            <p class="resumo">O que o Auto-Tune faz, feito do zero em C++. Dois motores de correção com o mesmo deslocamento: um preserva a voz da pessoa, o outro preserva a latência.</p>
+            <div class="numeros">
+              <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+              <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+              <div class="num"><b>340×</b><span>de diferença entre os dois motores</span></div>
+            </div>
+            <div class="botoes"><a class="cta" href="#">Baixar o plugin</a><a class="cta fantasma" href="#">Ver o projeto</a></div>
+          </div>
+          <div class="col-print"><figure><img src="/public/prints/autotune/01-plugin-cantando-v3.png" alt="Plugin em funcionamento durante o canto." loading="lazy"></figure></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<section class="fechamento" id="contato">
+  <div class="wrap">
+    <div class="linha">
+      <div class="canais">
+        <p class="canal"><a href="#">bielcheeeeee@gmail.com</a></p>
+        <p class="canal"><a href="#">(51) 98033-6365</a><span class="via">chama no WhatsApp</span></p>
+      </div>
+      <div class="perfis"><a href="#">GitHub</a><a href="#">LinkedIn</a></div>
+    </div>
+    <div class="assinatura">
+      <span>Gabriel Cherubini · Porto Alegre · GMT−3</span>
+      <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    </div>
+  </div>
+</section>
+
+<div class="barra">
+  <p>Cacos</p>
+  <button data-ordem="linhas">linhas</button>
+  <button data-ordem="radial">radial</button>
+  <button data-ordem="diagonal">diagonal</button>
+  <button data-n="6">6×6</button>
+  <button data-n="8">8×8</button>
+  <button data-n="12">12×12</button>
+  <button data-repetir>repetir ⟳</button>
+  <span class="sep"></span>
+  <p>Fita</p>
+  <button data-mov="ambos">tempo + rolagem</button>
+  <button data-mov="tempo">só tempo</button>
+  <button data-lam="3">3</button>
+  <button data-lam="4">4</button>
+  <button data-lam="5">5</button>
+  <button data-brilho>brilho</button>
+  <button data-varredura>varredura no print</button>
+</div>
+
+<script>
+const raiz = document.documentElement
+
+// --- a barra ----------------------------------------------------------
+function pintarBarra() {
+  document.querySelectorAll('.barra [data-ordem]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.ordem === ORDEM)))
+  document.querySelectorAll('.barra [data-n]').forEach(b =>
+    b.setAttribute('aria-pressed', String(+b.dataset.n === N)))
+  document.querySelectorAll('.barra [data-mov]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.mov === raiz.dataset.movimento)))
+  document.querySelectorAll('.barra [data-lam]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.lam === raiz.dataset.laminas)))
+  for (const [sel, chave] of [['[data-brilho]', 'brilho'], ['[data-varredura]', 'varredura']])
+    document.querySelector('.barra ' + sel).setAttribute('aria-pressed', String(raiz.dataset[chave] === 'sim'))
+}
+
+// --- a fita anda com a rolagem ----------------------------------------
+// Só entra onde o navegador não tem `animation-timeline: scroll()`. Onde
+// tem, a conta é dele e este bloco nem roda.
+if (!CSS.supports('animation-timeline: scroll()')) {
+  let pedido = 0
+  const medir = () => {
+    pedido = 0
+    const curso = document.documentElement.scrollHeight - innerHeight
+    raiz.style.setProperty('--avanco', curso > 0 ? (scrollY / curso).toFixed(4) : 0)
+  }
+  addEventListener('scroll', () => { pedido ||= requestAnimationFrame(medir) }, { passive: true })
+  addEventListener('resize', medir)
+  medir()
+}
+
+// --- o print que se monta em cacos ------------------------------------
+// A grade é feita aqui e não no HTML pelo mesmo motivo que o Enzo dá no
+// AcqBolhas: são N² divs vazios que não dizem nada, e escritos à mão no
+// HTML o próximo leitor apaga por parecerem sobra.
+let N = 8, ORDEM = 'linhas'
+const ESPALHO = 0.7   // segundos entre o primeiro caco e o último
+let observador
+
+function montarGrade(fig) {
+  fig.querySelector('.cacos')?.remove()
+  fig.querySelector('.varredura-print')?.remove()
+  fig.classList.remove('pronto')
+
+  const img = fig.querySelector('img')
+  const grade = document.createElement('div')
+  grade.className = 'cacos'
+  const meio = (N - 1) / 2
+  const distMax = Math.hypot(meio, meio)
+
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const dx = c - meio, dy = r - meio
+    const dist = Math.hypot(dx, dy) || 1
+
+    // Cada ordem tem o seu atraso E a sua direção de entrada. Não adianta
+    // trocar só a ordem: caco que entra pela direção errada briga com a
+    // leitura do gesto.
+    // O deslocamento vai em PORCENTAGEM, não em px. Em `translate()` a
+    // porcentagem é do próprio elemento, então o caco sempre sai da mesma
+    // fração do tamanho dele — em qualquer largura de tela, com qualquer
+    // N. Em px fixos (era 22px) o gesto sumia num print largo, e as três
+    // ordens ficavam indistinguíveis entre si.
+    let atraso, fx, fy
+    if (ORDEM === 'radial') {
+      // A do Enzo: quem está mais longe do centro chega primeiro.
+      atraso = ((distMax - dist) / distMax) * ESPALHO
+      const fora = 70 + dist * 18
+      fx = (dx / dist) * fora; fy = (dy / dist) * fora
+    } else if (ORDEM === 'diagonal') {
+      atraso = ((r + c) / (2 * N - 2)) * ESPALHO
+      fx = 85; fy = 85
+    } else {
+      // Linhas: o print se escreve de cima para baixo, como um conjunto de
+      // registros chegando. É o que combina com backend.
+      atraso = (r / (N - 1)) * ESPALHO + (c % 3) * 0.02
+      fx = 0; fy = -110
+    }
+
+    const caco = document.createElement('div')
+    caco.className = 'caco'
+    Object.assign(caco.style, {
+      left: `${(c * 100) / N}%`,
+      top: `${(r * 100) / N}%`,
+      // +1px de sobra: sem ela a costura entre cacos vizinhos deixa passar
+      // uma linha do que está atrás. `overflow: hidden` na grade corta o
+      // que sobra nas bordas de fora.
+      width: `calc(${100 / N}% + 1px)`,
+      height: `calc(${100 / N}% + 1px)`,
+      backgroundImage: `url(${img.getAttribute('src')})`,
+      backgroundSize: `${N * 100}% ${N * 100}%`,
+      backgroundPosition: `${(c * 100) / (N - 1)}% ${(r * 100) / (N - 1)}%`,
+    })
+    caco.style.setProperty('--atraso', `${atraso.toFixed(3)}s`)
+    caco.style.setProperty('--fx', `${fx.toFixed(1)}%`)
+    caco.style.setProperty('--fy', `${fy.toFixed(1)}%`)
+    caco.style.setProperty('--giro', `${(r + c) % 2 === 0 ? 7 : -7}deg`)
+    grade.appendChild(caco)
+  }
+
+  const luz = document.createElement('div')
+  luz.className = 'varredura-print'
+  fig.append(grade, luz)
+  fig.classList.add('fragmentado')
+}
+
+// Monta quando entra na tela, não quando nasce: o atraso mais longo é
+// quase um segundo, e ninguém rola até o quarto print nesse tempo — a
+// pessoa chegaria lá com tudo já parado, sem gesto nenhum.
+//
+// QUEM JÁ ESTÁ NA TELA NÃO PASSA PELO OBSERVER. Passava, e era um defeito
+// visível: o primeiro callback depois de `observe()` só chega uns frames
+// adiante — medido em ~300ms. Nesse intervalo os cacos já existem em
+// repouso (opacity 0), então o print SUMIA por um terço de segundo antes
+// de começar a montar. Um `requestAnimationFrame` dá o único quadro que a
+// animação precisa para ter começo visível, e nada mais.
+function armar() {
+  observador?.disconnect()
+  observador = new IntersectionObserver(entradas => {
+    for (const e of entradas) {
+      if (!e.isIntersecting) continue
+      e.target.classList.add('pronto')
+      observador.unobserve(e.target)
+    }
+  }, { threshold: 0.25 })
+
+  for (const fig of document.querySelectorAll('.col-print figure')) {
+    const r = fig.getBoundingClientRect()
+    if (r.top < innerHeight && r.bottom > 0) requestAnimationFrame(() => fig.classList.add('pronto'))
+    else observador.observe(fig)
+  }
+}
+
+function refazer() {
+  document.querySelectorAll('.col-print figure').forEach(montarGrade)
+  armar()
+}
+
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) refazer()
+
+document.querySelectorAll('.barra [data-ordem]').forEach(b =>
+  b.addEventListener('click', () => { ORDEM = b.dataset.ordem; refazer(); pintarBarra() }))
+document.querySelectorAll('.barra [data-n]').forEach(b =>
+  b.addEventListener('click', () => { N = +b.dataset.n; refazer(); pintarBarra() }))
+document.querySelector('.barra [data-varredura]').addEventListener('click', () => {
+  raiz.dataset.varredura = raiz.dataset.varredura === 'sim' ? 'nao' : 'sim'
+  refazer(); pintarBarra()
+})
+document.querySelector('.barra [data-repetir]').addEventListener('click', refazer)
+
+// --- a fita -----------------------------------------------------------
+document.querySelectorAll('.barra [data-mov]').forEach(b =>
+  b.addEventListener('click', () => { raiz.dataset.movimento = b.dataset.mov; pintarBarra() }))
+document.querySelectorAll('.barra [data-lam]').forEach(b =>
+  b.addEventListener('click', () => { raiz.dataset.laminas = b.dataset.lam; pintarBarra() }))
+document.querySelector('.barra [data-brilho]').addEventListener('click', () => {
+  raiz.dataset.brilho = raiz.dataset.brilho === 'sim' ? 'nao' : 'sim'; pintarBarra()
+})
+
+// --- a seção ativa no topo -------------------------------------------
+const elos = new Map([...document.querySelectorAll('nav a')].map(a => [a.getAttribute('href').slice(1), a]))
+const secoes = [...document.querySelectorAll('main section[id]'), document.getElementById('contato')]
+const obsNav = new IntersectionObserver(entradas => {
+  for (const e of entradas) {
+    if (!e.isIntersecting) continue
+    elos.forEach(a => a.removeAttribute('aria-current'))
+    elos.get(e.target.id)?.setAttribute('aria-current', 'true')
+  }
+}, { rootMargin: '-20% 0px -70% 0px' })
+secoes.forEach(s => obsNav.observe(s))
+
+pintarBarra()
+</script>
+
+</body>
+</html>

@@ -41,12 +41,17 @@ describe('alt de imagem', () => {
 })
 
 describe('hierarquia de títulos', () => {
-  it('a faixa da home usa h2 — o h1 é a frase de abertura', () => {
+  it('o cartão de projeto usa h3 — h1 é a abertura e h2 é o título da seção', () => {
     const { container } = render(
       <FaixaProjeto projeto={projetos[0]} lang="pt" espelho={false} />,
     )
+    // A home hoje é h1 na abertura, h2 em cada seção (Sobre, Experiência,
+    // Projetos) e h3 no nome do sistema. O cartão desceu de h2 para h3
+    // quando ganhou uma seção por cima dele — pular nível é o que quebra a
+    // navegação por títulos.
     expect(container.querySelector('h1')).toBeNull()
-    expect(container.querySelector('h2')).toBeInTheDocument()
+    expect(container.querySelector('h2')).toBeNull()
+    expect(container.querySelector('h3')).toHaveTextContent(projetos[0].nome)
   })
 })
 

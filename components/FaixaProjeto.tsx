@@ -4,9 +4,10 @@ import { t } from '@/lib/idioma'
 import { ui } from '@/content/ui'
 import { estiloDoTema } from '@/lib/tema'
 import { PrintFigura } from '@/components/PrintFigura'
+import { PrintEmCacos } from '@/components/PrintEmCacos'
 
 /**
- * O print que abre a faixa: o marcado com `naFaixa`, senão o primeiro do
+ * O print que abre o cartão: o marcado com `naFaixa`, senão o primeiro do
  * destaque, senão o de abertura — que é o caso do Office Timesheet, cujo
  * destaque não tem imagem.
  */
@@ -45,12 +46,13 @@ export function FaixaProjeto({
       aria-labelledby={`faixa-${projeto.slug}`}
       data-brilho
     >
-      <div className="wrap grade">
+      {/* Sem `wrap`: a coluna agora é do `.cartoes` que envolve as quatro. */}
+      <div className="grade">
         <div className="col-texto revela">
           <div className="ficha-faixa">
-            <h2 className="nome" id={`faixa-${projeto.slug}`}>
+            <h3 className="nome" id={`faixa-${projeto.slug}`}>
               {projeto.nome}
-            </h2>
+            </h3>
             <p className="paraquem">{t(projeto.paraQuem, lang, `${campo}.paraQuem`)}</p>
             {projeto.selo ? (
               <p className="selo">{t(projeto.selo, lang, `${campo}.selo`)}</p>
@@ -87,19 +89,21 @@ export function FaixaProjeto({
           </div>
         </div>
 
-        <div className={`col-print revela${print && print.largura < 900 ? ' pequeno' : ''}`}>
+        <PrintEmCacos className={`col-print revela${print && print.largura < 900 ? ' pequeno' : ''}`}>
           {print ? (
             <PrintFigura
               print={print}
               slug={projeto.slug}
               lang={lang}
               campo={`${campo}.print`}
-              sizes="(max-width: 820px) 100vw, 1320px"
+              // 1320px, não a largura da coluna: a prancha ABRE mais larga
+              // que o cartão, e o srcset precisa cobrir o tamanho aberto.
+              sizes="(max-width: 900px) 100vw, 1320px"
               prioridade={prioridade}
               variante="nua"
             />
           ) : null}
-        </div>
+        </PrintEmCacos>
       </div>
     </section>
   )

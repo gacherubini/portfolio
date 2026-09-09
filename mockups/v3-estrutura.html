@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTÓTIPO v3 — estrutura centralizada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =======================================================================
+   PROTÓTIPO DESCARTÁVEL. Não é a folha do site.
+   Serve para decidir três coisas:
+     1. a ordem (abertura · sobre · experiência · projetos · contato)
+     2. a largura (conteúdo centralizado, não esticado na tela)
+     3. o fundo animado
+   e para escolher entre as duas versões da faixa de projeto (A e B).
+   ======================================================================= */
+
+:root {
+  --casca:  #FAFAF7;
+  --tinta:  #15171A;
+  --regua:  #E4E4DE;
+  --calmo:  #585D62;
+  --marca:  #0F1317;
+  --dev:    #2A4FD7;
+
+  /* A largura é a mudança. Hoje o site abre em 1180px; aqui o miolo fecha
+     em 1000px e a prosa nunca passa de ~66 caracteres. */
+  --pagina: 1000px;
+  --lado:   28px;
+
+  /* As quatro cores dos quatro sistemas. Já são a assinatura do site:
+     a régua da tela de entrada atravessa exatamente estas quatro. */
+  --c-revy:     #7FBFA3;
+  --c-bddente:  #5A21B4;
+  --c-office:   #CB6D31;
+  --c-autotune: #F3B843;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--casca);
+  color: var(--tinta);
+  font-family: Archivo, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+.wrap { max-width: var(--pagina); margin: 0 auto; padding-inline: var(--lado); }
+
+/* =======================================================================
+   O FUNDO — "os trilhos"
+   Não é aquário. A metáfora vem do que os sistemas fazem: coisa em
+   trânsito. Carteira, depósito, saque, dado de mercado — tudo é uma
+   marca andando de um lado para o outro de um trilho.
+
+   E já existe no site: a tela de entrada é uma régua que corre e troca
+   pelas quatro cores dos quatro sistemas. O fundo é essa mesma ideia,
+   muito mais devagar e muito mais apagada, atrás da página inteira.
+
+   Sem `opacity:` em lugar nenhum — a transparência vai no próprio
+   color-mix. A regra da folha (test/folha.test.ts) fica intacta.
+   ======================================================================= */
+.trilhos {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Os trilhos em si: fios horizontais quase invisíveis, no ritmo largo de
+   uma pauta. Estáticos — quem anda é a marca em cima deles. */
+.trilhos::before {
+  content: "";
+  position: absolute;
+  inset: -10% 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 119px,
+    color-mix(in srgb, var(--tinta) 5%, transparent) 119px 120px
+  );
+}
+
+.trilhos i {
+  position: absolute;
+  left: 0;
+  height: 2px;
+  width: 128px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--cor) 45%, transparent) 55%,
+    color-mix(in srgb, var(--cor) 80%, transparent)
+  );
+  animation: correr var(--dur) linear var(--atraso) infinite;
+}
+
+/* Quatro marcas, quatro cores, quatro velocidades. Nunca cruzam a tela
+   juntas: os tempos são primos entre si de propósito. */
+.trilhos i:nth-child(1) { --cor: var(--c-revy);     --dur: 23s; --atraso:  0s; top: 179px; }
+.trilhos i:nth-child(2) { --cor: var(--c-bddente);  --dur: 31s; --atraso:  7s; top: 419px; }
+.trilhos i:nth-child(3) { --cor: var(--c-office);   --dur: 19s; --atraso: 13s; top: 659px; }
+.trilhos i:nth-child(4) { --cor: var(--c-autotune); --dur: 37s; --atraso:  3s; top: 899px; }
+
+@keyframes correr {
+  from { transform: translateX(-140px); }
+  to   { transform: translateX(calc(100vw + 140px)); }
+}
+
+/* Movimento reduzido: os fios ficam, as marcas somem. */
+@media (prefers-reduced-motion: reduce) {
+  .trilhos i { display: none; }
+}
+
+/* Todo o conteúdo passa por cima do fundo. */
+.casca-topo, main, .fechamento, .divisor { position: relative; z-index: 1; }
+
+/* =======================================================================
+   TOPO — gruda no alto e marca a seção em que você está
+   ======================================================================= */
+.casca-topo {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--casca) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--regua);
+}
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; }
+
+.marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; color: var(--marca); }
+.marca-dev { color: var(--dev); }
+
+nav { display: flex; gap: 24px; font-size: 14px; color: var(--calmo); }
+nav a { text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
+nav a:hover { color: var(--tinta); }
+/* A seção em que você está fica marcada, como no site de referência. */
+nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color: var(--dev); }
+
+.idioma { margin: 0; font-size: 13px; color: var(--calmo); }
+.idioma b { color: var(--tinta); font-weight: 600; }
+
+/* =======================================================================
+   ABERTURA
+   ======================================================================= */
+.abertura { padding: 92px 0 80px; }
+.abertura h1 {
+  margin: 0 0 18px;
+  font-size: 46px; line-height: 1.08; font-weight: 700;
+  letter-spacing: -.028em; max-width: 15ch;
+}
+.abertura p { margin: 0; color: var(--calmo); font-size: 17px; max-width: 54ch; }
+
+/* =======================================================================
+   O TÍTULO DE SEÇÃO
+   Sem rótulo em caixa alta espaçada por cima do título — o site já fala
+   em frase, e a caixa alta é o vício de todo portfólio. Aqui o que
+   organiza é um fio e o número da seção no lugar do rótulo.
+   ======================================================================= */
+.secao { padding: 76px 0; border-top: 1px solid var(--regua); }
+.secao > h2 {
+  margin: 0 0 34px;
+  font-size: 13px; font-weight: 600; color: var(--calmo);
+  display: flex; align-items: baseline; gap: 12px;
+}
+.secao > h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--regua);
+}
+
+/* =======================================================================
+   1 · SOBRE — agora em cima, antes de tudo
+   ======================================================================= */
+.sobre .grade {
+  display: grid; grid-template-columns: minmax(0, 1fr) 268px;
+  gap: 64px; align-items: start;
+}
+.sobre .lede {
+  margin: 0 0 24px; font-size: 27px; line-height: 1.22; font-weight: 700;
+  letter-spacing: -.025em; max-width: 20ch;
+}
+.sobre p.corpo { margin: 0 0 16px; font-size: 16.5px; line-height: 1.6; max-width: 58ch; color: #2A2E32; }
+.sobre p.corpo:last-child { margin-bottom: 0; }
+
+.rail { border-top: 2px solid var(--tinta); padding-top: 16px; }
+.rail dl { margin: 0; }
+.rail dt { font-size: 12.5px; color: var(--calmo); margin-top: 15px; }
+.rail div:first-child dt { margin-top: 0; }
+.rail dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
+
+/* =======================================================================
+   2 · EXPERIÊNCIA — seção nova
+   Montada só com o que já estava escrito no Sobre: Ambush desde 2023,
+   as duas fases lá dentro, e a PUC-RS. Nenhuma data inventada.
+   ======================================================================= */
+.linhadotempo { display: grid; gap: 0; }
+
+.posto {
+  display: grid; grid-template-columns: 138px minmax(0, 1fr);
+  gap: 34px; padding: 26px 0;
+  border-bottom: 1px solid var(--regua);
+}
+.posto:first-child { padding-top: 0; }
+.posto:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.quando { font-size: 13.5px; color: var(--calmo); font-variant-numeric: tabular-nums; padding-top: 2px; }
+
+.posto h3 { margin: 0 0 3px; font-size: 18px; font-weight: 700; letter-spacing: -.015em; }
+.posto .papel { margin: 0 0 4px; font-size: 15px; font-weight: 500; }
+.posto .onde { margin: 0 0 14px; font-size: 13.5px; color: var(--calmo); }
+.posto ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.posto li {
+  font-size: 15px; line-height: 1.55; max-width: 58ch;
+  padding-left: 17px; position: relative; color: #2A2E32;
+}
+/* O marcador é um traço, não um ponto: cada linha é uma frente de
+   trabalho, não um item de compra. */
+.posto li::before {
+  content: ""; position: absolute; left: 0; top: .68em;
+  width: 9px; height: 1.5px; background: var(--dev);
+}
+.posto .pilha {
+  margin: 14px 0 0; display: flex; gap: 7px; flex-wrap: wrap;
+}
+.posto .pilha span {
+  font-size: 12.5px; font-weight: 500; color: var(--calmo);
+  border: 1px solid var(--regua); border-radius: 4px; padding: 3px 9px;
+  background: #fff;
+}
+
+/* =======================================================================
+   3 · PROJETOS — as duas versões da faixa
+   ======================================================================= */
+.projetos-intro { margin: -14px 0 34px; font-size: 16px; color: var(--calmo); max-width: 56ch; }
+
+/* -----------------------------------------------------------------------
+   VERSÃO A — cartão centralizado
+   A cor do sistema vira o fundo do cartão. A página continua clara em
+   volta, e o fundo animado aparece entre um projeto e outro.
+   ----------------------------------------------------------------------- */
+.cartoes { display: grid; gap: 22px; }
+
+.cartao {
+  background: var(--fundo); color: var(--texto);
+  border-radius: 14px; padding: 38px 40px;
+  overflow: hidden;
+}
+.cartao a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
+.cartao .grade { display: grid; grid-template-columns: 1fr 1.08fr; gap: 40px; align-items: center; }
+.cartao.espelho .col-texto { grid-column: 2; grid-row: 1; }
+.cartao.espelho .col-print { grid-column: 1; grid-row: 1; }
+
+/* -----------------------------------------------------------------------
+   VERSÃO B — faixa que atravessa a tela, conteúdo estreito
+   A cor continua sangrando de ponta a ponta. Só o miolo encolheu.
+   ----------------------------------------------------------------------- */
+.faixa { background: var(--fundo); color: var(--texto); padding: 62px 0; }
+.faixa a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
+.faixa .grade { display: grid; grid-template-columns: 1fr 1.08fr; gap: 46px; align-items: center; }
+.faixa.espelho .col-texto { grid-column: 2; grid-row: 1; }
+.faixa.espelho .col-print { grid-column: 1; grid-row: 1; }
+
+/* --- o miolo, igual nas duas versões --- */
+.ficha-faixa {
+  display: flex; align-items: baseline; gap: 13px;
+  padding-bottom: 11px; margin-bottom: 18px; border-bottom: 1px solid var(--borda);
+}
+.nome { margin: 0; font-size: 31px; font-weight: 800; letter-spacing: -.022em; line-height: 1; }
+.paraquem { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+.situacao {
+  margin: 0 0 0 auto; font-size: 11.5px; font-weight: 600;
+  border: 1px solid var(--borda); border-radius: 999px; padding: 3px 10px; color: var(--calmo-tema);
+}
+.resumo { font-size: 16px; margin: 0 0 22px; max-width: 46ch; line-height: 1.55; }
+
+.numeros { display: flex; gap: 32px; margin-bottom: 26px; flex-wrap: wrap; }
+.num b { display: block; font-size: 23px; font-weight: 700; color: var(--destaque); letter-spacing: -.015em; }
+.num span { font-size: 12px; color: var(--calmo-tema); display: block; max-width: 16ch; line-height: 1.35; }
+
+.botoes { display: flex; gap: 11px; align-items: center; flex-wrap: wrap; }
+.cta {
+  background: var(--ctaFundo); color: var(--ctaTexto); text-decoration: none;
+  font-weight: 600; font-size: 14px; padding: 10px 19px; border-radius: 6px;
+}
+.cta.fantasma { background: transparent; color: var(--texto); border: 1px solid var(--borda); }
+.fechado { margin: 0; font-size: 13px; color: var(--calmo-tema); }
+
+.col-print img {
+  width: 100%; height: auto; display: block;
+  border-radius: 8px; border: 1px solid var(--borda);
+}
+.col-print figure { margin: 0; }
+
+/* =======================================================================
+   CONTATO — a última faixa, na cor da casa
+   ======================================================================= */
+.fechamento { background: var(--dev); color: #fff; padding: 58px 0 52px; margin-top: 76px; }
+.fechamento .linha { display: grid; grid-template-columns: 1fr auto; gap: 52px; align-items: end; }
+.canais { display: flex; flex-direction: column; gap: 15px; }
+.canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.canal a {
+  font-size: 25px; font-weight: 600; letter-spacing: -.022em; color: #fff;
+  text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.3); padding-bottom: 3px;
+}
+.canal a:hover { border-bottom-color: #fff; }
+.canal .via { font-size: 13px; color: rgba(255,255,255,.85); }
+.perfis { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+.perfis a { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.9); text-decoration: none; }
+.perfis a:hover { color: #fff; }
+.assinatura {
+  margin-top: 40px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.22);
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  font-size: 13px; color: rgba(255,255,255,.88);
+}
+.assinatura .marca, .assinatura .marca-dev { color: #fff; }
+
+/* =======================================================================
+   A RÉGUA DO PROTÓTIPO — some no site de verdade
+   ======================================================================= */
+.proto-aviso {
+  margin: 0; padding: 9px var(--lado); background: #15171A; color: #FAFAF7;
+  font-size: 12.5px; text-align: center; position: relative; z-index: 30;
+}
+.proto-aviso b { color: #F3B843; }
+
+.divisor { padding: 66px 0 0; }
+.divisor .caixa {
+  max-width: var(--pagina); margin: 0 auto;
+  border: 1px dashed #B9BCB4; border-radius: 10px; padding: 22px 26px; background: #fff;
+}
+.divisor h2 { margin: 0 0 7px; font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+.divisor p { margin: 0; font-size: 14.5px; color: var(--calmo); max-width: 68ch; line-height: 1.55; }
+.divisor .medida { display: block; margin-top: 9px; font-size: 13px; color: #7A7F83; }
+
+/* =======================================================================
+   TELAS ESTREITAS
+   ======================================================================= */
+@media (max-width: 900px) {
+  .sobre .grade { grid-template-columns: 1fr; gap: 36px; }
+  .cartao .grade, .cartao.espelho .grade,
+  .faixa .grade, .faixa.espelho .grade { grid-template-columns: 1fr; gap: 26px; }
+  .cartao.espelho .col-texto, .cartao.espelho .col-print,
+  .faixa.espelho .col-texto, .faixa.espelho .col-print { grid-column: 1; grid-row: auto; }
+  .posto { grid-template-columns: 1fr; gap: 8px; }
+  .fechamento .linha { grid-template-columns: 1fr; gap: 30px; align-items: start; }
+  .perfis { flex-direction: row; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .abertura h1 { font-size: 33px; }
+  .abertura { padding: 56px 0 48px; }
+  .cartao { padding: 26px 24px; }
+  nav { gap: 16px; font-size: 13px; }
+}
+@media (max-width: 620px) {
+  :root { --lado: 20px; }
+  .topo { flex-wrap: wrap; }
+  .canal a { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<p class="proto-aviso">
+  Protótipo descartável · <b>mockups/v3-estrutura.html</b> · não é o site.
+  Role até o fim: a seção de projetos aparece duas vezes, na versão A e na versão B.
+</p>
+
+<!-- O fundo animado. Fica atrás de tudo, fixo, e não recebe clique. -->
+<div class="trilhos" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+<header class="casca-topo">
+  <div class="wrap topo">
+    <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    <nav>
+      <a href="#sobre">Sobre</a>
+      <a href="#experiencia">Experiência</a>
+      <a href="#projetos">Projetos</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <p class="idioma"><b>PT</b> · EN</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= ABERTURA ================= -->
+  <div class="wrap abertura">
+    <h1>Os sistemas que eu construí.</h1>
+    <p>Cada um com print, explicação em português comum e, quando o sistema é público, link para entrar e clicar.</p>
+  </div>
+
+  <!-- ================= 1 · SOBRE ================= -->
+  <section class="secao sobre wrap" id="sobre">
+    <h2>Sobre</h2>
+    <div class="grade">
+      <div>
+        <p class="lede">Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.</p>
+        <p class="corpo">Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas, desde 2023. Comecei numa plataforma interna de RH escrita em Go. Hoje estou no backend da Binance: carteira, saldo, depósito e saque, dados de mercado e os fluxos de compliance.</p>
+        <p class="corpo">Tenho 23 anos e estou terminando a faculdade de Ciência da Computação na PUC-RS.</p>
+        <p class="corpo">Os quatro sistemas aqui embaixo são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.</p>
+      </div>
+      <aside class="rail">
+        <dl>
+          <div><dt>Onde</dt><dd>Porto Alegre, Brasil · GMT−3</dd></div>
+          <div><dt>Trabalho</dt><dd>Backend na Ambush · Austin, Texas · remoto</dd></div>
+          <div><dt>Stack</dt><dd>Java · Spring Boot · Go · PostgreSQL</dd></div>
+          <div><dt>Inglês</dt><dd>Fluente</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= 2 · EXPERIÊNCIA ================= -->
+  <section class="secao wrap" id="experiencia">
+    <h2>Experiência</h2>
+    <div class="linhadotempo">
+
+      <article class="posto">
+        <p class="quando">2023 — hoje</p>
+        <div>
+          <h3>Ambush</h3>
+          <p class="papel">Desenvolvedor backend</p>
+          <p class="onde">Austin, Texas · remoto</p>
+          <ul>
+            <li>Backend da Binance: carteira, saldo, depósito e saque, dados de mercado e os fluxos de compliance.</li>
+            <li>Antes disso, a plataforma interna de RH da empresa, escrita em Go — foi por onde entrei.</li>
+          </ul>
+          <p class="pilha"><span>Java</span><span>Spring Boot</span><span>Go</span><span>PostgreSQL</span></p>
+        </div>
+      </article>
+
+      <article class="posto">
+        <p class="quando">terminando</p>
+        <div>
+          <h3>PUC-RS</h3>
+          <p class="papel">Ciência da Computação</p>
+          <p class="onde">Porto Alegre, Brasil</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= 3 · PROJETOS — VERSÃO A ================= -->
+  <section class="secao wrap" id="projetos">
+    <h2>Projetos</h2>
+    <p class="projetos-intro">Quatro sistemas construídos fora do expediente, cada um inteiro e sozinho.</p>
+
+    <div class="cartoes">
+
+      <!-- REVY -->
+      <article class="cartao" style="--fundo:#111111;--texto:#EAF0EA;--borda:#2A322C;--destaque:#7FBFA3;--ctaFundo:#7FBFA3;--ctaTexto:#111111;--calmo-tema:#9AA39D">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Revy</h3>
+              <p class="paraquem">Loja de motos usadas</p>
+              <p class="situacao">no ar</p>
+            </div>
+            <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa a moto do estoque, responde preço e condição, e passa para uma pessoa quando o assunto sai do roteiro.</p>
+            <div class="botoes">
+              <a class="cta" href="#">Abrir a Revy</a>
+              <a class="cta fantasma" href="#">Ver o projeto</a>
+            </div>
+          </div>
+          <div class="col-print">
+            <figure><img src="/public/prints/revy/01-visao-geral.png" alt="Painel do lojista com os indicadores de estoque e de tráfego." loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+      <!-- BDDENTE -->
+      <article class="cartao espelho" style="--fundo:#5A21B4;--texto:#F4EEFC;--borda:#7E4EC0;--destaque:#D9C4F5;--ctaFundo:#FFFFFF;--ctaTexto:#4A1A8C;--calmo-tema:#CBBCE8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">BDDente</h3>
+              <p class="paraquem">Consultório odontológico</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a 2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup foram escopo do primeiro dia, não fase dois.</p>
+            <div class="numeros">
+              <div class="num"><b>~30</b><span>anos de histórico migrados</span></div>
+              <div class="num"><b>5.559</b><span>pacientes no cadastro histórico</span></div>
+              <div class="num"><b>914</b><span>testes passando</span></div>
+            </div>
+            <div class="botoes">
+              <p class="fechado">Sistema fechado, roda no consultório.</p>
+              <a class="cta fantasma" href="#">Ver o projeto</a>
+            </div>
+          </div>
+          <div class="col-print">
+            <figure><img src="/public/prints/bddente/01-agenda-semana.png" alt="Agenda da semana do consultório." loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+      <!-- OFFICE TIMESHEET -->
+      <article class="cartao" style="--fundo:#ECECEC;--texto:#1D2724;--borda:#C9CFCC;--destaque:#CB6D31;--ctaFundo:#2E3D38;--ctaTexto:#FFFFFF;--calmo-tema:#55605C">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Office Timesheet</h3>
+              <p class="paraquem">Escritório de arquitetura</p>
+              <p class="situacao">fechado</p>
+            </div>
+            <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada projeto custou. Tem um assistente que responde as perguntas chatas de segunda-feira sem ninguém abrir sete telas.</p>
+            <div class="numeros">
+              <div class="num"><b>1.452</b><span>casos de teste, contra Postgres real no CI</span></div>
+              <div class="num"><b>148</b><span>endpoints HTTP</span></div>
+              <div class="num"><b>40</b><span>tabelas no banco</span></div>
+            </div>
+            <div class="botoes">
+              <p class="fechado">Sistema fechado, interno do escritório.</p>
+              <a class="cta fantasma" href="#">Ver o projeto</a>
+            </div>
+          </div>
+          <div class="col-print">
+            <figure><img src="/public/prints/office-timesheet/08-dashboard-admin.png" alt="Painel do administrador com as horas da equipe." loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+      <!-- AUTOTUNE -->
+      <article class="cartao espelho" style="--fundo:#10312F;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#F3B843;--ctaFundo:#F3B843;--ctaTexto:#10312F;--calmo-tema:#9FBCB8">
+        <div class="grade">
+          <div class="col-texto">
+            <div class="ficha-faixa">
+              <h3 class="nome">Autotune</h3>
+              <p class="paraquem">Quem grava voz</p>
+              <p class="situacao">publicado</p>
+            </div>
+            <p class="resumo">O que o Auto-Tune faz, feito do zero em C++. Dois motores de correção com o mesmo deslocamento: um preserva a voz da pessoa, o outro preserva a latência.</p>
+            <div class="numeros">
+              <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+              <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+              <div class="num"><b>340×</b><span>de diferença entre os dois motores</span></div>
+            </div>
+            <div class="botoes">
+              <a class="cta" href="#">Baixar o plugin</a>
+              <a class="cta fantasma" href="#">Ver o projeto</a>
+            </div>
+          </div>
+          <div class="col-print">
+            <figure><img src="/public/prints/autotune/01-plugin-cantando-v3.png" alt="Plugin em funcionamento durante o canto." loading="lazy"></figure>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= DIVISOR ================= -->
+  <div class="divisor">
+    <div class="caixa">
+      <h2>↑ Versão A — cartão centralizado &nbsp;·&nbsp; ↓ Versão B — faixa atravessando a tela</h2>
+      <p>
+        Mesmo conteúdo, mesmas cores, mesma largura de miolo. O que muda é onde a cor do sistema para.
+        Na A ela fecha num cartão e o fundo animado continua aparecendo entre um projeto e outro.
+        Na B ela sangra de ponta a ponta da tela e o fundo animado fica escondido atrás dela.
+        <span class="medida">Miolo em 1000px nas duas — hoje o site abre em 1180px.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ================= 3 · PROJETOS — VERSÃO B ================= -->
+  <div style="padding-top:34px">
+
+    <!-- REVY -->
+    <section class="faixa" style="--fundo:#111111;--texto:#EAF0EA;--borda:#2A322C;--destaque:#7FBFA3;--ctaFundo:#7FBFA3;--ctaTexto:#111111;--calmo-tema:#9AA39D">
+      <div class="wrap grade">
+        <div class="col-texto">
+          <div class="ficha-faixa">
+            <h3 class="nome">Revy</h3>
+            <p class="paraquem">Loja de motos usadas</p>
+            <p class="situacao">no ar</p>
+          </div>
+          <p class="resumo">Quem responde o cliente no WhatsApp é o sistema. Ele puxa a moto do estoque, responde preço e condição, e passa para uma pessoa quando o assunto sai do roteiro.</p>
+          <div class="botoes">
+            <a class="cta" href="#">Abrir a Revy</a>
+            <a class="cta fantasma" href="#">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print">
+          <figure><img src="/public/prints/revy/01-visao-geral.png" alt="Painel do lojista com os indicadores de estoque e de tráfego." loading="lazy"></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- BDDENTE -->
+    <section class="faixa espelho" style="--fundo:#5A21B4;--texto:#F4EEFC;--borda:#7E4EC0;--destaque:#D9C4F5;--ctaFundo:#FFFFFF;--ctaTexto:#4A1A8C;--calmo-tema:#CBBCE8">
+      <div class="wrap grade">
+        <div class="col-texto">
+          <div class="ficha-faixa">
+            <h3 class="nome">BDDente</h3>
+            <p class="paraquem">Consultório odontológico</p>
+            <p class="situacao">fechado</p>
+          </div>
+          <p class="resumo">Substituiu um FoxPro que rodou no consultório de 1996 a 2024. Trinta anos de prontuário entraram junto — migração, LGPD e backup foram escopo do primeiro dia, não fase dois.</p>
+          <div class="numeros">
+            <div class="num"><b>~30</b><span>anos de histórico migrados</span></div>
+            <div class="num"><b>5.559</b><span>pacientes no cadastro histórico</span></div>
+            <div class="num"><b>914</b><span>testes passando</span></div>
+          </div>
+          <div class="botoes">
+            <p class="fechado">Sistema fechado, roda no consultório.</p>
+            <a class="cta fantasma" href="#">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print">
+          <figure><img src="/public/prints/bddente/01-agenda-semana.png" alt="Agenda da semana do consultório." loading="lazy"></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- OFFICE TIMESHEET -->
+    <section class="faixa" style="--fundo:#ECECEC;--texto:#1D2724;--borda:#C9CFCC;--destaque:#CB6D31;--ctaFundo:#2E3D38;--ctaTexto:#FFFFFF;--calmo-tema:#55605C">
+      <div class="wrap grade">
+        <div class="col-texto">
+          <div class="ficha-faixa">
+            <h3 class="nome">Office Timesheet</h3>
+            <p class="paraquem">Escritório de arquitetura</p>
+            <p class="situacao">fechado</p>
+          </div>
+          <p class="resumo">Saber onde o tempo da equipe foi parar e quanto cada projeto custou. Tem um assistente que responde as perguntas chatas de segunda-feira sem ninguém abrir sete telas.</p>
+          <div class="numeros">
+            <div class="num"><b>1.452</b><span>casos de teste, contra Postgres real no CI</span></div>
+            <div class="num"><b>148</b><span>endpoints HTTP</span></div>
+            <div class="num"><b>40</b><span>tabelas no banco</span></div>
+          </div>
+          <div class="botoes">
+            <p class="fechado">Sistema fechado, interno do escritório.</p>
+            <a class="cta fantasma" href="#">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print">
+          <figure><img src="/public/prints/office-timesheet/08-dashboard-admin.png" alt="Painel do administrador com as horas da equipe." loading="lazy"></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTOTUNE -->
+    <section class="faixa espelho" style="--fundo:#10312F;--texto:#E4F2F0;--borda:#2A5A56;--destaque:#F3B843;--ctaFundo:#F3B843;--ctaTexto:#10312F;--calmo-tema:#9FBCB8">
+      <div class="wrap grade">
+        <div class="col-texto">
+          <div class="ficha-faixa">
+            <h3 class="nome">Autotune</h3>
+            <p class="paraquem">Quem grava voz</p>
+            <p class="situacao">publicado</p>
+          </div>
+          <p class="resumo">O que o Auto-Tune faz, feito do zero em C++. Dois motores de correção com o mesmo deslocamento: um preserva a voz da pessoa, o outro preserva a latência.</p>
+          <div class="numeros">
+            <div class="num"><b>61,72 ms</b><span>TD-PSOLA, preserva os formantes</span></div>
+            <div class="num"><b>0,18 ms</b><span>ponteiro móvel, 8 amostras fixas</span></div>
+            <div class="num"><b>340×</b><span>de diferença entre os dois motores</span></div>
+          </div>
+          <div class="botoes">
+            <a class="cta" href="#">Baixar o plugin</a>
+            <a class="cta fantasma" href="#">Ver o projeto</a>
+          </div>
+        </div>
+        <div class="col-print">
+          <figure><img src="/public/prints/autotune/01-plugin-cantando-v3.png" alt="Plugin em funcionamento durante o canto." loading="lazy"></figure>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+<!-- ================= CONTATO ================= -->
+<section class="fechamento" id="contato">
+  <div class="wrap">
+    <div class="linha">
+      <div class="canais">
+        <p class="canal"><a href="#">bielcheeeeee@gmail.com</a></p>
+        <p class="canal"><a href="#">(51) 98033-6365</a><span class="via">chama no WhatsApp</span></p>
+      </div>
+      <div class="perfis">
+        <a href="#">GitHub</a>
+        <a href="#">LinkedIn</a>
+      </div>
+    </div>
+    <div class="assinatura">
+      <span>Gabriel Cherubini · Porto Alegre · GMT−3</span>
+      <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+    </div>
+  </div>
+</section>
+
+<script>
+// A marcação da seção ativa no topo. No site vira um componente client
+// pequeno; aqui é só para o protótipo mostrar o comportamento.
+const alvos = [...document.querySelectorAll('main section[id], #contato')]
+const elos = new Map([...document.querySelectorAll('nav a')].map(a => [a.getAttribute('href').slice(1), a]))
+const obs = new IntersectionObserver(entradas => {
+  for (const e of entradas) {
+    if (!e.isIntersecting) continue
+    elos.forEach(a => a.removeAttribute('aria-current'))
+    elos.get(e.target.id)?.setAttribute('aria-current', 'true')
+  }
+}, { rootMargin: '-20% 0px -70% 0px' })
+alvos.forEach(s => obs.observe(s))
+</script>
+
+</body>
+</html>

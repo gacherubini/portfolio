@@ -24,10 +24,13 @@ describe('a regra da folha', () => {
     expect(errados).toEqual([])
   })
 
-  it('mantém o padding lateral de .wrap no Sobre', () => {
-    const regraSobre = folha.match(/\.sobre\s*\{([^}]*)\}/)?.[1] ?? ''
-    expect(regraSobre).toContain('padding-block: 84px 92px')
-    expect(regraSobre).not.toMatch(/padding\s*:/)
+  it('quem espaça as seções é .secao, e no eixo block', () => {
+    // O Sobre tinha `padding-block` próprio de quando era o último bloco da
+    // home. Hoje ele é uma `.secao` como as outras — e `.secao` divide o
+    // elemento com `.wrap`, então vale a mesma regra: eixo, nunca o atalho.
+    const regraSecao = folha.match(/\.secao\s*\{([^}]*)\}/)?.[1] ?? ''
+    expect(regraSecao).toContain('padding-block: 76px')
+    expect(regraSecao).not.toMatch(/(?:^|;)\s*padding\s*:/)
   })
 
   // As classes que dividem o elemento com `.wrap`, lidas dos componentes: um
@@ -79,8 +82,12 @@ describe('a regra da folha', () => {
   })
 
   it('.wrap só declara a goteira, e no eixo inline', () => {
+    // Era `> 1` porque a goteira do telefone vinha de um segundo `.wrap`
+    // dentro da media query de 560px. Hoje ela é `--lado`, e a regra é uma
+    // só — o que o teste guarda não é a contagem, é que NENHUMA declaração
+    // de `.wrap` use o atalho.
     const regras = [...folha.matchAll(/\.wrap\s*\{([^}]*)\}/g)].map((m) => m[1])
-    expect(regras.length).toBeGreaterThan(1)
+    expect(regras.length).toBeGreaterThan(0)
     for (const r of regras) {
       expect(r).toMatch(/padding-inline:/)
       expect(r).not.toMatch(/(?:^|;)\s*padding\s*:/)
@@ -167,5 +174,29 @@ describe('a regra da folha', () => {
     // onde o filho do grid é a `.placa` e a prancha está dentro dela.
     const regra = folha.match(/\.placas > \.prancha\.aberta,\n\.placas > :has\(\.prancha\.aberta\) \{([^}]*)\}/)?.[1] ?? ''
     expect(regra).toMatch(/grid-column:\s*1 \/ -1/)
+  })
+
+  it('a fita para sob movimento reduzido, mas continua desenhada', () => {
+    // Parar não basta em partícula, que parada vira sujeira — mas a fita é
+    // desenho: sem andar, ela continua sendo o que é.
+    const reduzido = folha.slice(folha.lastIndexOf('@media (prefers-reduced-motion: reduce)'))
+    expect(reduzido).toMatch(/\.pista, \.brilho \{[^}]*animation:\s*none/)
+  })
+
+  it('o caco em repouso já é o primeiro quadro de assentar', () => {
+    // É o que garante que sem JavaScript, e sob movimento reduzido, nada
+    // dependa da animação para a imagem existir.
+    const repouso = folha.match(/^\.caco \{([^}]*)\}/m)?.[1] ?? ''
+    const primeiro = folha.match(/@keyframes assentar \{\s*0%\s*\{([^}]*)\}/)?.[1] ?? ''
+    for (const prop of ['opacity: 0', 'scale(.62)', 'brightness(2.2)']) {
+      expect(repouso, 'repouso').toContain(prop)
+      expect(primeiro, 'quadro 0%').toContain(prop)
+    }
+  })
+
+  it('a fita mora atrás do conteúdo, e o conteúdo declara isso', () => {
+    // `.fita-fundo` é absoluta em `z-index: 0`; sem as três abaixo subindo
+    // para 1, a ordem de pintura passa a depender da ordem do DOM.
+    expect(folha).toMatch(/\.casca-topo, main, \.fechamento \{[^}]*z-index:\s*1/)
   })
 })
