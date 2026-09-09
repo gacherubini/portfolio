@@ -17,9 +17,9 @@ export const sobre: {
   /** Perfis, secundários ao lado do contato. */
   links: { rotulo: string; href: string }[]
 } = {
-  // Reescrito em 09/09/2026 a partir do currículo em PDF. O Sobre subiu para
-  // o topo da home (antes era o último bloco), então "aqui de cima" virou
-  // "aqui embaixo" — os projetos agora vêm depois.
+  // O Sobre subiu para o topo da home em 09/09/2026 — antes era o último
+  // bloco —, e por isso "aqui de cima" virou "aqui embaixo": os projetos
+  // agora vêm depois dele.
   paragrafos: [
     {
       pt: 'Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.',
@@ -30,13 +30,6 @@ export const sobre: {
       // ofício não envelhece, a data de entrada envelhece sozinha todo ano.
       pt: 'Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend da Binance, em Java.',
       en: "I've been programming for more than 5 years. I live in Porto Alegre, Brazil, and work remotely for Ambush, in Austin, Texas. I started in Go and today I work on Binance's backend, in Java.",
-    },
-    {
-      // Entrou em 09/09 com o currículo. Sem ele o Sobre diz onde a pessoa
-      // trabalha e o que ela usa, mas não COMO ela trabalha — e é isso que
-      // separa um perfil de outro na mesma stack.
-      pt: 'É sistema que mexe com dinheiro dos outros. Contrato de API que não pode quebrar, cache que não pode servir saldo velho, erro que aparece no painel antes de aparecer no suporte.',
-      en: 'It’s a system that handles other people’s money. An API contract that can’t break, a cache that can’t serve a stale balance, an error that shows on the dashboard before it shows in support.',
     },
     {
       pt: 'IA é onde minha atenção está hoje, e não como quem usa chat. Construo por dentro: agentes que chamam funções do próprio produto, skills, loops de agente que tocam a tarefa inteira e param exatamente onde precisam de uma pessoa. O assistente do Office Timesheet e o agente de WhatsApp da Revy saíram daí. Este site também.',

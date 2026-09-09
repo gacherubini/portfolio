@@ -14,6 +14,10 @@
  * OS DOIS PROJETOS DA AMBUSH SÃO FASES, NÃO EMPREGOS. Um cartão só, com a
  * fase antiga carregando a própria data no último bloco. Dois cartões
  * repetiriam o nome da empresa e sugeririam duas contratações.
+ *
+ * O ESTÁGIO DE SUPORTE FICOU DE FORA, por decisão do dono em 09/09. Ele
+ * estava no currículo e chegou a entrar aqui; a lista é curta de propósito,
+ * e três meses de suporte não sustentam uma linha ao lado da Ambush.
  */
 import type { Texto } from '@/content/tipos'
 
@@ -71,26 +75,8 @@ export const experiencia: Cargo[] = [
       {
         titulo: { pt: 'Go, antes disso · fev 2023 — jun 2024', en: 'Go, before that · Feb 2023 — Jun 2024' },
         texto: {
-          pt: 'A plataforma interna de RH da empresa, sobre PostgreSQL. Foi por onde entrei.',
-          en: 'The company’s internal HR platform, over PostgreSQL. It’s how I came in.',
-        },
-      },
-    ],
-  },
-
-  {
-    id: 'prefeitura',
-    empresa: 'Prefeitura de Porto Alegre',
-    cargo: { pt: 'Estágio em suporte técnico', en: 'Technical support intern' },
-    periodo: { pt: 'dez 2022 — fev 2023', en: 'Dec 2022 — Feb 2023' },
-    local: { pt: 'Porto Alegre, Brasil', en: 'Porto Alegre, Brazil' },
-    tipo: 'trabalho',
-    blocos: [
-      {
-        titulo: { pt: 'Onde eu comecei', en: 'Where I started' },
-        texto: {
-          pt: 'Três meses do outro lado do balcão, que é de onde se aprende que sistema quebrado tem gente esperando.',
-          en: 'Three months on the other side of the counter, which is where you learn that a broken system has someone waiting.',
+          pt: 'A plataforma interna de RH da empresa.',
+          en: 'The company’s internal HR platform.',
         },
       },
     ],
