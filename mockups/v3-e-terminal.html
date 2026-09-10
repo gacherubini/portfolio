@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v3 — E, o terminal na fita (comp guardado)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*
+  E — O TERMINAL NA FITA. O painel `v3-e` do comparador `app/[lang]/v3/`,
+  congelado em HTML autocontido no dia em que a rota foi apagada (09/09/2026).
+
+  NÃO É PÁGINA DO SITE, e nunca foi: é a direção de identidade que perdeu para
+  a B — ver `docs/superpowers/specs/2026-09-09-portfolio-v3-design.md`, seção 8,
+  para o que ela custa se voltar (dois laranjas, IBM Plex Mono, e a janela de
+  terminal com cursor animado).
+
+  AUTOCONTIDO DE PROPÓSITO. A rota original dependia de `lib/fita.ts`, de
+  `content/` e de um `next/font`; qualquer uma das três mudando em seis meses
+  quebraria o comp em silêncio. Aqui o CSS está embutido, os cinco `d` da fita
+  são literais, os ícones são SVG inline e as duas fontes vêm do Google Fonts.
+  Abre daqui a dois anos com um duplo clique.
+*/
+:root {
+  --casca: #FAFAF7;
+  --tinta: #15171A;
+  --regua: #E4E4DE;
+  --calmo: #585D62;
+  --marca: #0F1317;
+  --dev: #2A4FD7;
+
+  /* A escala da v3: sete degraus em razão ~1,25, no lugar dos 29 tamanhos. */
+  --v3-t1: 13px;
+  --v3-t2: 16px;
+  --v3-t3: 20px;
+  --v3-t4: 25px;
+  --v3-t7: 50px;
+
+  /* DOIS LARANJAS, e o motivo é medido. `#FF5A00` dá 2,99:1 contra a casca:
+     serve para fita, fio e régua, que são decoração, e reprova em qualquer
+     texto. `#C24300` é a mesma matiz escurecida até 4,90:1, e é o único que
+     pode virar letra — ícone ao lado de texto conta como texto. */
+  --laranja: #FF5A00;
+  --laranja-texto: #C24300;
+  --v3-fio: var(--laranja);
+  --cor-icone: var(--laranja-texto);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: #F1F1EC; color: var(--tinta);
+  font-family: Archivo, system-ui, sans-serif; font-size: var(--v3-t2); line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+
+.v3-folha { max-width: 1180px; margin: 0 auto; padding-block: 40px 120px; padding-inline: 24px; }
+.v3-rotulo { max-width: 68ch; margin-bottom: 18px; }
+.v3-rotulo h2 { margin: 0 0 6px; font-size: var(--v3-t3); font-weight: 700; letter-spacing: -.02em; }
+.v3-rotulo p { margin: 0; font-size: var(--v3-t2); line-height: 1.55; color: var(--calmo); }
+
+/* A "tela": a moldura existe só para separar o painel da página em volta. */
+.v3-tela { background: var(--casca); border: 1px solid var(--regua); border-radius: 10px; overflow: hidden; }
+.v3-topo {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding-block: 16px; padding-inline: 40px; border-bottom: 1px solid var(--regua);
+}
+.marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; color: var(--marca); }
+.marca-dev { color: var(--laranja-texto); }
+nav { display: flex; gap: 24px; font-size: 14px; color: var(--calmo); }
+nav a { text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
+nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color: var(--laranja); }
+.idioma { margin: 0; font-size: var(--v3-t1); color: var(--calmo); }
+.idioma [aria-current] { color: var(--tinta); font-weight: 600; }
+.idioma a { text-decoration: none; }
+
+/* --- a abertura, com a janela ------------------------------------------- */
+/* A janela precisa de ar em volta: é ela que a fita atravessa. */
+.v3-hero { position: relative; overflow: hidden; padding-block: 76px 68px; padding-inline: 40px; }
+.v3-hero-texto { position: relative; z-index: 1; }
+
+/* --- a fita -------------------------------------------------------------- */
+/* A máscara é escada, não rampa: cheia embaixo, meia força na faixa do texto
+   de apoio, e dissolvendo no alto, onde ela encostaria no topo grudado. */
+.v3-fita {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  mask-image: linear-gradient(to top, #000 14%, rgba(0,0,0,.55) 46%, rgba(0,0,0,.3) 74%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 14%, rgba(0,0,0,.55) 46%, rgba(0,0,0,.3) 74%, transparent 100%);
+}
+.v3-fita svg { position: absolute; bottom: 0; left: 0; height: 100%; width: 400%; }
+.pista { position: absolute; left: 0; right: 0; height: 100%; }
+/* Velocidades sem divisor comum — 41, 29, 19, 53, 37, todos primos. Com
+   divisor comum o arranjo se recompõe em intervalo curto e o laço ganha
+   batida audível. */
+.pista.l1 { bottom: 0;     animation: fita-derivar 41s linear infinite; }
+.pista.l2 { bottom: -14px; animation: fita-derivar 29s linear infinite reverse; }
+.pista.l3 { bottom: -28px; animation: fita-derivar 19s linear infinite; }
+.pista.l4 { bottom: -42px; animation: fita-derivar 53s linear infinite; }
+.pista.l5 { bottom: -56px; animation: fita-derivar 37s linear infinite; }
+/* Uma volta inteira da pista é exatamente um ciclo do desenho: o quadro final
+   é igual ao inicial e o laço fecha sem emenda. */
+@keyframes fita-derivar { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+/* --- a janela ------------------------------------------------------------ */
+/* Ancorada à esquerda e em 72% da coluna: em largura cheia ela tapa a fita
+   inteira, e a fita é metade da ideia. */
+.v3-term {
+  max-width: 72%;
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  box-shadow: 0 18px 44px -24px rgba(10,10,10,.5);
+}
+.v3-term-barra { background: #1C1C1C; border-radius: 10px 10px 0 0; padding: 11px 16px; display: flex; align-items: center; gap: 14px; }
+.v3-term-luzes { display: inline-flex; gap: 7px; }
+.v3-term-luzes i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+.v3-term-luzes i:nth-child(1) { background: #FF5F57; }
+.v3-term-luzes i:nth-child(2) { background: #FEBC2E; }
+.v3-term-luzes i:nth-child(3) { background: #28C840; }
+.v3-term-caminho { color: #8A8A8A; font-size: var(--v3-t1); }
+
+.v3-term-corpo { background: #0A0A0A; border-radius: 0 0 10px 10px; padding: 30px 30px 26px; position: relative; overflow: hidden; }
+/* O único enfeite do manual que entra, e uma vez só. */
+.v3-term-corpo::after {
+  content: ""; position: absolute; right: 0; bottom: 0; width: 104px; height: 9px;
+  background: repeating-linear-gradient(115deg, var(--laranja) 0 5px, transparent 5px 11px);
+}
+.v3-term-marca { margin: 0 0 12px; color: var(--laranja); font-size: 21px; font-weight: 600; line-height: 1; }
+.v3-term-corpo h1 { margin: 0 0 20px; color: #FFFFFF; font-size: 30px; font-weight: 600; line-height: 1.24; letter-spacing: -.015em; max-width: 24ch; }
+.v3-term-linhas { margin: 0 0 22px; padding: 0; list-style: none; display: grid; gap: 8px; }
+.v3-term-linhas li { color: #D6D6D6; font-size: 14px; line-height: 1.5; }
+.v3-term-linhas span { color: var(--laranja); }
+.v3-term-cursor { margin: 0; color: #8A8A8A; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.v3-term-cursor i { width: 9px; height: 16px; background: var(--laranja); display: block; animation: v3-piscar 1.06s steps(1) infinite; }
+@keyframes v3-piscar { 0%, 50% { opacity: 1 } 50.01%, 100% { opacity: 0 } }
+
+/* --- os ícones ----------------------------------------------------------- */
+.v3-icone { flex: none; vertical-align: -.22em; color: var(--cor-icone); }
+/* Sem moldura, sem cartão: só ícone, rótulo e ar. Uma fileira de ícones em
+   caixas iguais é o kit de cartões que aparece em todo portfólio gerado. */
+.v3-hero .v3-pilha-icones {
+  margin: 34px 0 0; display: flex; flex-wrap: wrap; gap: 14px 30px;
+  font-size: var(--v3-t1); color: var(--calmo); max-width: none;
+}
+.v3-pilha-icones span { display: inline-flex; align-items: center; gap: 9px; }
+
+/* --- as seções ----------------------------------------------------------- */
+.v3-secao { padding-block: 56px; padding-inline: 40px; }
+.v3-secao + .v3-secao { padding-top: 0; }
+.v3-titulo-secao { margin: 0 0 30px; font-size: var(--v3-t1); font-weight: 600; color: var(--tinta); display: flex; align-items: center; gap: 14px; }
+.v3-titulo-secao::after { content: ""; flex: 1; height: 2px; background: var(--v3-fio); }
+
+.v3-sobre { display: grid; grid-template-columns: minmax(0, 1fr) 268px; gap: 64px; align-items: start; }
+.v3-lede { margin: 0 0 22px; font-size: var(--v3-t4); line-height: 1.24; font-weight: 700; letter-spacing: -.025em; max-width: 20ch; }
+.v3-corpo { margin: 0; font-size: var(--v3-t2); line-height: 1.62; max-width: 58ch; color: #2A2E32; }
+
+.v3-rail { border-top: 2px solid var(--laranja); padding-top: 18px; }
+.v3-rail dl { margin: 0; }
+.v3-rail dt { font-size: var(--v3-t1); color: var(--calmo); margin-top: 16px; display: flex; align-items: center; gap: 8px; }
+.v3-rail div:first-child dt { margin-top: 0; }
+.v3-rail dd { margin: 2px 0 0; font-size: var(--v3-t2); font-weight: 500; line-height: 1.4; font-variant-numeric: tabular-nums; }
+
+.v3-perfis {
+  margin: 26px 0 0; padding-top: 18px; border-top: 1px solid var(--regua);
+  display: flex; flex-direction: column; gap: 11px; font-size: var(--v3-t2);
+}
+.v3-perfis a { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--tinta); font-weight: 500; }
+.v3-perfis a:hover { color: var(--cor-icone); }
+
+/* --- a experiência, com as marcas na coluna da data ---------------------- */
+.v3-posto { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 36px; padding-block: 28px; border-bottom: 1px solid var(--regua); }
+.v3-posto:first-of-type { padding-top: 0; }
+.v3-posto:last-of-type { border-bottom: 0; padding-bottom: 0; }
+/* PROVISÓRIOS: tipografia no lugar do arquivo, só para fechar tamanho e peso.
+   Os dois vão para a mesma altura ótica e para a mesma tinta. */
+.v3-logo { display: block; margin-bottom: 12px; line-height: 1; color: var(--tinta); }
+.v3-logo--ambush { font-family: Georgia, 'Times New Roman', serif; font-size: 20px; letter-spacing: .004em; }
+.v3-logo--pucrs { font-weight: 800; font-size: 18px; letter-spacing: -.035em; }
+.v3-quando { margin: 0; font-size: var(--v3-t1); color: var(--calmo); font-variant-numeric: tabular-nums; }
+.v3-posto h4 { margin: 0 0 3px; font-size: var(--v3-t3); font-weight: 700; letter-spacing: -.02em; }
+.v3-papel { margin: 0 0 4px; font-size: var(--v3-t2); font-weight: 500; }
+.v3-onde { margin: 0 0 16px; font-size: var(--v3-t1); color: var(--calmo); }
+
+.v3-blocos { margin: 0; display: grid; gap: 15px; }
+.v3-blocos dt { font-size: var(--v3-t2); font-weight: 700; letter-spacing: -.012em; margin-bottom: 3px; display: flex; align-items: center; gap: 9px; }
+.v3-blocos dd { margin: 0; font-size: var(--v3-t2); line-height: 1.58; max-width: 62ch; color: #3A3E42; }
+.v3-pilha { margin: 16px 0 0; display: flex; gap: 7px; flex-wrap: wrap; }
+.v3-pilha span { font-size: var(--v3-t1); font-weight: 500; color: var(--calmo); border: 1px solid var(--regua); border-radius: 4px; padding: 3px 9px; background: #fff; }
+
+@media (max-width: 900px) {
+  .v3-hero { padding-block: 56px 48px; padding-inline: 24px; }
+  .v3-topo, .v3-secao { padding-inline: 24px; }
+  .v3-sobre { grid-template-columns: 1fr; gap: 36px; }
+  .v3-posto { grid-template-columns: 1fr; gap: 10px; }
+  .v3-term { max-width: 100%; }
+  .v3-term-corpo { padding: 22px 18px; }
+  .v3-term-corpo h1 { font-size: 23px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pista, .v3-term-cursor i { animation: none; }
+}
+</style>
+</head>
+<body>
+<main class="v3-folha">
+  <div class="v3-rotulo">
+    <h2>E — O terminal na fita</h2>
+    <p>A identidade da D com o terminal de volta e os ícones do manual. A fita continua correndo, em cinco lâminas, e a janela se assenta nela em vez de flutuar no vazio. Plex Mono só dentro do terminal; a prosa fica em Archivo. <b>Guardada, não descartada</b> — perdeu para a B em 09/09/2026, e o que ela custa para voltar está na seção 8 da spec da v3.</p>
+  </div>
+
+  <article class="v3-tela">
+    <div class="v3-topo">
+      <span class="marca">gacherubini<span class="marca-dev">.dev</span></span>
+      <nav>
+        <a href="#" aria-current="page">Sobre</a>
+        <a href="#">Experiência</a>
+        <a href="#">Projetos</a>
+        <a href="#">Contato</a>
+      </nav>
+      <p class="idioma"><span aria-current="true">PT</span> / <a href="#">EN</a></p>
+    </div>
+
+    <div class="v3-hero">
+      <div class="v3-fita" aria-hidden="true">
+        <div class="pista l5">
+          <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+            <path d="M0 117.7 L26 92.6 L52 68.8 L78 66.1 L104 66.3 L130 62.7 L156 59.1 L182 68.7 L208 58.8 L234 48.8 L260 26.0 L286 27.6 L312 32.7 L338 45.4 L364 51.7 L390 43.7 L416 56.7 L442 64.0 L468 87.0 L494 89.0 L520 92.0 L546 77.1 L572 75.8 L598 81.1 L624 98.2 L650 110.8 L676 138.6 L702 152.1 L728 173.9 L754 186.0 L780 180.4 L806 181.1 L832 183.4 L858 160.2 L884 135.9 L910 136.6 L936 124.9 L962 129.3 L988 121.4 L1014 105.2 L1040 100.5 L1066 100.0 L1092 107.1 L1118 109.8 L1144 109.4 L1170 92.2 L1196 80.9 L1222 78.0 L1248 77.6 L1274 76.4 L1300 90.1 L1326 93.9 L1352 103.3 L1378 114.3 L1404 119.2 L1430 117.7 L1440 117.7 L1466 92.6 L1492 68.8 L1518 66.1 L1544 66.3 L1570 62.7 L1596 59.1 L1622 68.7 L1648 58.8 L1674 48.8 L1700 26.0 L1726 27.6 L1752 32.7 L1778 45.4 L1804 51.7 L1830 43.7 L1856 56.7 L1882 64.0 L1908 87.0 L1934 89.0 L1960 92.0 L1986 77.1 L2012 75.8 L2038 81.1 L2064 98.2 L2090 110.8 L2116 138.6 L2142 152.1 L2168 173.9 L2194 186.0 L2220 180.4 L2246 181.1 L2272 183.4 L2298 160.2 L2324 135.9 L2350 136.6 L2376 124.9 L2402 129.3 L2428 121.4 L2454 105.2 L2480 100.5 L2506 100.0 L2532 107.1 L2558 109.8 L2584 109.4 L2610 92.2 L2636 80.9 L2662 78.0 L2688 77.6 L2714 76.4 L2740 90.1 L2766 93.9 L2792 103.3 L2818 114.3 L2844 119.2 L2870 117.7 L2880 117.7 L2906 92.6 L2932 68.8 L2958 66.1 L2984 66.3 L3010 62.7 L3036 59.1 L3062 68.7 L3088 58.8 L3114 48.8 L3140 26.0 L3166 27.6 L3192 32.7 L3218 45.4 L3244 51.7 L3270 43.7 L3296 56.7 L3322 64.0 L3348 87.0 L3374 89.0 L3400 92.0 L3426 77.1 L3452 75.8 L3478 81.1 L3504 98.2 L3530 110.8 L3556 138.6 L3582 152.1 L3608 173.9 L3634 186.0 L3660 180.4 L3686 181.1 L3712 183.4 L3738 160.2 L3764 135.9 L3790 136.6 L3816 124.9 L3842 129.3 L3868 121.4 L3894 105.2 L3920 100.5 L3946 100.0 L3972 107.1 L3998 109.8 L4024 109.4 L4050 92.2 L4076 80.9 L4102 78.0 L4128 77.6 L4154 76.4 L4180 90.1 L4206 93.9 L4232 103.3 L4258 114.3 L4284 119.2 L4310 117.7 L4320 117.7 L4346 92.6 L4372 68.8 L4398 66.1 L4424 66.3 L4450 62.7 L4476 59.1 L4502 68.7 L4528 58.8 L4554 48.8 L4580 26.0 L4606 27.6 L4632 32.7 L4658 45.4 L4684 51.7 L4710 43.7 L4736 56.7 L4762 64.0 L4788 87.0 L4814 89.0 L4840 92.0 L4866 77.1 L4892 75.8 L4918 81.1 L4944 98.2 L4970 110.8 L4996 138.6 L5022 152.1 L5048 173.9 L5074 186.0 L5100 180.4 L5126 181.1 L5152 183.4 L5178 160.2 L5204 135.9 L5230 136.6 L5256 124.9 L5282 129.3 L5308 121.4 L5334 105.2 L5360 100.5 L5386 100.0 L5412 107.1 L5438 109.8 L5464 109.4 L5490 92.2 L5516 80.9 L5542 78.0 L5568 77.6 L5594 76.4 L5620 90.1 L5646 93.9 L5672 103.3 L5698 114.3 L5724 119.2 L5750 117.7 L5760 117.7" stroke="#FF5A00" stroke-opacity="0.24" stroke-width="1" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div class="pista l4">
+          <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+            <path d="M0 84.5 L16 75.6 L32 83.7 L48 88.2 L64 99.2 L80 116.7 L96 141.1 L112 162.4 L128 182.9 L144 186.0 L160 181.3 L176 175.5 L192 171.5 L208 158.5 L224 156.5 L240 165.0 L256 161.4 L272 154.5 L288 141.4 L304 135.2 L320 114.8 L336 89.3 L352 84.5 L368 75.6 L384 77.6 L400 77.4 L416 63.3 L432 67.1 L448 79.3 L464 73.9 L480 83.5 L496 97.5 L512 118.4 L528 122.5 L544 128.3 L560 117.4 L576 103.7 L592 99.6 L608 108.5 L624 107.7 L640 104.0 L656 105.7 L672 111.7 L688 112.5 L704 90.7 L720 89.2 L736 100.4 L752 114.5 L768 116.6 L784 106.8 L800 85.3 L816 64.5 L832 64.9 L848 59.6 L864 49.0 L880 65.0 L896 71.3 L912 74.2 L928 69.0 L944 52.0 L960 33.0 L976 27.9 L992 26.0 L1008 29.0 L1024 45.3 L1040 45.8 L1056 74.6 L1072 95.9 L1088 106.6 L1104 103.2 L1120 91.9 L1136 98.0 L1152 104.5 L1168 111.4 L1184 114.9 L1200 124.3 L1216 126.4 L1232 124.7 L1248 119.4 L1264 108.5 L1280 97.0 L1296 92.3 L1312 79.6 L1328 80.7 L1344 81.6 L1360 78.2 L1376 74.4 L1392 73.9 L1408 79.4 L1424 84.5 L1440 84.5 L1456 75.6 L1472 83.7 L1488 88.2 L1504 99.2 L1520 116.7 L1536 141.1 L1552 162.4 L1568 182.9 L1584 186.0 L1600 181.3 L1616 175.5 L1632 171.5 L1648 158.5 L1664 156.5 L1680 165.0 L1696 161.4 L1712 154.5 L1728 141.4 L1744 135.2 L1760 114.8 L1776 89.3 L1792 84.5 L1808 75.6 L1824 77.6 L1840 77.4 L1856 63.3 L1872 67.1 L1888 79.3 L1904 73.9 L1920 83.5 L1936 97.5 L1952 118.4 L1968 122.5 L1984 128.3 L2000 117.4 L2016 103.7 L2032 99.6 L2048 108.5 L2064 107.7 L2080 104.0 L2096 105.7 L2112 111.7 L2128 112.5 L2144 90.7 L2160 89.2 L2176 100.4 L2192 114.5 L2208 116.6 L2224 106.8 L2240 85.3 L2256 64.5 L2272 64.9 L2288 59.6 L2304 49.0 L2320 65.0 L2336 71.3 L2352 74.2 L2368 69.0 L2384 52.0 L2400 33.0 L2416 27.9 L2432 26.0 L2448 29.0 L2464 45.3 L2480 45.8 L2496 74.6 L2512 95.9 L2528 106.6 L2544 103.2 L2560 91.9 L2576 98.0 L2592 104.5 L2608 111.4 L2624 114.9 L2640 124.3 L2656 126.4 L2672 124.7 L2688 119.4 L2704 108.5 L2720 97.0 L2736 92.3 L2752 79.6 L2768 80.7 L2784 81.6 L2800 78.2 L2816 74.4 L2832 73.9 L2848 79.4 L2864 84.5 L2880 84.5 L2896 75.6 L2912 83.7 L2928 88.2 L2944 99.2 L2960 116.7 L2976 141.1 L2992 162.4 L3008 182.9 L3024 186.0 L3040 181.3 L3056 175.5 L3072 171.5 L3088 158.5 L3104 156.5 L3120 165.0 L3136 161.4 L3152 154.5 L3168 141.4 L3184 135.2 L3200 114.8 L3216 89.3 L3232 84.5 L3248 75.6 L3264 77.6 L3280 77.4 L3296 63.3 L3312 67.1 L3328 79.3 L3344 73.9 L3360 83.5 L3376 97.5 L3392 118.4 L3408 122.5 L3424 128.3 L3440 117.4 L3456 103.7 L3472 99.6 L3488 108.5 L3504 107.7 L3520 104.0 L3536 105.7 L3552 111.7 L3568 112.5 L3584 90.7 L3600 89.2 L3616 100.4 L3632 114.5 L3648 116.6 L3664 106.8 L3680 85.3 L3696 64.5 L3712 64.9 L3728 59.6 L3744 49.0 L3760 65.0 L3776 71.3 L3792 74.2 L3808 69.0 L3824 52.0 L3840 33.0 L3856 27.9 L3872 26.0 L3888 29.0 L3904 45.3 L3920 45.8 L3936 74.6 L3952 95.9 L3968 106.6 L3984 103.2 L4000 91.9 L4016 98.0 L4032 104.5 L4048 111.4 L4064 114.9 L4080 124.3 L4096 126.4 L4112 124.7 L4128 119.4 L4144 108.5 L4160 97.0 L4176 92.3 L4192 79.6 L4208 80.7 L4224 81.6 L4240 78.2 L4256 74.4 L4272 73.9 L4288 79.4 L4304 84.5 L4320 84.5 L4336 75.6 L4352 83.7 L4368 88.2 L4384 99.2 L4400 116.7 L4416 141.1 L4432 162.4 L4448 182.9 L4464 186.0 L4480 181.3 L4496 175.5 L4512 171.5 L4528 158.5 L4544 156.5 L4560 165.0 L4576 161.4 L4592 154.5 L4608 141.4 L4624 135.2 L4640 114.8 L4656 89.3 L4672 84.5 L4688 75.6 L4704 77.6 L4720 77.4 L4736 63.3 L4752 67.1 L4768 79.3 L4784 73.9 L4800 83.5 L4816 97.5 L4832 118.4 L4848 122.5 L4864 128.3 L4880 117.4 L4896 103.7 L4912 99.6 L4928 108.5 L4944 107.7 L4960 104.0 L4976 105.7 L4992 111.7 L5008 112.5 L5024 90.7 L5040 89.2 L5056 100.4 L5072 114.5 L5088 116.6 L5104 106.8 L5120 85.3 L5136 64.5 L5152 64.9 L5168 59.6 L5184 49.0 L5200 65.0 L5216 71.3 L5232 74.2 L5248 69.0 L5264 52.0 L5280 33.0 L5296 27.9 L5312 26.0 L5328 29.0 L5344 45.3 L5360 45.8 L5376 74.6 L5392 95.9 L5408 106.6 L5424 103.2 L5440 91.9 L5456 98.0 L5472 104.5 L5488 111.4 L5504 114.9 L5520 124.3 L5536 126.4 L5552 124.7 L5568 119.4 L5584 108.5 L5600 97.0 L5616 92.3 L5632 79.6 L5648 80.7 L5664 81.6 L5680 78.2 L5696 74.4 L5712 73.9 L5728 79.4 L5744 84.5 L5760 84.5" stroke="#FF5A00" stroke-opacity="0.32" stroke-width="1" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div class="pista l3">
+          <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+            <path d="M0 60.6 L20 60.9 L40 52.4 L60 56.0 L80 49.1 L100 39.7 L120 42.5 L140 38.4 L160 26.0 L180 28.6 L200 37.1 L220 67.8 L240 91.7 L260 108.6 L280 121.5 L300 125.7 L320 119.2 L340 114.9 L360 102.0 L380 101.4 L400 97.9 L420 91.8 L440 98.8 L460 103.1 L480 108.4 L500 119.9 L520 121.9 L540 126.7 L560 137.3 L580 152.4 L600 150.9 L620 146.3 L640 130.8 L660 90.2 L680 68.4 L700 41.3 L720 31.4 L740 27.6 L760 32.4 L780 35.5 L800 50.2 L820 72.9 L840 90.9 L860 112.0 L880 107.6 L900 98.3 L920 102.2 L940 101.3 L960 100.7 L980 107.3 L1000 120.3 L1020 124.1 L1040 136.1 L1060 139.3 L1080 129.6 L1100 113.6 L1120 110.2 L1140 113.4 L1160 124.4 L1180 140.4 L1200 162.1 L1220 186.0 L1240 183.0 L1260 179.2 L1280 167.2 L1300 157.2 L1320 142.5 L1340 125.9 L1360 110.5 L1380 90.4 L1400 72.9 L1420 60.6 L1440 60.6 L1460 60.9 L1480 52.4 L1500 56.0 L1520 49.1 L1540 39.7 L1560 42.5 L1580 38.4 L1600 26.0 L1620 28.6 L1640 37.1 L1660 67.8 L1680 91.7 L1700 108.6 L1720 121.5 L1740 125.7 L1760 119.2 L1780 114.9 L1800 102.0 L1820 101.4 L1840 97.9 L1860 91.8 L1880 98.8 L1900 103.1 L1920 108.4 L1940 119.9 L1960 121.9 L1980 126.7 L2000 137.3 L2020 152.4 L2040 150.9 L2060 146.3 L2080 130.8 L2100 90.2 L2120 68.4 L2140 41.3 L2160 31.4 L2180 27.6 L2200 32.4 L2220 35.5 L2240 50.2 L2260 72.9 L2280 90.9 L2300 112.0 L2320 107.6 L2340 98.3 L2360 102.2 L2380 101.3 L2400 100.7 L2420 107.3 L2440 120.3 L2460 124.1 L2480 136.1 L2500 139.3 L2520 129.6 L2540 113.6 L2560 110.2 L2580 113.4 L2600 124.4 L2620 140.4 L2640 162.1 L2660 186.0 L2680 183.0 L2700 179.2 L2720 167.2 L2740 157.2 L2760 142.5 L2780 125.9 L2800 110.5 L2820 90.4 L2840 72.9 L2860 60.6 L2880 60.6 L2900 60.9 L2920 52.4 L2940 56.0 L2960 49.1 L2980 39.7 L3000 42.5 L3020 38.4 L3040 26.0 L3060 28.6 L3080 37.1 L3100 67.8 L3120 91.7 L3140 108.6 L3160 121.5 L3180 125.7 L3200 119.2 L3220 114.9 L3240 102.0 L3260 101.4 L3280 97.9 L3300 91.8 L3320 98.8 L3340 103.1 L3360 108.4 L3380 119.9 L3400 121.9 L3420 126.7 L3440 137.3 L3460 152.4 L3480 150.9 L3500 146.3 L3520 130.8 L3540 90.2 L3560 68.4 L3580 41.3 L3600 31.4 L3620 27.6 L3640 32.4 L3660 35.5 L3680 50.2 L3700 72.9 L3720 90.9 L3740 112.0 L3760 107.6 L3780 98.3 L3800 102.2 L3820 101.3 L3840 100.7 L3860 107.3 L3880 120.3 L3900 124.1 L3920 136.1 L3940 139.3 L3960 129.6 L3980 113.6 L4000 110.2 L4020 113.4 L4040 124.4 L4060 140.4 L4080 162.1 L4100 186.0 L4120 183.0 L4140 179.2 L4160 167.2 L4180 157.2 L4200 142.5 L4220 125.9 L4240 110.5 L4260 90.4 L4280 72.9 L4300 60.6 L4320 60.6 L4340 60.9 L4360 52.4 L4380 56.0 L4400 49.1 L4420 39.7 L4440 42.5 L4460 38.4 L4480 26.0 L4500 28.6 L4520 37.1 L4540 67.8 L4560 91.7 L4580 108.6 L4600 121.5 L4620 125.7 L4640 119.2 L4660 114.9 L4680 102.0 L4700 101.4 L4720 97.9 L4740 91.8 L4760 98.8 L4780 103.1 L4800 108.4 L4820 119.9 L4840 121.9 L4860 126.7 L4880 137.3 L4900 152.4 L4920 150.9 L4940 146.3 L4960 130.8 L4980 90.2 L5000 68.4 L5020 41.3 L5040 31.4 L5060 27.6 L5080 32.4 L5100 35.5 L5120 50.2 L5140 72.9 L5160 90.9 L5180 112.0 L5200 107.6 L5220 98.3 L5240 102.2 L5260 101.3 L5280 100.7 L5300 107.3 L5320 120.3 L5340 124.1 L5360 136.1 L5380 139.3 L5400 129.6 L5420 113.6 L5440 110.2 L5460 113.4 L5480 124.4 L5500 140.4 L5520 162.1 L5540 186.0 L5560 183.0 L5580 179.2 L5600 167.2 L5620 157.2 L5640 142.5 L5660 125.9 L5680 110.5 L5700 90.4 L5720 72.9 L5740 60.6 L5760 60.6" stroke="#FF5A00" stroke-opacity="0.42" stroke-width="1.1" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div class="pista l2">
+          <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+            <path d="M0 98.7 L12 108.2 L24 116.4 L36 120.7 L48 118.1 L60 125.1 L72 126.2 L84 121.3 L96 125.4 L108 129.4 L120 131.7 L132 129.1 L144 133.5 L156 146.3 L168 143.5 L180 137.9 L192 132.4 L204 135.4 L216 133.6 L228 121.9 L240 123.7 L252 120.2 L264 88.9 L276 74.1 L288 67.4 L300 62.8 L312 55.9 L324 57.8 L336 55.1 L348 44.8 L360 33.5 L372 26.0 L384 38.3 L396 62.0 L408 74.0 L420 78.5 L432 93.5 L444 100.6 L456 97.4 L468 98.2 L480 91.7 L492 78.4 L504 72.6 L516 79.6 L528 64.0 L540 65.1 L552 70.3 L564 83.9 L576 99.6 L588 121.1 L600 130.4 L612 141.4 L624 150.0 L636 161.3 L648 163.5 L660 173.6 L672 166.4 L684 149.0 L696 132.8 L708 121.4 L720 118.4 L732 124.4 L744 131.2 L756 139.7 L768 152.2 L780 156.3 L792 145.0 L804 129.7 L816 125.9 L828 110.8 L840 113.9 L852 111.3 L864 114.1 L876 103.2 L888 92.4 L900 97.6 L912 112.3 L924 142.9 L936 146.8 L948 145.6 L960 147.4 L972 139.7 L984 123.1 L996 118.9 L1008 109.1 L1020 98.4 L1032 93.8 L1044 98.9 L1056 83.6 L1068 87.2 L1080 99.4 L1092 110.1 L1104 111.0 L1116 116.9 L1128 124.1 L1140 126.3 L1152 128.0 L1164 135.9 L1176 142.8 L1188 141.1 L1200 142.4 L1212 147.1 L1224 153.6 L1236 161.9 L1248 169.3 L1260 179.6 L1272 186.0 L1284 172.9 L1296 167.4 L1308 153.8 L1320 145.6 L1332 144.9 L1344 131.8 L1356 124.2 L1368 115.0 L1380 112.5 L1392 108.1 L1404 104.1 L1416 100.0 L1428 98.7 L1440 98.7 L1452 108.2 L1464 116.4 L1476 120.7 L1488 118.1 L1500 125.1 L1512 126.2 L1524 121.3 L1536 125.4 L1548 129.4 L1560 131.7 L1572 129.1 L1584 133.5 L1596 146.3 L1608 143.5 L1620 137.9 L1632 132.4 L1644 135.4 L1656 133.6 L1668 121.9 L1680 123.7 L1692 120.2 L1704 88.9 L1716 74.1 L1728 67.4 L1740 62.8 L1752 55.9 L1764 57.8 L1776 55.1 L1788 44.8 L1800 33.5 L1812 26.0 L1824 38.3 L1836 62.0 L1848 74.0 L1860 78.5 L1872 93.5 L1884 100.6 L1896 97.4 L1908 98.2 L1920 91.7 L1932 78.4 L1944 72.6 L1956 79.6 L1968 64.0 L1980 65.1 L1992 70.3 L2004 83.9 L2016 99.6 L2028 121.1 L2040 130.4 L2052 141.4 L2064 150.0 L2076 161.3 L2088 163.5 L2100 173.6 L2112 166.4 L2124 149.0 L2136 132.8 L2148 121.4 L2160 118.4 L2172 124.4 L2184 131.2 L2196 139.7 L2208 152.2 L2220 156.3 L2232 145.0 L2244 129.7 L2256 125.9 L2268 110.8 L2280 113.9 L2292 111.3 L2304 114.1 L2316 103.2 L2328 92.4 L2340 97.6 L2352 112.3 L2364 142.9 L2376 146.8 L2388 145.6 L2400 147.4 L2412 139.7 L2424 123.1 L2436 118.9 L2448 109.1 L2460 98.4 L2472 93.8 L2484 98.9 L2496 83.6 L2508 87.2 L2520 99.4 L2532 110.1 L2544 111.0 L2556 116.9 L2568 124.1 L2580 126.3 L2592 128.0 L2604 135.9 L2616 142.8 L2628 141.1 L2640 142.4 L2652 147.1 L2664 153.6 L2676 161.9 L2688 169.3 L2700 179.6 L2712 186.0 L2724 172.9 L2736 167.4 L2748 153.8 L2760 145.6 L2772 144.9 L2784 131.8 L2796 124.2 L2808 115.0 L2820 112.5 L2832 108.1 L2844 104.1 L2856 100.0 L2868 98.7 L2880 98.7 L2892 108.2 L2904 116.4 L2916 120.7 L2928 118.1 L2940 125.1 L2952 126.2 L2964 121.3 L2976 125.4 L2988 129.4 L3000 131.7 L3012 129.1 L3024 133.5 L3036 146.3 L3048 143.5 L3060 137.9 L3072 132.4 L3084 135.4 L3096 133.6 L3108 121.9 L3120 123.7 L3132 120.2 L3144 88.9 L3156 74.1 L3168 67.4 L3180 62.8 L3192 55.9 L3204 57.8 L3216 55.1 L3228 44.8 L3240 33.5 L3252 26.0 L3264 38.3 L3276 62.0 L3288 74.0 L3300 78.5 L3312 93.5 L3324 100.6 L3336 97.4 L3348 98.2 L3360 91.7 L3372 78.4 L3384 72.6 L3396 79.6 L3408 64.0 L3420 65.1 L3432 70.3 L3444 83.9 L3456 99.6 L3468 121.1 L3480 130.4 L3492 141.4 L3504 150.0 L3516 161.3 L3528 163.5 L3540 173.6 L3552 166.4 L3564 149.0 L3576 132.8 L3588 121.4 L3600 118.4 L3612 124.4 L3624 131.2 L3636 139.7 L3648 152.2 L3660 156.3 L3672 145.0 L3684 129.7 L3696 125.9 L3708 110.8 L3720 113.9 L3732 111.3 L3744 114.1 L3756 103.2 L3768 92.4 L3780 97.6 L3792 112.3 L3804 142.9 L3816 146.8 L3828 145.6 L3840 147.4 L3852 139.7 L3864 123.1 L3876 118.9 L3888 109.1 L3900 98.4 L3912 93.8 L3924 98.9 L3936 83.6 L3948 87.2 L3960 99.4 L3972 110.1 L3984 111.0 L3996 116.9 L4008 124.1 L4020 126.3 L4032 128.0 L4044 135.9 L4056 142.8 L4068 141.1 L4080 142.4 L4092 147.1 L4104 153.6 L4116 161.9 L4128 169.3 L4140 179.6 L4152 186.0 L4164 172.9 L4176 167.4 L4188 153.8 L4200 145.6 L4212 144.9 L4224 131.8 L4236 124.2 L4248 115.0 L4260 112.5 L4272 108.1 L4284 104.1 L4296 100.0 L4308 98.7 L4320 98.7 L4332 108.2 L4344 116.4 L4356 120.7 L4368 118.1 L4380 125.1 L4392 126.2 L4404 121.3 L4416 125.4 L4428 129.4 L4440 131.7 L4452 129.1 L4464 133.5 L4476 146.3 L4488 143.5 L4500 137.9 L4512 132.4 L4524 135.4 L4536 133.6 L4548 121.9 L4560 123.7 L4572 120.2 L4584 88.9 L4596 74.1 L4608 67.4 L4620 62.8 L4632 55.9 L4644 57.8 L4656 55.1 L4668 44.8 L4680 33.5 L4692 26.0 L4704 38.3 L4716 62.0 L4728 74.0 L4740 78.5 L4752 93.5 L4764 100.6 L4776 97.4 L4788 98.2 L4800 91.7 L4812 78.4 L4824 72.6 L4836 79.6 L4848 64.0 L4860 65.1 L4872 70.3 L4884 83.9 L4896 99.6 L4908 121.1 L4920 130.4 L4932 141.4 L4944 150.0 L4956 161.3 L4968 163.5 L4980 173.6 L4992 166.4 L5004 149.0 L5016 132.8 L5028 121.4 L5040 118.4 L5052 124.4 L5064 131.2 L5076 139.7 L5088 152.2 L5100 156.3 L5112 145.0 L5124 129.7 L5136 125.9 L5148 110.8 L5160 113.9 L5172 111.3 L5184 114.1 L5196 103.2 L5208 92.4 L5220 97.6 L5232 112.3 L5244 142.9 L5256 146.8 L5268 145.6 L5280 147.4 L5292 139.7 L5304 123.1 L5316 118.9 L5328 109.1 L5340 98.4 L5352 93.8 L5364 98.9 L5376 83.6 L5388 87.2 L5400 99.4 L5412 110.1 L5424 111.0 L5436 116.9 L5448 124.1 L5460 126.3 L5472 128.0 L5484 135.9 L5496 142.8 L5508 141.1 L5520 142.4 L5532 147.1 L5544 153.6 L5556 161.9 L5568 169.3 L5580 179.6 L5592 186.0 L5604 172.9 L5616 167.4 L5628 153.8 L5640 145.6 L5652 144.9 L5664 131.8 L5676 124.2 L5688 115.0 L5700 112.5 L5712 108.1 L5724 104.1 L5736 100.0 L5748 98.7 L5760 98.7" stroke="#FF5A00" stroke-opacity="0.54" stroke-width="1.2" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div class="pista l1">
+          <svg viewBox="0 0 5760 200" preserveAspectRatio="none" fill="none">
+            <path d="M0 116.1 L14 136.3 L28 147.8 L42 151.2 L56 150.7 L70 139.1 L84 123.3 L98 122.4 L112 111.4 L126 110.2 L140 98.3 L154 65.3 L168 38.8 L182 33.8 L196 26.0 L210 26.7 L224 36.5 L238 51.9 L252 71.6 L266 93.9 L280 118.5 L294 133.6 L308 154.9 L322 169.9 L336 185.6 L350 186.0 L364 183.4 L378 174.2 L392 159.7 L406 146.1 L420 127.6 L434 114.4 L448 110.5 L462 122.5 L476 131.6 L490 140.7 L504 150.8 L518 156.6 L532 162.7 L546 167.3 L560 163.2 L574 162.9 L588 149.5 L602 145.7 L616 135.4 L630 135.7 L644 143.0 L658 153.1 L672 160.0 L686 170.0 L700 161.1 L714 161.0 L728 154.2 L742 137.1 L756 125.1 L770 117.5 L784 104.7 L798 105.9 L812 96.5 L826 88.1 L840 75.4 L854 59.0 L868 51.6 L882 55.0 L896 56.3 L910 60.2 L924 52.6 L938 53.9 L952 66.1 L966 84.6 L980 91.8 L994 90.0 L1008 87.9 L1022 85.1 L1036 86.9 L1050 89.4 L1064 91.7 L1078 103.0 L1092 99.5 L1106 88.4 L1120 88.7 L1134 90.1 L1148 86.0 L1162 95.2 L1176 110.6 L1190 123.9 L1204 123.6 L1218 117.7 L1232 103.3 L1246 90.7 L1260 71.9 L1274 52.5 L1288 40.9 L1302 41.0 L1316 53.2 L1330 67.5 L1344 76.8 L1358 89.3 L1372 99.6 L1386 107.2 L1400 110.9 L1414 114.3 L1428 116.1 L1440 116.1 L1454 136.3 L1468 147.8 L1482 151.2 L1496 150.7 L1510 139.1 L1524 123.3 L1538 122.4 L1552 111.4 L1566 110.2 L1580 98.3 L1594 65.3 L1608 38.8 L1622 33.8 L1636 26.0 L1650 26.7 L1664 36.5 L1678 51.9 L1692 71.6 L1706 93.9 L1720 118.5 L1734 133.6 L1748 154.9 L1762 169.9 L1776 185.6 L1790 186.0 L1804 183.4 L1818 174.2 L1832 159.7 L1846 146.1 L1860 127.6 L1874 114.4 L1888 110.5 L1902 122.5 L1916 131.6 L1930 140.7 L1944 150.8 L1958 156.6 L1972 162.7 L1986 167.3 L2000 163.2 L2014 162.9 L2028 149.5 L2042 145.7 L2056 135.4 L2070 135.7 L2084 143.0 L2098 153.1 L2112 160.0 L2126 170.0 L2140 161.1 L2154 161.0 L2168 154.2 L2182 137.1 L2196 125.1 L2210 117.5 L2224 104.7 L2238 105.9 L2252 96.5 L2266 88.1 L2280 75.4 L2294 59.0 L2308 51.6 L2322 55.0 L2336 56.3 L2350 60.2 L2364 52.6 L2378 53.9 L2392 66.1 L2406 84.6 L2420 91.8 L2434 90.0 L2448 87.9 L2462 85.1 L2476 86.9 L2490 89.4 L2504 91.7 L2518 103.0 L2532 99.5 L2546 88.4 L2560 88.7 L2574 90.1 L2588 86.0 L2602 95.2 L2616 110.6 L2630 123.9 L2644 123.6 L2658 117.7 L2672 103.3 L2686 90.7 L2700 71.9 L2714 52.5 L2728 40.9 L2742 41.0 L2756 53.2 L2770 67.5 L2784 76.8 L2798 89.3 L2812 99.6 L2826 107.2 L2840 110.9 L2854 114.3 L2868 116.1 L2880 116.1 L2894 136.3 L2908 147.8 L2922 151.2 L2936 150.7 L2950 139.1 L2964 123.3 L2978 122.4 L2992 111.4 L3006 110.2 L3020 98.3 L3034 65.3 L3048 38.8 L3062 33.8 L3076 26.0 L3090 26.7 L3104 36.5 L3118 51.9 L3132 71.6 L3146 93.9 L3160 118.5 L3174 133.6 L3188 154.9 L3202 169.9 L3216 185.6 L3230 186.0 L3244 183.4 L3258 174.2 L3272 159.7 L3286 146.1 L3300 127.6 L3314 114.4 L3328 110.5 L3342 122.5 L3356 131.6 L3370 140.7 L3384 150.8 L3398 156.6 L3412 162.7 L3426 167.3 L3440 163.2 L3454 162.9 L3468 149.5 L3482 145.7 L3496 135.4 L3510 135.7 L3524 143.0 L3538 153.1 L3552 160.0 L3566 170.0 L3580 161.1 L3594 161.0 L3608 154.2 L3622 137.1 L3636 125.1 L3650 117.5 L3664 104.7 L3678 105.9 L3692 96.5 L3706 88.1 L3720 75.4 L3734 59.0 L3748 51.6 L3762 55.0 L3776 56.3 L3790 60.2 L3804 52.6 L3818 53.9 L3832 66.1 L3846 84.6 L3860 91.8 L3874 90.0 L3888 87.9 L3902 85.1 L3916 86.9 L3930 89.4 L3944 91.7 L3958 103.0 L3972 99.5 L3986 88.4 L4000 88.7 L4014 90.1 L4028 86.0 L4042 95.2 L4056 110.6 L4070 123.9 L4084 123.6 L4098 117.7 L4112 103.3 L4126 90.7 L4140 71.9 L4154 52.5 L4168 40.9 L4182 41.0 L4196 53.2 L4210 67.5 L4224 76.8 L4238 89.3 L4252 99.6 L4266 107.2 L4280 110.9 L4294 114.3 L4308 116.1 L4320 116.1 L4334 136.3 L4348 147.8 L4362 151.2 L4376 150.7 L4390 139.1 L4404 123.3 L4418 122.4 L4432 111.4 L4446 110.2 L4460 98.3 L4474 65.3 L4488 38.8 L4502 33.8 L4516 26.0 L4530 26.7 L4544 36.5 L4558 51.9 L4572 71.6 L4586 93.9 L4600 118.5 L4614 133.6 L4628 154.9 L4642 169.9 L4656 185.6 L4670 186.0 L4684 183.4 L4698 174.2 L4712 159.7 L4726 146.1 L4740 127.6 L4754 114.4 L4768 110.5 L4782 122.5 L4796 131.6 L4810 140.7 L4824 150.8 L4838 156.6 L4852 162.7 L4866 167.3 L4880 163.2 L4894 162.9 L4908 149.5 L4922 145.7 L4936 135.4 L4950 135.7 L4964 143.0 L4978 153.1 L4992 160.0 L5006 170.0 L5020 161.1 L5034 161.0 L5048 154.2 L5062 137.1 L5076 125.1 L5090 117.5 L5104 104.7 L5118 105.9 L5132 96.5 L5146 88.1 L5160 75.4 L5174 59.0 L5188 51.6 L5202 55.0 L5216 56.3 L5230 60.2 L5244 52.6 L5258 53.9 L5272 66.1 L5286 84.6 L5300 91.8 L5314 90.0 L5328 87.9 L5342 85.1 L5356 86.9 L5370 89.4 L5384 91.7 L5398 103.0 L5412 99.5 L5426 88.4 L5440 88.7 L5454 90.1 L5468 86.0 L5482 95.2 L5496 110.6 L5510 123.9 L5524 123.6 L5538 117.7 L5552 103.3 L5566 90.7 L5580 71.9 L5594 52.5 L5608 40.9 L5622 41.0 L5636 53.2 L5650 67.5 L5664 76.8 L5678 89.3 L5692 99.6 L5706 107.2 L5720 110.9 L5734 114.3 L5748 116.1 L5760 116.1" stroke="#FF5A00" stroke-opacity="0.7" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+      </div>
+      <div class="v3-hero-texto">
+        <div class="v3-term">
+          <div class="v3-term-barra">
+            <span class="v3-term-luzes" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="v3-term-caminho">gabriel@dev:~</span>
+          </div>
+          <div class="v3-term-corpo">
+            <p class="v3-term-marca" aria-hidden="true">&gt;_</p>
+            <h1>Os sistemas que eu construí.</h1>
+            <ul class="v3-term-linhas">
+              <li><span aria-hidden="true">//</span> Backend developer</li>
+              <li><span aria-hidden="true">//</span> Java | Spring Boot | Go | PostgreSQL</li>
+              <li><span aria-hidden="true">//</span> Backend da Binance, na Ambush · Austin, TX</li>
+              <li><span aria-hidden="true">//</span> agent loops | skills | function calling</li>
+            </ul>
+            <p class="v3-term-cursor">gabriel@dev:~$ <i aria-hidden="true"></i></p>
+          </div>
+        </div>
+        <p class="v3-pilha-icones">
+          <span><svg class="v3-icone" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="6.5" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="13.5" width="18" height="6.5" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="6.5" y1="7.25" x2="6.6" y2="7.25" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><line x1="6.5" y1="16.75" x2="6.6" y2="16.75" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/></svg> Microsserviços</span>
+          <span><svg class="v3-icone" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5.5" rx="7.5" ry="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 5.5v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 11.5v7c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> PostgreSQL · Redis</span>
+          <span><svg class="v3-icone" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M9.5 4.5C7.8 4.5 7.5 5.6 7.5 7v2.4c0 1.3-.9 2.1-2 2.6 1.1.5 2 1.3 2 2.6V17c0 1.4.3 2.5 2 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 4.5c1.7 0 2 1.1 2 2.5v2.4c0 1.3.9 2.1 2 2.6-1.1.5-2 1.3-2 2.6V17c0 1.4-.3 2.5-2 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> REST e gRPC</span>
+          <span><svg class="v3-icone" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><rect x="3.2" y="11" width="4" height="4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="8.4" y="11" width="4" height="4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="13.6" y="11" width="4" height="4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="8.4" y="6" width="4" height="4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="2" y1="18.4" x2="22" y2="18.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Docker</span>
+          <span><svg class="v3-icone" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M7 18.5h10.2a3.8 3.8 0 0 0 .5-7.56A5.6 5.6 0 0 0 7.3 9.6 4.45 4.45 0 0 0 7 18.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Deploy e painéis</span>
+        </p>
+      </div>
+    </div>
+
+    <section class="v3-secao">
+      <h3 class="v3-titulo-secao"><span>Sobre</span></h3>
+      <div class="v3-sobre">
+        <div>
+          <p class="v3-lede">Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.</p>
+          <p class="v3-corpo">Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend da Binance, em Java.</p>
+        </div>
+        <aside class="v3-rail">
+          <dl>
+            <div>
+              <dt><svg class="v3-icone" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10.2" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Onde</dt>
+              <dd>Porto Alegre, Brasil · GMT−3</dd>
+            </div>
+            <div>
+              <dt><svg class="v3-icone" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="6.5" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="13.5" width="18" height="6.5" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="6.5" y1="7.25" x2="6.6" y2="7.25" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><line x1="6.5" y1="16.75" x2="6.6" y2="16.75" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/></svg>Trabalho</dt>
+              <dd>Backend na Ambush · Austin, Texas · remoto</dd>
+            </div>
+            <div>
+              <dt><svg class="v3-icone" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M9.5 4.5C7.8 4.5 7.5 5.6 7.5 7v2.4c0 1.3-.9 2.1-2 2.6 1.1.5 2 1.3 2 2.6V17c0 1.4.3 2.5 2 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 4.5c1.7 0 2 1.1 2 2.5v2.4c0 1.3.9 2.1 2 2.6-1.1.5-2 1.3-2 2.6V17c0 1.4-.3 2.5-2 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Stack</dt>
+              <dd>Java · Spring Boot · Go · PostgreSQL</dd>
+            </div>
+          </dl>
+          <p class="v3-perfis">
+            <a href="https://github.com/gacherubini"><svg class="v3-icone" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><path d="M12 2.5a9.5 9.5 0 0 0-3 18.5c.47.09.64-.2.64-.45v-1.6c-2.64.58-3.2-1.27-3.2-1.27-.43-1.1-1.05-1.4-1.05-1.4-.86-.59.07-.58.07-.58.95.07 1.45.98 1.45.98.85 1.45 2.23 1.03 2.77.79.09-.62.33-1.03.6-1.27-2.1-.24-4.32-1.05-4.32-4.68 0-1.03.37-1.88.97-2.54-.1-.24-.42-1.2.09-2.51 0 0 .8-.25 2.6.97a9.06 9.06 0 0 1 4.74 0c1.8-1.22 2.6-.97 2.6-.97.51 1.3.19 2.27.09 2.51.6.66.97 1.51.97 2.54 0 3.64-2.22 4.44-4.34 4.67.34.3.65.87.65 1.76v2.6c0 .26.17.55.65.45A9.5 9.5 0 0 0 12 2.5Z" fill="currentColor"/></svg> GitHub</a>
+            <a href="https://www.linkedin.com/in/gabrielabreuu"><svg class="v3-icone" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><rect x="2.8" y="2.8" width="18.4" height="18.4" rx="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="7.4" y1="10.5" x2="7.4" y2="16.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="7.4" y1="7.4" x2="7.4" y2="7.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4"/><path d="M11.3 16.6v-3.4a2.2 2.2 0 0 1 4.4 0v3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="11.3" y1="10.5" x2="11.3" y2="16.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> LinkedIn</a>
+            <a href="mailto:bielche2009@hotmail.com"><svg class="v3-icone" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><rect x="2.5" y="5" width="19" height="14" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><polyline points="3.4,6.6 12,13 20.6,6.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> E-mail</a>
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="v3-secao">
+      <h3 class="v3-titulo-secao"><span>Experiência</span></h3>
+      <div class="v3-posto">
+        <div class="v3-coluna-marca">
+          <span class="v3-logo v3-logo--ambush">ambush</span>
+          <p class="v3-quando">fev 2023 — atual</p>
+        </div>
+        <div>
+          <h4>Ambush</h4>
+          <p class="v3-papel">Desenvolvedor backend</p>
+          <p class="v3-onde">Austin, Texas · remoto</p>
+          <dl class="v3-blocos">
+            <div>
+              <dt><svg class="v3-icone" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5.5" rx="7.5" ry="3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 5.5v6c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 11.5v7c0 1.66 3.36 3 7.5 3s7.5-1.34 7.5-3v-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Carteira e mercado</dt>
+              <dd>Microsserviços em Java e Spring Boot no backend da Binance: saldo, depósito, saque, preço e cálculo de portfólio.</dd>
+            </div>
+            <div>
+              <dt><svg class="v3-icone" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M9.5 4.5C7.8 4.5 7.5 5.6 7.5 7v2.4c0 1.3-.9 2.1-2 2.6 1.1.5 2 1.3 2 2.6V17c0 1.4.3 2.5 2 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.5 4.5c1.7 0 2 1.1 2 2.5v2.4c0 1.3.9 2.1 2 2.6-1.1.5-2 1.3-2 2.6V17c0 1.4-.3 2.5-2 2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Contratos de API</dt>
+              <dd>REST e gRPC entre vários times consumindo os mesmos serviços. Documentação primeiro, código depois.</dd>
+            </div>
+          </dl>
+          <p class="v3-pilha"><span>Java</span><span>Spring Boot</span><span>Go</span><span>PostgreSQL</span><span>Redis</span></p>
+        </div>
+      </div>
+      <div class="v3-posto v3-posto--formacao">
+        <div class="v3-coluna-marca">
+          <span class="v3-logo v3-logo--pucrs">PUCRS</span>
+          <p class="v3-quando">mar 2022 — dez 2026</p>
+        </div>
+        <div>
+          <h4>PUC-RS</h4>
+          <p class="v3-papel">Bacharelado em Ciência da Computação</p>
+          <p class="v3-onde">Porto Alegre, Brasil</p>
+
+
+        </div>
+      </div>
+    </section>
+  </article>
+</main>
+</body>
+</html>

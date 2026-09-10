@@ -2,6 +2,7 @@ import type { Idioma } from '@/content/tipos'
 import { t } from '@/lib/idioma'
 import { ui } from '@/content/ui'
 import { experiencia } from '@/content/experiencia'
+import { Icone, type NomeDeIcone } from '@/components/Icone'
 
 /**
  * A EXPERIÊNCIA — segunda seção da home, entre o Sobre e os projetos.
@@ -15,6 +16,13 @@ import { experiencia } from '@/content/experiencia'
  * linha e meia; seção inteira para uma linha e meia é cabeçalho a mais para
  * o leitor atravessar.
  */
+/**
+ * Um ícone por bloco, na ordem em que os blocos aparecem — banco, chaves,
+ * nuvem, git. Onde entra ícone o traço do `dt::before` sai (ver a folha):
+ * dois marcadores na mesma linha seria um a mais.
+ */
+const ICONE_DO_BLOCO: NomeDeIcone[] = ['banco', 'chaves', 'nuvem', 'git']
+
 export function Experiencia({ lang }: { lang: Idioma }) {
   return (
     <section className="secao wrap" id="experiencia">
@@ -27,7 +35,22 @@ export function Experiencia({ lang }: { lang: Idioma }) {
             className={`posto${cargo.tipo === 'formacao' ? ' formacao' : ''}`}
             key={cargo.id}
           >
-            <p className="quando">{t(cargo.periodo, lang, `${campo}.periodo`)}</p>
+            <div className="coluna-marca">
+              {cargo.marca ? (
+                <span
+                  className="marca"
+                  role="img"
+                  aria-label={cargo.marca.alt}
+                  style={{
+                    width: cargo.marca.largura,
+                    height: cargo.marca.altura,
+                    maskImage: `url(/marcas/${cargo.marca.arquivo})`,
+                    WebkitMaskImage: `url(/marcas/${cargo.marca.arquivo})`,
+                  }}
+                />
+              ) : null}
+              <p className="quando">{t(cargo.periodo, lang, `${campo}.periodo`)}</p>
+            </div>
             <div>
               <h3>{cargo.empresa}</h3>
               <p className="papel">{t(cargo.cargo, lang, `${campo}.cargo`)}</p>
@@ -37,7 +60,10 @@ export function Experiencia({ lang }: { lang: Idioma }) {
                 <dl className="blocos">
                   {cargo.blocos.map((b, i) => (
                     <div key={i}>
-                      <dt>{t(b.titulo, lang, `${campo}.blocos.${i}.titulo`)}</dt>
+                      <dt>
+                        {ICONE_DO_BLOCO[i] ? <Icone nome={ICONE_DO_BLOCO[i]} tamanho={16} /> : null}
+                        {t(b.titulo, lang, `${campo}.blocos.${i}.titulo`)}
+                      </dt>
                       <dd>{t(b.texto, lang, `${campo}.blocos.${i}.texto`)}</dd>
                     </div>
                   ))}

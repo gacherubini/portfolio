@@ -1,16 +1,21 @@
+import type { ReactNode } from 'react'
+
 /**
- * Os ícones do manual de marca, desenhados à mão em monolinha.
+ * Os doze ícones do site, desenhados à mão em monolinha.
  *
- * SVG inline e `currentColor` em tudo: são doze formas pequenas, e uma
- * biblioteca inteira para isso seria mais peso de rede do que o site inteiro
- * de tipografia. Traço de 1,6 e cantos redondos, que é o desenho da folha de
- * ícones do manual.
+ * SVG inline e `currentColor` em tudo: uma biblioteca inteira para doze
+ * formas pequenas pesaria mais que o site todo de tipografia. Traço de 1,6
+ * e cantos redondos. As formas vieram do comparador descartável
+ * (`app/[lang]/v3/icones.tsx`) sem mudar um ponto.
  *
  * `aria-hidden` sem exceção. Nenhum destes carrega informação que o texto ao
  * lado já não diga — quando o ícone estiver sozinho, quem nomeia é o rótulo
- * visível ou o `aria-label` de quem chama.
+ * visível ou o link em volta.
+ *
+ * A regra que decide se um ícone entra: ele tem de nomear alguma coisa que
+ * já está escrita no conteúdo. Nenhum entra por ser bonito.
  */
-type Nome =
+export type NomeDeIcone =
   | 'terminal' | 'servidor' | 'banco' | 'git' | 'nuvem' | 'chaves'
   | 'github' | 'linkedin' | 'email' | 'monitor' | 'pino' | 'docker'
 
@@ -22,7 +27,7 @@ const TRACO = {
   strokeLinejoin: 'round' as const,
 }
 
-const FORMAS: Record<Nome, React.ReactNode> = {
+const FORMAS: Record<NomeDeIcone, ReactNode> = {
   terminal: (
     <>
       <rect x="2.5" y="4" width="19" height="16" rx="2.5" {...TRACO} />
@@ -114,10 +119,10 @@ const FORMAS: Record<Nome, React.ReactNode> = {
   ),
 }
 
-export function Icone({ nome, tamanho = 18 }: { nome: Nome; tamanho?: number }) {
+export function Icone({ nome, tamanho = 18 }: { nome: NomeDeIcone; tamanho?: number }) {
   return (
     <svg
-      className="v3-icone"
+      className="icone"
       viewBox="0 0 24 24"
       width={tamanho}
       height={tamanho}
@@ -128,5 +133,3 @@ export function Icone({ nome, tamanho = 18 }: { nome: Nome; tamanho?: number }) 
     </svg>
   )
 }
-
-export type { Nome as NomeDeIcone }
