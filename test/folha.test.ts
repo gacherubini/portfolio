@@ -121,7 +121,7 @@ describe('a regra da folha', () => {
     // uma paleta (Revy e Autotune, 1.00:1) — o anel de foco existe e é
     // invisível. Cada superfície temática precisa da própria regra, presa a
     // `--destaque`, que `verificarTema` já garante ≥ 3:1 contra `--fundo`.
-    for (const superficie of ['.faixa', '.pagina-projeto', '.fechamento']) {
+    for (const superficie of ['.faixa', '.pagina-projeto']) {
       const escapada = superficie.replace('.', '\\.')
       const regex = new RegExp(`${escapada}\\s*a:focus-visible\\s*\\{`)
       expect(folha).toMatch(regex)
@@ -197,6 +197,6 @@ describe('a regra da folha', () => {
   it('a fita mora atrás do conteúdo, e o conteúdo declara isso', () => {
     // `.fita-fundo` é absoluta em `z-index: 0`; sem as três abaixo subindo
     // para 1, a ordem de pintura passa a depender da ordem do DOM.
-    expect(folha).toMatch(/\.casca-topo, main, \.fechamento \{[^}]*z-index:\s*1/)
+    expect(folha).toMatch(/\.casca-topo, main \{[^}]*z-index:\s*1/)
   })
 })

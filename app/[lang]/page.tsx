@@ -9,7 +9,6 @@ import { projetos } from '@/content/indice'
 import { FaixaProjeto } from '@/components/FaixaProjeto'
 import { Sobre } from '@/components/Sobre'
 import { Experiencia } from '@/components/Experiencia'
-import { Fechamento } from '@/components/Fechamento'
 import { Brilho, Fita } from '@/components/Fita'
 import { curriculoDisponivel } from '@/lib/curriculo'
 
@@ -89,7 +88,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         {/* A ORDEM DA HOME MUDOU EM 09/09/2026: quem chega quer saber quem
             é a pessoa antes de olhar sistema. Sobre, experiência, e só
             então os quatro projetos. */}
-        <Sobre lang={lang} />
+        <Sobre lang={lang} temCurriculo={temCurriculo} />
         <Experiencia lang={lang} />
 
         <section className="secao wrap" id="projetos">
@@ -110,7 +109,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </div>
         </section>
       </main>
-      <Fechamento lang={lang} temCurriculo={temCurriculo} />
     </>
   )
 }

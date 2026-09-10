@@ -18,6 +18,7 @@ import type { ReactNode } from 'react'
 export type NomeDeIcone =
   | 'terminal' | 'servidor' | 'banco' | 'git' | 'nuvem' | 'chaves'
   | 'github' | 'linkedin' | 'email' | 'monitor' | 'pino' | 'docker'
+  | 'telefone'
 
 const TRACO = {
   fill: 'none',
@@ -115,6 +116,14 @@ const FORMAS: Record<NomeDeIcone, ReactNode> = {
     <>
       <path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" {...TRACO} />
       <circle cx="12" cy="10.2" r="2.6" {...TRACO} />
+    </>
+  ),
+  telefone: (
+    <>
+      <path
+        d="M7.4 3.5h2.1l1.5 3.7-1.8 1.3a11.5 11.5 0 0 0 5.3 5.3l1.3-1.8 3.7 1.5v2.1a2.4 2.4 0 0 1-2.6 2.4C10.6 17.4 6.6 13.4 5 6.1A2.4 2.4 0 0 1 7.4 3.5Z"
+        {...TRACO}
+      />
     </>
   ),
 }

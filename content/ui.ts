@@ -1,12 +1,12 @@
 import type { Idioma, Situacao, Texto } from '@/content/tipos'
 
 export const ui = {
-  // A ordem aqui é a ordem da home: sobre, experiência, projetos, contato.
+  // A ordem aqui é a ordem da home: sobre, experiência, projetos. O contato
+  // não é seção desde 09/09/2026 — mora no Sobre.
   nav: {
     sobre: { pt: 'Sobre', en: 'About' },
     experiencia: { pt: 'Experiência', en: 'Experience' },
     projetos: { pt: 'Projetos', en: 'Projects' },
-    contato: { pt: 'Contato', en: 'Contact' },
   },
   abertura: {
     titulo: { pt: 'Os sistemas que eu construí.', en: 'The systems I built.' },
@@ -38,6 +38,7 @@ export const ui = {
     problema: { pt: 'O problema', en: 'The problem' },
     oQueFaz: { pt: 'O que o sistema faz', en: 'What the system does' },
   },
+  // Só a página de projeto tem rodapé — a home acaba nos cartões.
   rodape: {
     lugar: { pt: 'Gabriel Cherubini · Porto Alegre · GMT−3', en: 'Gabriel Cherubini · Porto Alegre, Brazil · GMT−3' },
     dominio: { pt: 'gacherubini.dev', en: 'gacherubini.dev' },

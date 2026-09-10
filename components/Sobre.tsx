@@ -9,6 +9,10 @@ import { Icone, type NomeDeIcone } from '@/components/Icone'
  * da experiência e dos projetos: quem chega quer saber quem é a pessoa antes
  * de olhar sistema. O primeiro parágrafo é a lede, em corpo grande; os
  * outros são texto normal. Tudo sobre o neutro da casca.
+ *
+ * Em 09/09/2026 a faixa azul do fim da home saiu, e o contato inteiro passou
+ * a morar aqui: e-mail, WhatsApp e o currículo. É o único ponto de contato do
+ * site, então nada dali pode ficar sem lugar.
  */
 /**
  * Um ícone por linha da ficha que nomeia alguma coisa — pino (Onde),
@@ -23,7 +27,7 @@ const ICONE_DO_PERFIL: Record<string, NomeDeIcone> = {
   LinkedIn: 'linkedin',
 }
 
-export function Sobre({ lang }: { lang: Idioma }) {
+export function Sobre({ lang, temCurriculo }: { lang: Idioma; temCurriculo: boolean }) {
   const [lede, ...resto] = sobre.paragrafos
 
   return (
@@ -63,7 +67,19 @@ export function Sobre({ lang }: { lang: Idioma }) {
               <Icone nome="email" tamanho={17} />{' '}
               {t({ pt: 'E-mail', en: 'Email' }, lang, 'sobre.perfis.email')}
             </a>
+            <a href={sobre.contato.telefone.href}>
+              <Icone nome="telefone" tamanho={17} /> {sobre.contato.telefone.exibicao}
+            </a>
           </p>
+          {/* SLOT: sem o PDF em public/, nada aqui. Nunca um botão que baixa 404. */}
+          {temCurriculo ? (
+            <p className="curriculo-linha">
+              <a className="curriculo" href={sobre.contato.curriculo.href} download>
+                {t(sobre.contato.curriculo.rotulo, lang, 'sobre.contato.curriculo.rotulo')}{' '}
+                <span>PDF</span>
+              </a>
+            </p>
+          ) : null}
         </aside>
       </div>
     </section>

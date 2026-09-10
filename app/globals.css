@@ -7,7 +7,7 @@
   REGRA DA FOLHA: nenhuma regra de texto usa `opacity` fora dos valores em
   OPACIDADES_DE_TEXTO (lib/contraste.ts): 0.72, 0.85, 0.88, 0.9, 0.92.
   Abaixo de 0.72 o roxo do BDDente reprova no contraste (4,22:1 a 0,65).
-  Dentro do fechamento azul o piso é mais alto — 0.85, por OPACIDADES_NO_AZUL:
+  Sobre o azul da casa o piso é mais alto — 0.85, por OPACIDADES_NO_AZUL:
   branco a 0.72 sobre #2A4FD7 dá só 4,21:1.
 */
 :root {
@@ -111,6 +111,9 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 /* `padding-block` 56px: pinado pelo teste e vindo do aperto de ritmo da main;
    o fio que caiu é o da v3 (decisão B do dono). */
 .secao { padding-block: 56px; }
+/* Sem a faixa azul do fim (saiu em 09/09/2026) a home acaba na última seção.
+   O respiro que a faixa dava ao pé da página passa a ser dela. */
+main > .secao:last-child { padding-bottom: 104px; }
 .secao > h2 {
   margin: 0 0 34px; font-size: var(--t1); font-weight: 600; color: var(--calmo);
   display: flex; align-items: baseline; gap: 12px;
@@ -212,11 +215,16 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .posto:first-of-type { padding-top: 0; }
 .posto:last-of-type { border-bottom: 0; padding-bottom: 0; }
 .quando { font-size: var(--t1); color: var(--calmo); font-variant-numeric: tabular-nums; padding-top: 2px; }
-/* A marca acima da data, na coluna de 138px. Só o canal alfa vai para
-   `public/marcas/` (ver `scripts/tratar-marcas.mjs`); a cor é `currentColor`,
-   então ela herda a tinta do texto em volta e nunca fica presa num hex. Sem
-   moldura: marca, data e ar. */
-.marca {
+/* A marca do empregador acima da data, na coluna de 138px. Só o canal alfa
+   vai para `public/marcas/` (ver `scripts/tratar-marcas.mjs`); a cor é
+   `currentColor`, então ela herda a tinta do texto em volta e nunca fica
+   presa num hex. Sem moldura: marca, data e ar.
+
+   O NOME DA CLASSE NÃO PODE SER `.marca`: esse é o logotipo escrito
+   (`components/Marca.tsx`). As duas regras dividiam o mesmo seletor e esta,
+   por vir depois, vencia — o logotipo do topo e o da tela de entrada viravam
+   um retângulo chapado de `currentColor`. */
+.marca-empresa {
   display: block; background-color: currentColor;
   mask-repeat: no-repeat; mask-size: contain;
   -webkit-mask-repeat: no-repeat; -webkit-mask-size: contain;
@@ -281,8 +289,9 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 /* O traço vira ícone: dois marcadores na mesma linha seria um a mais. */
 .blocos dt:has(.icone)::before { content: none; }
 
-/* Os perfis no pé do `.rail`: secundários ao lado do contato, que mora no
-   fechamento e continua sendo o canal direto. */
+/* Os perfis no pé do `.rail`. Desde 09/09/2026 a faixa azul do fim da home
+   não existe mais e este é o ÚNICO contato do site: GitHub, LinkedIn,
+   e-mail, WhatsApp e o currículo. */
 .sobre .perfis {
   margin: 26px 0 0; padding-top: 18px; border-top: 1px solid var(--regua);
   display: flex; flex-direction: column; gap: 11px; font-size: var(--t2);
@@ -293,44 +302,17 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 }
 .sobre .perfis a:hover { color: var(--dev); }
 
-/* --- o fechamento, na cor da casa --------------------------------------- */
-.fechamento { background: var(--dev); color: #fff; padding: 44px 0 40px; margin-top: 56px; }
-.fechamento .linha { display: grid; grid-template-columns: 1fr auto; gap: 56px; align-items: end; }
-.canais { display: flex; flex-direction: column; gap: 16px; }
-.canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.canal a {
-  font-size: var(--t4); font-weight: 600; letter-spacing: -.022em; color: #fff;
-  text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.3);
-  padding-bottom: 3px; line-height: 1.25;
+/* O currículo é o único item que o visitante leva embora, então é o único
+   botão do `.rail` — o resto ali é link de texto. */
+.curriculo-linha { margin: 16px 0 0; }
+.sobre a.curriculo {
+  display: inline-block; text-decoration: none;
+  font-size: var(--t2); font-weight: 600; color: #fff;
+  background: var(--dev); border: 1px solid var(--dev);
+  border-radius: 999px; padding: 9px 17px;
 }
-.canal a:hover { border-bottom-color: #fff; }
-.canal .via { font-size: var(--t1); opacity: .85; }
-
-.perfis { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
-.perfis a {
-  font-size: var(--t2); font-weight: 500; color: #fff; opacity: .88;
-  text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 1px;
-}
-.perfis a:hover { opacity: 1; border-bottom-color: rgba(255,255,255,.6); }
-/* O currículo é a única coisa aqui que o visitante leva embora. */
-.perfis a.curriculo {
-  opacity: 1; font-weight: 600; border: 1px solid rgba(255,255,255,.55);
-  border-radius: 5px; padding: 9px 16px; margin-bottom: 6px;
-}
-.perfis a.curriculo:hover { background: #fff; color: var(--dev); border-color: #fff; }
-.perfis a.curriculo span { font-weight: 400; opacity: .85; font-size: var(--t1); }
-
-.assinatura {
-  margin-top: 32px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.22);
-  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-  font-size: var(--t1); opacity: .88;
-}
-/* Opacidade compõe. O `.85` do `.marca-dev` dentro do `.88` daqui dá `.748`,
-   que sobre o azul da marca é 4,42:1 — abaixo do mínimo, e invisível para
-   `verificarCasca`, que mede cada valor declarado isolado. Dentro de um bloco
-   que já esmaece, o filho vai em opacidade cheia. */
-.assinatura .marca--branca .marca-dev { opacity: 1; }
-.fechamento a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.sobre a.curriculo:hover { background: var(--marca); border-color: var(--marca); }
+.sobre a.curriculo span { font-weight: 400; font-size: var(--t1); }
 
 @media (max-width: 900px) {
   .abertura-home { padding-block: 56px 48px; }
@@ -340,9 +322,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   nav { gap: 16px; font-size: var(--t1); }
   .sobre .grade { grid-template-columns: 1fr; gap: 40px; }
   .sobre .lede { font-size: var(--t3); }
-  .fechamento .linha { grid-template-columns: 1fr; gap: 34px; align-items: start; }
-  .perfis { flex-direction: row; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
-  .canal a { font-size: var(--t3); }
+  .sobre .perfis { flex-direction: row; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
 }
 
 /* --- a página do projeto ------------------------------------------------ */
@@ -839,7 +819,7 @@ html[data-anima] .revela.dentro { opacity: 1; transform: none; }
   z-index: 0; pointer-events: none; overflow: hidden;
 }
 /* Tudo o que é conteúdo passa por cima dela. */
-.casca-topo, main, .fechamento { position: relative; z-index: 1; }
+.casca-topo, main { position: relative; z-index: 1; }
 
 .fita {
   position: absolute; inset: 0;

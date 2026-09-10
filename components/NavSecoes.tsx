@@ -5,7 +5,10 @@ import type { Idioma } from '@/content/tipos'
 import { t } from '@/lib/idioma'
 import { ui } from '@/content/ui'
 
-const SECOES = ['sobre', 'experiencia', 'projetos', 'contato'] as const
+// Sem `contato`: a faixa azul do fim da home saiu em 09/09/2026 e o contato
+// mora dentro do Sobre. Um segundo item apontando para a mesma âncora acenderia
+// dois links de uma vez.
+const SECOES = ['sobre', 'experiencia', 'projetos'] as const
 
 /**
  * A navegação do topo, marcando a seção em que o visitante está.

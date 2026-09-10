@@ -38,7 +38,7 @@ export function Experiencia({ lang }: { lang: Idioma }) {
             <div className="coluna-marca">
               {cargo.marca ? (
                 <span
-                  className="marca"
+                  className="marca-empresa"
                   role="img"
                   aria-label={cargo.marca.alt}
                   style={{
