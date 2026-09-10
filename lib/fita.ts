@@ -33,7 +33,7 @@ const ALTURA = 200
 
 export const FITA_VIEWBOX = `0 0 ${CICLO * VOLTAS} ${ALTURA}`
 
-type Perfil = {
+export type Perfil = {
   semente: number
   /** Distância entre amostras. Menor = linha mais nervosa. */
   passo: number
@@ -93,9 +93,9 @@ export type Lamina = {
 
 /** Da mais apagada para a mais forte: a ordem do DOM é a ordem de pintura. */
 export const LAMINAS: Lamina[] = [
-  { classe: 'l5', opacidade: 0.13, espessura: 1, d: serie({ semente: 62831, passo: 48, inercia: 0.81, ruido: 6, salto: 9, puxao: 0.035 }) },
-  { classe: 'l4', opacidade: 0.18, espessura: 1, d: serie({ semente: 51413, passo: 30, inercia: 0.74, ruido: 8, salto: 13, puxao: 0.048 }) },
-  { classe: 'l3', opacidade: 0.24, espessura: 1, d: serie({ semente: 90210, passo: 60, inercia: 0.84, ruido: 5, salto: 8, puxao: 0.03 }) },
-  { classe: 'l2', opacidade: 0.3, espessura: 1.1, d: serie({ semente: 31337, passo: 36, inercia: 0.78, ruido: 7, salto: 11, puxao: 0.04 }) },
-  { classe: 'l1', opacidade: 0.4, espessura: 1.3, d: serie({ semente: 7717, passo: 24, inercia: 0.7, ruido: 9, salto: 15, puxao: 0.055 }) },
+  { classe: 'l5', opacidade: 0.2, espessura: 1, d: serie({ semente: 62831, passo: 26, inercia: 0.8, ruido: 8, salto: 12, puxao: 0.04 }) },
+  { classe: 'l4', opacidade: 0.28, espessura: 1, d: serie({ semente: 51413, passo: 16, inercia: 0.68, ruido: 11, salto: 17, puxao: 0.052 }) },
+  { classe: 'l3', opacidade: 0.36, espessura: 1.1, d: serie({ semente: 90210, passo: 20, inercia: 0.72, ruido: 10, salto: 15, puxao: 0.046 }) },
+  { classe: 'l2', opacidade: 0.46, espessura: 1.2, d: serie({ semente: 31337, passo: 12, inercia: 0.6, ruido: 13, salto: 21, puxao: 0.062 }) },
+  { classe: 'l1', opacidade: 0.6, espessura: 1.4, d: serie({ semente: 7717, passo: 14, inercia: 0.64, ruido: 12, salto: 19, puxao: 0.058 }) },
 ]

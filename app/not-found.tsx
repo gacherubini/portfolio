@@ -17,14 +17,18 @@ export default function NaoEncontradoRaiz() {
   return (
     <html lang="pt-BR">
       <body>
-        <main className="wrap abertura-home">
-          <h1>Página não encontrada. Page not found.</h1>
-          <p lang="pt">
-            Esta página não existe. <a href="/pt">Voltar para a home</a>.
-          </p>
-          <p lang="en">
-            This page doesn&apos;t exist. <a href="/en">Back to the home page</a>.
-          </p>
+        {/* Mesma estrutura da home (seção full-bleed + coluna interna), sem
+            a fita: o 404 herda o desenho da abertura sem carregar decoração. */}
+        <main className="abertura">
+          <div className="wrap abertura-home">
+            <h1>Página não encontrada. Page not found.</h1>
+            <p lang="pt">
+              Esta página não existe. <a href="/pt">Voltar para a home</a>.
+            </p>
+            <p lang="en">
+              This page doesn&apos;t exist. <a href="/en">Back to the home page</a>.
+            </p>
+          </div>
         </main>
       </body>
     </html>

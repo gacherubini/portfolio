@@ -139,6 +139,17 @@ por 1,48s), e dois testes que prometiam no nome mais do que afirmavam no corpo.
   vitrine). Não reabrir uma terceira vez sem argumento novo. A queixa que
   motivou a reabertura foi "o site fica sem cara própria", e ela continua de pé
   como crítica — a escolha foi manter a direção mesmo assim.
+- **Direção visual v3 (09/09/2026).** A reabertura veio com o argumento novo
+  que a regra exigia, e desta vez a direção mudou: **a fita é a abertura, o
+  azul é a cor da casa**. A fita (caminhada aleatória como dado de mercado)
+  saiu de decoração de fundo e virou o desenho da primeira tela; `#2A4FD7`
+  saiu de "a cor do `.dev`" e virou cor de estrutura (fio do `h2`, régua da
+  ficha, hover dos perfis), sem nenhum hex novo. A queixa *"o site fica sem
+  cara própria"*, aberta desde 04/09, sai como **resolvida**. A E — a
+  identidade do manual (`#FF5A00`, Plex Mono, `>_`, abertura-terminal) — fica
+  **adiada**, guardada em `mockups/v3-e-terminal.html` (HTML autocontido, ver
+  tabela abaixo); o porquê e o custo de uma volta estão na seção 8 da spec
+  `docs/superpowers/specs/2026-09-09-portfolio-v3-design.md`.
 - **Cor pode ser atribuída quando o produto não tem uma.** A regra antiga
   proibia cor inventada. Caiu em 04/09, na decisão do Autotune. O que ficou no
   lugar: a origem de cada cor é declarada na tabela da seção 3 da spec —
@@ -198,6 +209,7 @@ Rode `python -m http.server 4321` na raiz e abra `/mockups/`.
 | `v2-home.html`, `v2-projeto-office.html` | **o protótipo da v2** — pranchas, abertura por FLIP, tela de entrada, `numerosHome` e selo, montado sobre o `app/globals.css` real |
 | `v2-proto.css`, `v2-proto.js` | camada só do protótipo da v2, por cima da folha real; não é código do site |
 | `index.html`, `autotune.html`, `sobre.html` | comparadores das três rodadas de decisão |
+| `v3-e-terminal.html` | **a E adiada da v3** — terminal com cursor piscando, fita laranja e os treze ícones, HTML autocontido (a rota `app/[lang]/v3/` foi apagada na Task 8) |
 | os outros | as alternativas descartadas, guardadas para não refazer a discussão |
 
 Nada em `docs/` aparece no site. O texto que o visitante lê mora em

@@ -106,8 +106,8 @@ describe('a regra da folha', () => {
   })
 
   it('não deixa o grid-row da faixa espelhada vazar para o empilhamento mobile', () => {
-    const inicio = folha.indexOf('@media (max-width: 820px) {\n  .faixa .grade')
-    const fim = folha.indexOf('@media (max-width: 820px) {\n  .abertura-home')
+    const inicio = folha.indexOf('@media (max-width: 900px) {\n  .faixa .grade')
+    const fim = folha.indexOf('@media (max-width: 900px) {\n  .abertura-home')
     const blocoMobile = folha.slice(inicio, fim)
     const reset =
       blocoMobile.match(/\.faixa\.espelho \.col-texto, \.faixa\.espelho \.col-print \{([^}]*)\}/)?.[1] ?? ''

@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run prints && vitest run && next build",
+    "build": "npm run marcas && npm run prints && vitest run && next build",
+    "marcas": "node scripts/tratar-marcas.mjs",
     "prints": "node scripts/otimizar-prints.mjs",
     "start": "next start",
     "test": "vitest run",

@@ -18,6 +18,18 @@
   --marca: #0F1317;
   --dev: #2A4FD7;
 
+  /* A ESCALA. Eram 29 tamanhos entre 11,5px e 52px, com 12,5/13/13,5/14/14,5/15
+     vivos ao mesmo tempo — é o que fazia a página parecer quase certa sem dar
+     para apontar onde. Sete degraus em razão ~1,25, e nenhum `font-size` em px
+     solto na folha: quem precisa de um tamanho pega um degrau. */
+  --t1: 13px;   /* rótulo, data, ficha, chip, legenda */
+  --t2: 16px;   /* corpo */
+  --t3: 20px;   /* subtítulo, apoio da abertura */
+  --t4: 25px;   /* lede */
+  --t5: 32px;   /* nome de projeto */
+  --t6: 40px;   /* número de régua */
+  --t7: 50px;   /* manchete */
+
   /* A LARGURA. Era 1180px e o conteúdo esticava na tela inteira; em 1000px
      a página se lê como coluna, e sobra margem — que é onde a fita mora. */
   --pagina: 1000px;
@@ -32,7 +44,7 @@ body {
   background: var(--casca);
   color: var(--tinta);
   font-family: var(--fonte-archivo), system-ui, sans-serif;
-  font-size: 15px;
+  font-size: var(--t2);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
@@ -58,7 +70,7 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 }
 .topo { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-block: 16px; }
 
-.marca { font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
+.marca { font-weight: 700; font-size: var(--t2); letter-spacing: -.01em; }
 .marca--casca { color: var(--marca); }
 .marca--casca .marca-dev { color: var(--dev); }
 .marca--mono { color: inherit; }
@@ -66,22 +78,28 @@ a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 .marca--branca { color: #fff; }
 .marca--branca .marca-dev { opacity: .85; }
 
-nav { display: flex; gap: 24px; font-size: 14px; color: var(--calmo); }
+nav { display: flex; gap: 24px; font-size: var(--t1); color: var(--calmo); }
 nav a { text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid transparent; }
 nav a:hover { color: var(--tinta); }
 nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color: var(--dev); }
 
-.idioma { margin: 0; font-size: 13px; color: var(--calmo); }
+.idioma { margin: 0; font-size: var(--t1); color: var(--calmo); }
 .idioma [aria-current] { color: var(--tinta); font-weight: 600; }
 .idioma a { text-decoration: none; }
 .idioma a:hover { color: var(--tinta); }
 
-.abertura-home { padding-block: 64px 52px; }
+/* A abertura é full-bleed e a fita preenche ela em `inset: 0`. Dentro da
+   coluna `.wrap` (1000px) a fita cliparia e as margens — que é onde a folha
+   diz que ela mora — esvaziariam. O texto sobe para `z-index: 1` por conta
+   própria, senão a fita, que é posicionada, pinta por cima do `h1`. */
+.abertura { position: relative; overflow: hidden; }
+.abertura-home { position: relative; z-index: 1; padding-block: 92px 80px; }
 .abertura-home h1 {
-  font-size: 46px; line-height: 1.08; font-weight: 700;
-  letter-spacing: -.028em; margin: 0 0 14px; max-width: 15ch;
+  font-size: var(--t7); line-height: 1.08; font-weight: 700;
+  letter-spacing: -.028em; margin: 0 0 18px; max-width: 22ch;
 }
-.abertura p { margin: 0; color: var(--calmo); font-size: 17px; max-width: 54ch; }
+}
+.abertura p { margin: 0; color: var(--calmo); font-size: var(--t3); max-width: 54ch; }
 
 /* O TÍTULO DE SEÇÃO. Rótulo em frase e um fio que atravessa o resto da
    linha — sem caixa alta espaçada, que é o vício de todo portfólio e não
@@ -89,13 +107,17 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 /* `padding-block`, nunca o atalho: `.secao` divide o elemento com `.wrap`,
    as duas têm especificidade (0,1,0), e um atalho levaria a goteira lateral
    junto. É a regra do topo desta folha. */
-.secao { padding-block: 56px; border-top: 1px solid var(--regua); }
+/* Sem fio no topo: o `h2::after` azul de 2px já separa as seções, e dois
+   fios paralelos era o excesso que a v3 veio subtrair. */
+/* `padding-block` 56px: pinado pelo teste e vindo do aperto de ritmo da main;
+   o fio que caiu é o da v3 (decisão B do dono). */
+.secao { padding-block: 56px; }
 .secao > h2 {
-  margin: 0 0 22px; font-size: 13px; font-weight: 600; color: var(--calmo);
+  margin: 0 0 34px; font-size: var(--t1); font-weight: 600; color: var(--calmo);
   display: flex; align-items: baseline; gap: 12px;
 }
-.secao > h2::after { content: ""; flex: 1; height: 1px; background: var(--regua); }
-.projetos-apoio { margin: -6px 0 24px; font-size: 16px; color: var(--calmo); max-width: 56ch; }
+.secao > h2::after { content: ""; flex: 1; height: 2px; background: var(--dev); }
+.projetos-apoio { margin: -14px 0 34px; font-size: var(--t2); color: var(--calmo); max-width: 56ch; }
 
 /* --- a faixa de projeto, hoje um cartão ------------------------------------------------ */
 /* Atravessava a tela inteira; hoje é um cartão dentro da coluna de 1000px.
@@ -129,31 +151,32 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   display: flex; align-items: baseline; gap: 13px;
   padding-bottom: 11px; margin-bottom: 18px; border-bottom: 1px solid var(--borda);
 }
-.nome { margin: 0; font-size: 31px; font-weight: 800; letter-spacing: -.022em; line-height: 1; }
-.paraquem { margin: 0; font-size: 13px; opacity: .72; }
+.nome { margin: 0; font-size: var(--t5); font-weight: 800; letter-spacing: -.022em; line-height: 1; }
+.paraquem { margin: 0; font-size: var(--t1); opacity: .72; }
 .situacao {
-  margin: 0 0 0 auto; font-size: 11.5px; font-weight: 600;
+  margin: 0 0 0 auto; font-size: var(--t1); font-weight: 600;
   border: 1px solid var(--borda); border-radius: 999px; padding: 3px 10px; opacity: .85;
 }
-.resumo { font-size: 16px; margin: 0 0 18px; max-width: 46ch; line-height: 1.55; opacity: .92; }
+.resumo { font-size: var(--t2); margin: 0 0 22px; max-width: 46ch; line-height: 1.55; opacity: .92; }
 
 .numeros { display: flex; gap: 32px; margin-bottom: 20px; flex-wrap: wrap; }
 /* Escopadas no cartão: a régua da página do projeto reusa `.num` com o
    rótulo em `var(--calmo)`, e calmo não aguenta opacity. Ver Tarefa 13. */
 .faixa .num b {
-  display: block; font-size: 23px; font-weight: 700;
+  display: block; font-size: var(--t4); font-weight: 700;
   color: var(--destaque); letter-spacing: -.015em;
+  font-variant-numeric: tabular-nums;
 }
-.faixa .num span { font-size: 12px; opacity: .72; display: block; max-width: 16ch; line-height: 1.35; }
+.faixa .num span { font-size: var(--t1); opacity: .72; display: block; max-width: 16ch; line-height: 1.35; }
 
 .botoes { display: flex; gap: 11px; align-items: center; flex-wrap: wrap; }
 .cta {
   background: var(--ctaFundo); color: var(--ctaTexto); text-decoration: none;
-  font-weight: 600; font-size: 14px; padding: 10px 19px; border-radius: 6px;
+  font-weight: 600; font-size: var(--t1); padding: 10px 19px; border-radius: 6px;
 }
 .cta.fantasma { background: transparent; color: var(--texto); border: 1px solid var(--borda); }
 /* 0.72 é o piso: 0.65 sobre o roxo do BDDente dá 4,22:1. Ver lib/contraste.ts. */
-.fechado { margin: 0; font-size: 13px; opacity: .72; }
+.fechado { margin: 0; font-size: var(--t1); opacity: .72; }
 
 .col-print img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--borda); }
 .col-print.pequeno img { max-width: 520px; margin: 0 auto; }
@@ -176,10 +199,10 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   gap: 48px; align-items: start;
 }
 .sobre .lede {
-  margin: 0 0 18px; font-size: 28px; line-height: 1.22; font-weight: 700;
+  margin: 0 0 26px; font-size: var(--t4); line-height: 1.22; font-weight: 700;
   letter-spacing: -.025em; max-width: 20ch;
 }
-.sobre p.corpo { margin: 0 0 14px; font-size: 16.5px; line-height: 1.6; max-width: 58ch; color: #2A2E32; }
+.sobre p.corpo { margin: 0 0 16px; font-size: var(--t2); line-height: 1.6; max-width: 58ch; color: #2A2E32; }
 .sobre p.corpo:last-child { margin-bottom: 0; }
 
 /* --- a experiência ------------------------------------------------------ */
@@ -189,16 +212,26 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 }
 .posto:first-of-type { padding-top: 0; }
 .posto:last-of-type { border-bottom: 0; padding-bottom: 0; }
-.quando { font-size: 13.5px; color: var(--calmo); font-variant-numeric: tabular-nums; padding-top: 2px; }
-.posto h3 { margin: 0 0 3px; font-size: 18px; font-weight: 700; letter-spacing: -.015em; }
-.posto .papel { margin: 0 0 4px; font-size: 15px; font-weight: 500; }
-.posto .onde { margin: 0 0 14px; font-size: 13.5px; color: var(--calmo); }
+.quando { font-size: var(--t1); color: var(--calmo); font-variant-numeric: tabular-nums; padding-top: 2px; }
+/* A marca acima da data, na coluna de 138px. Só o canal alfa vai para
+   `public/marcas/` (ver `scripts/tratar-marcas.mjs`); a cor é `currentColor`,
+   então ela herda a tinta do texto em volta e nunca fica presa num hex. Sem
+   moldura: marca, data e ar. */
+.marca {
+  display: block; background-color: currentColor;
+  mask-repeat: no-repeat; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; -webkit-mask-size: contain;
+  margin-bottom: 12px;
+}
+.posto h3 { margin: 0 0 3px; font-size: var(--t3); font-weight: 700; letter-spacing: -.015em; }
+.posto .papel { margin: 0 0 4px; font-size: var(--t2); font-weight: 500; }
+.posto .onde { margin: 0 0 14px; font-size: var(--t1); color: var(--calmo); }
 
 /* CADA LINHA DO CARGO É UM BLOCO COM TÍTULO, não um bullet: quem varre a
    página lê só os títulos e decide onde parar. Lista de frases soltas do
    mesmo tamanho obriga a ler tudo ou nada. */
-.blocos { margin: 0; display: grid; gap: 12px; }
-.blocos dt { font-size: 14.5px; font-weight: 700; letter-spacing: -.012em; margin-bottom: 3px; }
+.blocos { margin: 0; display: grid; gap: 15px; }
+.blocos dt { font-size: var(--t2); font-weight: 700; letter-spacing: -.012em; margin-bottom: 3px; }
 /* Fio curto no lugar do marcador: cada bloco é uma frente de trabalho, não
    item de compra. */
 .blocos dt::before {
@@ -206,22 +239,60 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   width: 10px; height: 2px; background: var(--dev);
   margin-right: 9px; transform: translateY(-1px);
 }
-.blocos dd { margin: 0; font-size: 15px; line-height: 1.58; max-width: 62ch; color: #3A3E42; }
+.blocos dd { margin: 0; font-size: var(--t2); line-height: 1.58; max-width: 62ch; color: #3A3E42; }
 
 .pilha { margin: 12px 0 0; display: flex; gap: 7px; flex-wrap: wrap; }
 .pilha span {
-  font-size: 12.5px; font-weight: 500; color: var(--calmo);
+  font-size: var(--t1); font-weight: 500; color: var(--calmo);
   border: 1px solid var(--regua); border-radius: 4px; padding: 3px 9px; background: #fff;
 }
 /* A formação não tem blocos: fica mais leve, só a linha. */
-.posto.formacao h3 { font-size: 16px; }
+.posto.formacao h3 { font-size: var(--t2); }
 .posto.formacao .onde { margin-bottom: 0; }
 
-.rail { border-top: 2px solid var(--tinta); padding-top: 18px; }
+.rail { border-top: 2px solid var(--dev); padding-top: 18px; }
 .rail dl { margin: 0; }
-.rail dt { font-size: 12.5px; color: var(--calmo); margin-top: 16px; }
+.rail dt { font-size: var(--t1); color: var(--calmo); margin-top: 16px; }
 .rail div:first-child dt { margin-top: 0; }
-.rail dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
+/* A ficha carrega GMT−3 e a pilha: número em largura tabular não dança
+   quando o valor muda. */
+.rail dd {
+  margin: 2px 0 0; font-size: var(--t2); font-weight: 500; line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- os ícones ----------------------------------------------------------- */
+/* Doze formas em monolinha, `currentColor` em tudo: sem moldura, sem cartão —
+   só ícone, rótulo e ar. Ver components/Icone.tsx.
+   A armadilha de especificidade: a pilha e os perfis são `<p>` dentro de
+   seção, e `.abertura p` pinta e mede esses `<p>`. Presas em classe própria
+   (0,1,0) herdariam `--calmo` e o `max-width` do parágrafo de apoio — por
+   isso toda regra que pinte ou meça um `<p>` nasce com o seletor da seção
+   na frente. */
+.icone { flex: none; vertical-align: -.22em; }
+.abertura .pilha-icones {
+  margin: 34px 0 0; display: flex; flex-wrap: wrap; gap: 14px 30px;
+  font-size: var(--t1); color: var(--calmo); max-width: none;
+}
+.pilha-icones span { display: inline-flex; align-items: center; gap: 9px; }
+
+/* Na ficha e nos blocos o ícone entra na linha do rótulo, no tamanho dele. */
+.rail dt:has(.icone) { display: flex; align-items: center; gap: 8px; }
+.blocos dt:has(.icone) { display: flex; align-items: center; gap: 9px; }
+/* O traço vira ícone: dois marcadores na mesma linha seria um a mais. */
+.blocos dt:has(.icone)::before { content: none; }
+
+/* Os perfis no pé do `.rail`: secundários ao lado do contato, que mora no
+   fechamento e continua sendo o canal direto. */
+.sobre .perfis {
+  margin: 26px 0 0; padding-top: 18px; border-top: 1px solid var(--regua);
+  display: flex; flex-direction: column; gap: 11px; font-size: var(--t2);
+}
+.sobre .perfis a {
+  display: inline-flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--tinta); font-weight: 500;
+}
+.sobre .perfis a:hover { color: var(--dev); }
 
 /* --- o fechamento, na cor da casa --------------------------------------- */
 .fechamento { background: var(--dev); color: #fff; padding: 44px 0 40px; margin-top: 56px; }
@@ -229,16 +300,16 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .canais { display: flex; flex-direction: column; gap: 16px; }
 .canal { margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .canal a {
-  font-size: 27px; font-weight: 600; letter-spacing: -.022em; color: #fff;
+  font-size: var(--t4); font-weight: 600; letter-spacing: -.022em; color: #fff;
   text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.3);
   padding-bottom: 3px; line-height: 1.25;
 }
 .canal a:hover { border-bottom-color: #fff; }
-.canal .via { font-size: 13px; opacity: .85; }
+.canal .via { font-size: var(--t1); opacity: .85; }
 
 .perfis { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
 .perfis a {
-  font-size: 15px; font-weight: 500; color: #fff; opacity: .88;
+  font-size: var(--t2); font-weight: 500; color: #fff; opacity: .88;
   text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 1px;
 }
 .perfis a:hover { opacity: 1; border-bottom-color: rgba(255,255,255,.6); }
@@ -248,12 +319,12 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   border-radius: 5px; padding: 9px 16px; margin-bottom: 6px;
 }
 .perfis a.curriculo:hover { background: #fff; color: var(--dev); border-color: #fff; }
-.perfis a.curriculo span { font-weight: 400; opacity: .85; font-size: 13px; }
+.perfis a.curriculo span { font-weight: 400; opacity: .85; font-size: var(--t1); }
 
 .assinatura {
   margin-top: 32px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.22);
   display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-  font-size: 13px; opacity: .88;
+  font-size: var(--t1); opacity: .88;
 }
 /* Opacidade compõe. O `.85` do `.marca-dev` dentro do `.88` daqui dá `.748`,
    que sobre o azul da marca é 4,42:1 — abaixo do mínimo, e invisível para
@@ -263,16 +334,16 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .fechamento a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 @media (max-width: 900px) {
-  .abertura-home { padding-block: 40px 32px; }
-  .abertura-home h1 { font-size: 33px; }
-  .secao { padding-block: 40px; }
+  .abertura-home { padding-block: 56px 48px; }
+  .abertura-home h1 { font-size: var(--t5); }
+  .secao { padding-block: 52px; }
   .posto { grid-template-columns: 1fr; gap: 8px; }
-  nav { gap: 16px; font-size: 13px; }
-  .sobre .grade { grid-template-columns: 1fr; gap: 32px; }
-  .sobre .lede { font-size: 23px; }
+  nav { gap: 16px; font-size: var(--t1); }
+  .sobre .grade { grid-template-columns: 1fr; gap: 40px; }
+  .sobre .lede { font-size: var(--t3); }
   .fechamento .linha { grid-template-columns: 1fr; gap: 34px; align-items: start; }
   .perfis { flex-direction: row; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
-  .canal a { font-size: 21px; }
+  .canal a { font-size: var(--t3); }
 }
 
 /* --- a página do projeto ------------------------------------------------ */
@@ -280,7 +351,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 
 .projeto-topo { border-bottom: 1px solid var(--borda); }
 .projeto-topo .marca-link { text-decoration: none; }
-.voltar { font-size: 14px; color: var(--calmo); text-decoration: none; }
+.voltar { font-size: var(--t1); color: var(--calmo); text-decoration: none; }
 .voltar:hover { color: var(--texto); }
 .pagina-projeto .idioma { color: var(--calmo); }
 .pagina-projeto .idioma [aria-current] { color: var(--texto); }
@@ -290,21 +361,21 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   gap: 72px; align-items: start;
 }
 .abertura-projeto h1 {
-  margin: 0 0 18px; font-size: 52px; line-height: 1.02; font-weight: 800;
+  margin: 0 0 18px; font-size: var(--t7); line-height: 1.02; font-weight: 800;
   letter-spacing: -.032em;
 }
-.chamada { margin: 0; font-size: 22px; line-height: 1.4; max-width: 34ch; opacity: .92; }
+.chamada { margin: 0; font-size: var(--t3); line-height: 1.4; max-width: 34ch; opacity: .92; }
 
 .ficha { border-top: 2px solid var(--destaque); padding-top: 18px; }
 .ficha dl { margin: 0; }
-.ficha dt { font-size: 12.5px; color: var(--calmo); margin-top: 16px; }
+.ficha dt { font-size: var(--t1); color: var(--calmo); margin-top: 16px; }
 .ficha div:first-child dt { margin-top: 0; }
-.ficha dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; line-height: 1.4; }
+.ficha dd { margin: 2px 0 0; font-size: var(--t2); font-weight: 500; line-height: 1.4; }
 
 .ficha .acoes { margin-top: 26px; display: flex; flex-direction: column; gap: 10px; }
 .ficha .cta {
   display: block; text-align: center; background: var(--ctaFundo); color: var(--ctaTexto);
-  text-decoration: none; font-weight: 600; font-size: 14.5px; padding: 12px 18px; border-radius: 6px;
+  text-decoration: none; font-weight: 600; font-size: var(--t1); padding: 12px 18px; border-radius: 6px;
 }
 .ficha .cta.fantasma { background: transparent; color: var(--texto); border: 1px solid var(--borda); }
 .ficha .cta.fantasma:hover { border-color: var(--destaque); }
@@ -314,25 +385,26 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   margin-top: 26px; background: var(--fundo2); border: 1px solid var(--borda);
   border-radius: 6px; padding: 14px 16px;
 }
-.semlink b { display: block; font-size: 14px; font-weight: 700; margin-bottom: 5px; }
-.semlink p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--calmo); }
+.semlink b { display: block; font-size: var(--t1); font-weight: 700; margin-bottom: 5px; }
+.semlink p { margin: 0; font-size: var(--t1); line-height: 1.5; color: var(--calmo); }
 
 .rodape-projeto {
   border-top: 1px solid var(--borda); padding-block: 34px 56px;
   display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-  font-size: 13.5px; color: var(--calmo);
+  font-size: var(--t1); color: var(--calmo);
 }
 
 .pagina-projeto a:focus-visible { outline: 2px solid var(--destaque); outline-offset: 3px; }
 
 @media (max-width: 900px) {
   .abertura-projeto { grid-template-columns: 1fr; gap: 36px; padding-block: 44px 32px; }
-  .abertura-projeto h1 { font-size: 36px; }
-  .chamada { font-size: 19px; }
+  .abertura-projeto h1 { font-size: var(--t5); }
+  .chamada { font-size: var(--t2); }
 }
 @media (max-width: 560px) {
+  /* O `font-size` do h1 saiu daqui: com a escala, o degrau de 900px já é
+     `--t5`, e este bloco repetia o mesmo 32px. */
   :root { --lado: 20px; }
-  .abertura-projeto h1 { font-size: 32px; }
 }
 
 /* --- o destaque --------------------------------------------------------- */
@@ -342,10 +414,10 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 }
 .destaque .cabeca { max-width: 58ch; margin-bottom: 36px; }
 .destaque h2 {
-  margin: 0 0 12px; font-size: 30px; font-weight: 700;
+  margin: 0 0 12px; font-size: var(--t5); font-weight: 700;
   letter-spacing: -.025em; line-height: 1.15;
 }
-.destaque .cabeca p { margin: 0 0 14px; font-size: 17px; line-height: 1.6; opacity: .9; }
+.destaque .cabeca p { margin: 0 0 14px; font-size: var(--t2); line-height: 1.6; opacity: .9; }
 .destaque .cabeca p:last-child { margin-bottom: 0; }
 .placas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
 .placa-larga { max-width: 960px; }
@@ -361,16 +433,17 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   padding-bottom: 14px; margin-bottom: 18px; border-bottom: 1px solid var(--borda);
 }
 /* Nome de motor é nome, não código: fica em Archivo. */
-.motor { font-size: 14px; font-weight: 600; letter-spacing: -.005em; color: var(--texto); }
+.motor { font-size: var(--t1); font-weight: 600; letter-spacing: -.005em; color: var(--texto); }
 .lat {
-  font-size: 26px; font-weight: 800; letter-spacing: -.03em;
+  font-size: var(--t4); font-weight: 800; letter-spacing: -.03em;
   color: var(--destaque); line-height: 1; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 .placa .pequeno img { max-width: 642px; margin: 0 auto; border-radius: 6px; }
 
 .leitura {
   margin: 38px auto 0; max-width: 62ch; border-top: 1px solid var(--borda);
-  padding-top: 22px; font-size: 16px; line-height: 1.62; text-align: center;
+  padding-top: 22px; font-size: var(--t2); line-height: 1.62; text-align: center;
 }
 .leitura b { color: var(--destaque); font-weight: 700; }
 
@@ -378,12 +451,12 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
   border-top: 1px solid var(--borda); padding-top: 26px;
 }
-.amarra h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; letter-spacing: -.012em; }
-.amarra p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--calmo); max-width: 34ch; }
+.amarra h3 { margin: 0 0 6px; font-size: var(--t2); font-weight: 700; letter-spacing: -.012em; }
+.amarra p { margin: 0; font-size: var(--t1); line-height: 1.55; color: var(--calmo); max-width: 34ch; }
 
 @media (max-width: 900px) {
   .destaque { padding: 48px 0 52px; }
-  .destaque h2 { font-size: 25px; }
+  .destaque h2 { font-size: var(--t4); }
   .placas, .amarras { grid-template-columns: 1fr; gap: 28px; }
   .leitura { text-align: left; margin-top: 28px; }
 }
@@ -404,18 +477,17 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 .regua--3 { grid-template-columns: repeat(3, 1fr); }
 .regua--4 { grid-template-columns: repeat(4, 1fr); gap: 34px; }
 .regua .num b {
-  display: block; font-size: 40px; font-weight: 800; color: var(--destaque);
-  letter-spacing: -.03em; line-height: 1;
+  display: block; font-size: var(--t6); font-weight: 800; color: var(--destaque);
+  letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums;
 }
-.regua--4 .num b { font-size: 38px; }
 .regua .num span {
-  display: block; font-size: 13px; color: var(--calmo); margin-top: 8px;
+  display: block; font-size: var(--t1); color: var(--calmo); margin-top: 8px;
   max-width: 24ch; line-height: 1.4;
 }
 
 .prosa { padding-block: 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
-.prosa h2 { margin: 0 0 14px; font-size: 19px; font-weight: 700; letter-spacing: -.015em; }
-.prosa p { margin: 0 0 16px; font-size: 16px; line-height: 1.62; opacity: .88; max-width: 48ch; }
+.prosa h2 { margin: 0 0 14px; font-size: var(--t3); font-weight: 700; letter-spacing: -.015em; }
+.prosa p { margin: 0 0 16px; font-size: var(--t2); line-height: 1.62; opacity: .88; max-width: 48ch; }
 .prosa p:last-child { margin-bottom: 0; }
 
 @media (max-width: 1000px) {
@@ -428,7 +500,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 
 /* --- galeria ------------------------------------------------------------ */
 .galeria { padding-block: 8px 64px; }
-.galeria h2 { margin: 0 0 22px; font-size: 13px; font-weight: 600; color: var(--calmo); }
+.galeria h2 { margin: 0 0 22px; font-size: var(--t1); font-weight: 600; color: var(--calmo); }
 .galeria > div + div { margin-top: 44px; }
 
 /* --- bloco técnico ------------------------------------------------------ */
@@ -436,10 +508,10 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 /* Era `<p>`; virou `<h2>` para dar landmark de heading ao bloco técnico sem
    mudar a aparência — por isso `font-weight: 400` cancela o negrito padrão
    do navegador para `h2`. */
-.tecnico .aviso { margin: 0 0 30px; font-size: 14px; font-weight: 400; color: var(--calmo); max-width: 52ch; }
+.tecnico .aviso { margin: 0 0 30px; font-size: var(--t1); font-weight: 400; color: var(--calmo); max-width: 52ch; }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 34px; }
 .chip {
-  font-size: 13px; font-weight: 500; border: 1px solid var(--borda);
+  font-size: var(--t1); font-weight: 500; border: 1px solid var(--borda);
   border-radius: 5px; padding: 5px 11px; color: var(--calmo); background: var(--fundo2);
 }
 
@@ -451,25 +523,25 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
 }
 .terminal pre {
   margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12.5px; line-height: 1.7; color: var(--calmo); white-space: pre;
+  font-size: var(--t1); line-height: 1.7; color: var(--calmo); white-space: pre;
 }
 .terminal pre b { color: var(--texto); font-weight: 500; }
-.legenda-terminal { margin: 0 0 40px; font-size: 13px; color: var(--calmo); max-width: 60ch; }
+.legenda-terminal { margin: 0 0 40px; font-size: var(--t1); color: var(--calmo); max-width: 60ch; }
 .legenda-terminal b { color: var(--destaque); font-weight: 700; }
 
 .notas { display: grid; gap: 44px 48px; }
 .notas--2 { grid-template-columns: 1fr 1fr; }
 .notas--3 { grid-template-columns: repeat(3, 1fr); gap: 34px; }
 .notas--4 { grid-template-columns: 1fr 1fr; }
-.nota h3 { margin: 0 0 9px; font-size: 16px; font-weight: 700; letter-spacing: -.012em; }
-.nota p { margin: 0 0 12px; font-size: 15px; line-height: 1.6; opacity: .88; max-width: 46ch; }
+.nota h3 { margin: 0 0 9px; font-size: var(--t2); font-weight: 700; letter-spacing: -.012em; }
+.nota p { margin: 0 0 12px; font-size: var(--t2); line-height: 1.6; opacity: .88; max-width: 46ch; }
 .nota p:last-child { margin-bottom: 0; }
 /* Sem `color` próprio: herda `--texto` do parágrafo, que já vem a `.88` e é o
    nível que o contraste cobre. Pintar de `--calmo` aqui dentro daria calmo a
    0,88 — 4,27:1 no Office Timesheet. O que separa código de prosa é a
    monoespaçada, não a cor; é assim nos comps P2 e P4. */
 .nota code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--t1);
   word-break: break-word;
 }
 /* No título, o código fica na tinta do corpo: 16px bold não é "texto grande",
@@ -491,7 +563,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
    letra de `--destaque` reprovaria no portão de contraste: no Office Timesheet
    ele dá 3,08:1, e 12px em peso 600 não é "texto grande". */
 .selo {
-  margin: 0; font-size: 12px; font-weight: 600; opacity: .85;
+  margin: 0; font-size: var(--t1); font-weight: 600; opacity: .85;
   display: inline-flex; align-items: center; gap: 7px;
   border: 1px solid var(--borda); border-radius: 999px; padding: 3px 11px;
 }
@@ -522,7 +594,7 @@ nav a[aria-current] { color: var(--tinta); font-weight: 600; border-bottom-color
   border: 1px solid var(--borda); border-radius: 8px; background: var(--fundo2);
 }
 .prancha-nota { border-top: 1px solid var(--borda); padding-top: 15px; }
-.prancha-nota p { margin: 0; font-size: 14.5px; line-height: 1.52; color: var(--calmo); }
+.prancha-nota p { margin: 0; font-size: var(--t1); line-height: 1.52; color: var(--calmo); }
 
 /* Legenda embaixo: o print de abertura e as placas. */
 .prancha--abaixo .prancha-nota { border-top: 0; padding-top: 11px; max-width: 64ch; }
@@ -576,7 +648,7 @@ html[data-entrada="visto"] .entrada { display: none; }
 
 .entrada-centro { display: grid; justify-items: center; }
 .entrada .marca {
-  font-size: 26px; letter-spacing: -.02em;
+  font-size: var(--t4); letter-spacing: -.02em;
   clip-path: inset(0 100% 0 0);
   animation: ent-marca .62s cubic-bezier(.22,.61,.36,1) forwards;
 }
@@ -672,7 +744,7 @@ html[data-entrada="visto"] .entrada { display: none; }
   position: absolute; right: 14px; bottom: 14px;
   background: var(--fundo); color: var(--texto);
   border: 1px solid var(--borda); border-radius: 999px;
-  padding: 6px 14px; font-size: 12.5px; font-weight: 600;
+  padding: 6px 14px; font-size: var(--t1); font-weight: 600;
   opacity: 0; transform: translateY(6px); pointer-events: none;
   transition: opacity .22s ease, transform .28s cubic-bezier(.2,.7,.3,1);
 }
@@ -749,31 +821,32 @@ html[data-anima] .revela.dentro { opacity: 1; transform: none; }
   [data-brilho]::before { display: none; }
 }
 
-/* --- a fita, o fundo da primeira tela ------------------------------------ */
+/* --- a fita, o desenho da abertura --------------------------------------- */
 /* Construção emprestada do `AcqMar` do currículo do Enzo Souto, com a forma
    trocada: onde ele desenha senoide (água), aqui é caminhada aleatória
    (dado de mercado). O que veio de lá é regra, não gosto — ver lib/fita.ts.
 
    NÃO ACOMPANHA A ROLAGEM. Nasceu `position: fixed` e descia grudada na
-   janela o tempo todo, o que cansa. Ancorada no topo do DOCUMENTO, ela fica
-   onde nasceu e sai de cena quando a página desce.
+   janela o tempo todo, o que cansa. Presa na ABERTURA, ela fica onde nasceu
+   e sai de cena quando a página desce.
 
    E DISSOLVE, NÃO TERMINA: sem a máscara a faixa acabaria numa linha reta
-   atravessando a página, que o olho lê como erro de pintura. */
+   atravessando a página, que o olho lê como erro de pintura. A máscara é
+   ESCADA, não rampa: cheia embaixo, meia força na faixa do parágrafo de
+   apoio — o primeiro texto a sofrer com linha cruzando — e dissolvendo no
+   alto, onde a fita encostaria no topo grudado. */
 .fita-fundo {
-  position: absolute; top: 0; left: 0; right: 0; height: 105vh;
+  position: absolute; inset: 0;
   z-index: 0; pointer-events: none; overflow: hidden;
-  mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
 }
 /* Tudo o que é conteúdo passa por cima dela. */
 .casca-topo, main, .fechamento { position: relative; z-index: 1; }
 
 .fita {
-  position: absolute; inset: auto 0 0; height: 40vh; min-height: 250px;
+  position: absolute; inset: 0;
   color: var(--dev);
-  mask-image: linear-gradient(to top, #000 52%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, #000 52%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 14%, rgba(0,0,0,.55) 46%, rgba(0,0,0,.3) 74%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 14%, rgba(0,0,0,.55) 46%, rgba(0,0,0,.3) 74%, transparent 100%);
 }
 .pista { position: absolute; left: 0; right: 0; height: 100%; }
 .fita svg { position: absolute; bottom: 0; left: 0; height: 100%; width: 400%; }
@@ -792,9 +865,9 @@ html[data-anima] .revela.dentro { opacity: 1; transform: none; }
 
 /* A varredura larga e lenta, que faz a casca respirar sem desenhar nada.
    FIXA na janela, e fora da `.fita-fundo` de propósito: as linhas ficam
-   presas ao topo do documento e saem de cena, mas o brilho acompanha a
+   presas na abertura e saem de cena, mas o brilho acompanha a
    rolagem e vale para a página inteira, até o rodapé. Dentro da fita ele
-   herdaria a máscara e a altura de 105vh, e morreria na primeira dobra. */
+   herdaria a máscara e morreria na primeira dobra. */
 .brilho {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(104deg, transparent 30%,

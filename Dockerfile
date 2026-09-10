@@ -18,11 +18,21 @@ COPY scripts/otimizar-prints.mjs ./scripts/otimizar-prints.mjs
 COPY public/prints ./public/prints
 RUN node scripts/otimizar-prints.mjs
 
+# As marcas entram na imagem pelo mesmo caminho dos prints: assadas aqui, e
+# não em produção. O `npm run marcas` do `npm run build` cobre o resto.
+FROM node:24-alpine AS marcas
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY scripts/tratar-marcas.mjs ./scripts/tratar-marcas.mjs
+COPY assets-marcas ./assets-marcas
+RUN node scripts/tratar-marcas.mjs
+
 FROM node:24-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 COPY --from=prints /app/public/prints-otimizados ./public/prints-otimizados
+COPY --from=marcas /app/public/marcas ./public/marcas
 ENV NEXT_TELEMETRY_DISABLED=1
 # Sem os testes aqui: o gate do vitest roda antes, na máquina de quem faz o
 # deploy. Dentro da imagem ele só somaria minutos de build.

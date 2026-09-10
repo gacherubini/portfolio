@@ -38,6 +38,14 @@ export type Cargo = {
   blocos: Bloco[]
   /** Só onde há pilha declarada — a formação não tem. */
   pilha?: string[]
+  /**
+   * A marca na coluna da data, pintada por `mask-image` + `currentColor` —
+   * nunca presa num hex. `largura`/`altura` são a CAIXA ÓTICA de exibição
+   * (não o PNG): "PUCRS" é caixa-alta e ocupa o recorte inteiro, "ambush" é
+   * minúsculo e gasta parte com as ascendentes — nos mesmos 20px a PUCRS
+   * pareceria maior. O `alt` é o nome da instituição e não muda de idioma.
+   */
+  marca?: { arquivo: string; largura: number; altura: number; alt: string }
 }
 
 export const experiencia: Cargo[] = [
@@ -50,6 +58,7 @@ export const experiencia: Cargo[] = [
     tipo: 'trabalho',
     atual: true,
     pilha: ['Java', 'Spring Boot', 'Go', 'PostgreSQL', 'Redis'],
+    marca: { arquivo: 'ambush.png', largura: 91, altura: 20, alt: 'Ambush' },
     blocos: [
       {
         titulo: { pt: 'Carteira e mercado', en: 'Wallets and market data' },
@@ -90,5 +99,6 @@ export const experiencia: Cargo[] = [
     local: { pt: 'Porto Alegre, Brasil', en: 'Porto Alegre, Brazil' },
     tipo: 'formacao',
     blocos: [],
+    marca: { arquivo: 'pucrs.png', largura: 61, altura: 17, alt: 'PUCRS' },
   },
 ]
