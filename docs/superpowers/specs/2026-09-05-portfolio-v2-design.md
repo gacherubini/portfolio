@@ -307,8 +307,8 @@ Sai o parágrafo da idade e da faculdade, inteiro. A frase do trabalho perde a
 data e condensa:
 
 > Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a
-> Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend da
-> Binance, em Java.
+> Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend de
+> uma grande exchange de cripto dos EUA, em Java.
 
 "desde 2023" sai de propósito: **o "5+ anos" não envelhece, a data envelhece.**
 

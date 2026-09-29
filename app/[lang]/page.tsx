@@ -26,8 +26,8 @@ export async function generateMetadata({
 
   return {
     title: pt
-      ? 'Gabriel Cherubini — os sistemas que eu construí'
-      : 'Gabriel Cherubini — the systems I built',
+      ? 'Gabriel Cherubini — Backend Engineer | Java & Spring Boot | Go'
+      : 'Gabriel Cherubini — Backend Engineer | Java & Spring Boot | Go',
     description: pt
       ? 'Portfólio de Gabriel Cherubini: Revy, BDDente, Office Timesheet e Autotune, cada um com prints e explicação em português comum.'
       : 'Gabriel Cherubini’s portfolio: Revy, BDDente, Office Timesheet and Autotune, each with screenshots and a plain-language explanation.',

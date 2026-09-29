@@ -11,9 +11,13 @@
  * só os títulos e decide onde parar. Lista de frases soltas do mesmo
  * tamanho obriga a ler tudo ou nada.
  *
- * OS DOIS PROJETOS DA AMBUSH SÃO FASES, NÃO EMPREGOS. Um cartão só, com a
- * fase antiga carregando a própria data no último bloco. Dois cartões
- * repetiriam o nome da empresa e sugeririam duas contratações.
+ * A AMBUSH SÃO DOIS CARGOS, o mais recente primeiro — igual ao currículo e ao
+ * LinkedIn: Backend Developer (fev 2024 — atual) e Junior Backend Developer
+ * (fev 2023 — fev 2024). Não há divisão por linguagem nem "Go até <mês>": o Go
+ * foi usado em mais de um projeto lá, sem ano exato.
+ *
+ * NÃO CITAR O NOME DO CLIENTE DA AMBUSH (NDA não confirmado): "uma grande
+ * exchange de cripto dos EUA".
  *
  * O ESTÁGIO DE SUPORTE FICOU DE FORA, por decisão do dono em 09/09. Ele
  * estava no currículo e chegou a entrar aqui; a lista é curta de propósito,
@@ -52,26 +56,26 @@ export const experiencia: Cargo[] = [
   {
     id: 'ambush',
     empresa: 'Ambush',
-    cargo: { pt: 'Desenvolvedor backend', en: 'Backend developer' },
-    periodo: { pt: 'fev 2023 — atual', en: 'Feb 2023 — present' },
-    local: { pt: 'Austin, Texas · remoto', en: 'Austin, Texas · remote' },
+    cargo: { pt: 'Desenvolvedor backend', en: 'Backend Developer' },
+    periodo: { pt: 'fev 2024 — atual', en: 'Feb 2024 — present' },
+    local: { pt: 'Austin, Texas, EUA · remoto', en: 'Austin, Texas, USA · remote' },
     tipo: 'trabalho',
     atual: true,
-    pilha: ['Java', 'Spring Boot', 'Go', 'PostgreSQL', 'Redis'],
+    pilha: ['Java', 'Spring Boot', 'PostgreSQL', 'Redis'],
     marca: { arquivo: 'ambush.png', largura: 91, altura: 20, alt: 'Ambush' },
     blocos: [
       {
         titulo: { pt: 'Carteira e mercado', en: 'Wallets and market data' },
         texto: {
-          pt: 'Microsserviços em Java e Spring Boot no backend da Binance: saldo, depósito, saque, preço e cálculo de portfólio.',
-          en: 'Java and Spring Boot microservices on Binance’s backend: balances, deposits, withdrawals, pricing and portfolio calculations.',
+          pt: 'Java e Spring Boot em carteiras digitais, contas, depósitos, saques, dados de ativos e mercado, cálculos de portfólio e workflows de KYC e compliance de uma grande exchange de cripto dos EUA.',
+          en: 'Java and Spring Boot on digital wallets, accounts, deposits, withdrawals, asset and market data, portfolio calculations and KYC and compliance workflows for a large U.S. crypto exchange.',
         },
       },
       {
         titulo: { pt: 'Contratos de API', en: 'API contracts' },
         texto: {
-          pt: 'REST e gRPC entre vários times consumindo os mesmos serviços. Documentação primeiro, código depois.',
-          en: 'REST and gRPC across several teams consuming the same services. Documentation first, code after.',
+          pt: 'Contratos REST e gRPC (OpenAPI e Protobuf) definidos antes do código.',
+          en: 'REST and gRPC contracts (OpenAPI and Protobuf) defined before the code.',
         },
       },
       {
@@ -82,10 +86,30 @@ export const experiencia: Cargo[] = [
         },
       },
       {
-        titulo: { pt: 'Go, antes disso · fev 2023 — jun 2024', en: 'Go, before that · Feb 2023 — Jun 2024' },
+        titulo: { pt: 'Agentes de código, todo dia', en: 'Coding agents, every day' },
         texto: {
-          pt: 'A plataforma interna de RH da empresa.',
-          en: 'The company’s internal HR platform.',
+          pt: 'Uso agentes de código (Claude Code, Codex, OpenCode) todo dia no fluxo spec-driven: implementar, testar e revisar.',
+          en: 'I use coding agents (Claude Code, Codex, OpenCode) every day within the spec-driven workflow to implement, test and review changes.',
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'ambush-junior',
+    empresa: 'Ambush',
+    cargo: { pt: 'Desenvolvedor backend júnior', en: 'Junior Backend Developer' },
+    periodo: { pt: 'fev 2023 — fev 2024', en: 'Feb 2023 — Feb 2024' },
+    local: { pt: 'Austin, Texas, EUA · remoto', en: 'Austin, Texas, USA · remote' },
+    tipo: 'trabalho',
+    pilha: ['Go', 'PostgreSQL', 'GCP Pub/Sub'],
+    marca: { arquivo: 'ambush.png', largura: 91, altura: 20, alt: 'Ambush' },
+    blocos: [
+      {
+        titulo: { pt: 'Plataforma interna de RH', en: 'Internal HR platform' },
+        texto: {
+          pt: 'Em Go: perfis, filtro de skills e agendamento de entrevistas, com PostgreSQL e GCP Pub/Sub.',
+          en: 'In Go: profiles, skills filtering and interview scheduling, with PostgreSQL and GCP Pub/Sub.',
         },
       },
     ],

@@ -27,8 +27,8 @@ export const ui = {
   experienciaTitulo: { pt: 'Experiência', en: 'Experience' },
   projetosTitulo: { pt: 'Projetos', en: 'Projects' },
   projetosApoio: {
-    pt: 'Quatro sistemas construídos fora do expediente, cada um inteiro e sozinho.',
-    en: 'Four systems built outside work hours, each one end to end and alone.',
+    pt: 'Quatro sistemas: três freelances para clientes reais e o meu TCC.',
+    en: 'Four systems: three freelance projects for real clients and my thesis.',
   },
   avisoTecnico: {
     pt: 'Esta parte é pra quem é da área. Se não for o seu caso, pode pular — acabou aqui.',

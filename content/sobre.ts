@@ -22,24 +22,24 @@ export const sobre: {
   // agora vêm depois dele.
   paragrafos: [
     {
-      pt: 'Sou desenvolvedor backend. Java e Spring Boot no dia a dia, Go antes disso.',
-      en: "I'm a backend developer. Java and Spring Boot day to day, Go before that.",
+      pt: 'Sou desenvolvedor backend. Java e Spring Boot no dia a dia, e Go em mais de um projeto.',
+      en: "I'm a backend developer. Java and Spring Boot day to day, and Go on more than one project.",
     },
     {
       // "desde 2023" saiu de propósito, a pedido do dono em 05/09: o tempo de
       // ofício não envelhece, a data de entrada envelhece sozinha todo ano.
-      pt: 'Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend da Binance, em Java.',
-      en: "I've been programming for more than 5 years. I live in Porto Alegre, Brazil, and work remotely for Ambush, in Austin, Texas. I started in Go and today I work on Binance's backend, in Java.",
+      pt: 'Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend de uma grande exchange de cripto dos EUA, em Java.',
+      en: "I've been programming for more than 5 years. I live in Porto Alegre, Brazil, and work remotely for Ambush, in Austin, Texas. I started in Go and today I work on the backend of a large U.S. crypto exchange, in Java.",
     },
     {
-      pt: 'IA é onde minha atenção está hoje, e não como quem usa chat. Construo por dentro: agentes que chamam funções do próprio produto, skills, loops de agente que tocam a tarefa inteira e param exatamente onde precisam de uma pessoa. O assistente do Office Timesheet e o agente de WhatsApp da Revy saíram daí. Este site também.',
-      en: "AI is where my attention is right now, and not as someone who uses a chat window. I build the inside of it: agents that call functions in the product itself, skills, agent loops that carry a task all the way and stop exactly where a person is needed. The Office Timesheet assistant and Revy's WhatsApp agent came out of that. So did this site.",
+      pt: 'IA é onde minha atenção está hoje, e não como quem usa chat. Construo por dentro: agentes que chamam funções do próprio produto, skills, loops de agente que tocam a tarefa inteira e param exatamente onde precisam de uma pessoa. O assistente do Office Timesheet e o agente de WhatsApp da Revy saíram daí. Este site também. No trabalho, uso Claude Code, Codex e OpenCode todo dia. E construí um agente pessoal, o gabriel-brain: roda como piloto e guarda a memória num repositório git.',
+      en: "AI is where my attention is right now, and not as someone who uses a chat window. I build the inside of it: agents that call functions in the product itself, skills, agent loops that carry a task all the way and stop exactly where a person is needed. The Office Timesheet assistant and Revy's WhatsApp agent came out of that. So did this site. At work, I use Claude Code, Codex and OpenCode every day. I also built a personal agent, gabriel-brain: it runs as a pilot, with its memory kept in a git repository.",
     },
     {
       // "aqui de cima" virou "aqui embaixo" em 09/09: o Sobre subiu para o
       // topo da home e os quatro sistemas passaram a vir depois dele.
-      pt: 'Os quatro sistemas aqui embaixo são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.',
-      en: 'The four systems below were built outside work hours. I built each one end to end, alone, and put it in front of real users.',
+      pt: 'Revy, BDDente e Office Timesheet foram freelances para clientes reais. O Autotune é o meu TCC na PUCRS, publicado como código aberto.',
+      en: 'Revy, BDDente and Office Timesheet were freelance projects for real clients. Autotune is my undergraduate thesis at PUCRS, published as open source.',
     },
   ],
 

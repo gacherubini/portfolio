@@ -514,8 +514,8 @@ Em `content/sobre.ts`, substituir o array `paragrafos` inteiro por:
     {
       // "desde 2023" saiu de propósito, a pedido do dono em 05/09: o tempo de
       // ofício não envelhece, a data de entrada envelhece sozinha todo ano.
-      pt: 'Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend da Binance, em Java.',
-      en: "I've been programming for more than 5 years. I live in Porto Alegre, Brazil, and work remotely for Ambush, in Austin, Texas. I started in Go and today I work on Binance's backend, in Java.",
+      pt: 'Programo há mais de 5 anos. Moro em Porto Alegre e trabalho remoto para a Ambush, em Austin, no Texas. Comecei em Go e hoje trabalho no backend de uma grande exchange de cripto dos EUA, em Java.',
+      en: "I've been programming for more than 5 years. I live in Porto Alegre, Brazil, and work remotely for Ambush, in Austin, Texas. I started in Go and today I work on a large U.S. crypto exchange's backend, in Java.",
     },
     {
       pt: 'Os quatro sistemas aqui de cima são de fora do expediente. Construí cada um inteiro, sozinho, e coloquei no ar com gente usando.',
